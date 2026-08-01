@@ -26,14 +26,16 @@ export default function AppsCatalogPage() {
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
-  // Load custom/uploaded apps from localStorage on client mount
+  // Load custom/modified apps from localStorage on client mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedCustom = localStorage.getItem('app100yen_custom_apps');
-      if (savedCustom) {
+      const savedApps = localStorage.getItem('app100yen_modified_apps');
+      if (savedApps) {
         try {
-          const customApps: AppItem[] = JSON.parse(savedCustom);
-          setAppList([...customApps, ...MOCK_APPS]);
+          const parsed: AppItem[] = JSON.parse(savedApps);
+          if (parsed && parsed.length > 0) {
+            setAppList(parsed);
+          }
         } catch (err) {
           console.error(err);
         }
@@ -41,9 +43,8 @@ export default function AppsCatalogPage() {
     }
   }, []);
 
-  const saveCustomAppsToStorage = (newList: AppItem[]) => {
-    const customOnly = newList.filter((a) => a.id.startsWith('app-custom-'));
-    localStorage.setItem('app100yen_custom_apps', JSON.stringify(customOnly));
+  const saveAppsToStorage = (newList: AppItem[]) => {
+    localStorage.setItem('app100yen_modified_apps', JSON.stringify(newList));
   };
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function AppsCatalogPage() {
       if (e.detail) {
         setAppList((prev) => {
           const updated = [e.detail, ...prev];
-          saveCustomAppsToStorage(updated);
+          saveAppsToStorage(updated);
           return updated;
         });
       }
@@ -60,7 +61,7 @@ export default function AppsCatalogPage() {
       if (e.detail) {
         setAppList((prev) => {
           const updated = prev.map((a) => (a.id === e.detail.id ? e.detail : a));
-          saveCustomAppsToStorage(updated);
+          saveAppsToStorage(updated);
           return updated;
         });
       }
@@ -69,7 +70,7 @@ export default function AppsCatalogPage() {
       if (e.detail) {
         setAppList((prev) => {
           const updated = prev.filter((a) => a.id !== e.detail);
-          saveCustomAppsToStorage(updated);
+          saveAppsToStorage(updated);
           return updated;
         });
       }
@@ -188,12 +189,12 @@ export default function AppsCatalogPage() {
           onAppUpdated={(updated) => {
             const newList = appList.map((a) => (a.id === updated.id ? updated : a));
             setAppList(newList);
-            saveCustomAppsToStorage(newList);
+            saveAppsToStorage(newList);
           }}
           onAppDeleted={(appId) => {
             const newList = appList.filter((a) => a.id !== appId);
             setAppList(newList);
-            saveCustomAppsToStorage(newList);
+            saveAppsToStorage(newList);
           }}
         />
       )}
