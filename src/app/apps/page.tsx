@@ -19,13 +19,24 @@ const CATEGORIES: AppCategory[] = [
 ];
 
 export default function AppsCatalogPage() {
+  const [appList, setAppList] = useState<AppItem[]>(MOCK_APPS);
   const [selectedCategory, setSelectedCategory] = useState<AppCategory>('전체');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
+  React.useEffect(() => {
+    const handleAppCreated = (e: any) => {
+      if (e.detail) {
+        setAppList((prev) => [e.detail, ...prev]);
+      }
+    };
+    window.addEventListener('app-created', handleAppCreated);
+    return () => window.removeEventListener('app-created', handleAppCreated);
+  }, []);
+
   const filteredApps = useMemo(() => {
-    return MOCK_APPS.filter((app) => {
+    return appList.filter((app) => {
       const matchCategory =
         selectedCategory === '전체' || app.category === selectedCategory;
       const matchSearch =
@@ -34,7 +45,7 @@ export default function AppsCatalogPage() {
         app.features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchCategory && matchSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [appList, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen flex flex-col justify-between text-slate-100 selection:bg-rose-500 selection:text-white">
