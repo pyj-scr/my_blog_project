@@ -113,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUploadModal, onAppCreated 
             {user ? (
               <div className="flex items-center gap-2 shrink-0">
                 <span className="hidden lg:inline text-xs font-bold text-slate-300 whitespace-nowrap">
-                  {user.name}
+                  {user.name === '구글 사용자' || user.name === 'Google User' || user.name === 'グーグルユーザー' ? t.userDefaultName : user.name}
                 </span>
                 <button
                   onClick={logout}

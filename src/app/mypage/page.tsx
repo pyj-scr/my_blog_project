@@ -98,7 +98,7 @@ export default function MyPage() {
       <div className="mb-8">
         <h2 className="text-xl font-black text-white flex items-center gap-2 mb-4">
           <ShoppingBag className="h-5 w-5 text-rose-400" />
-          <span>{t.myDownloadsTitle}</span>
+          <span>{t.navMyPage}</span>
         </h2>
 
         {purchases.length > 0 ? (

@@ -1,171 +1,178 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Language, Currency, AppItem } from '@/types/app';
+import { Language, AppItem } from '@/types/app';
 
-interface TranslationSet {
+export interface TranslationSet {
   brandTitle: string;
   brandTagline: string;
-  navHome: string;
   navApps: string;
   navMyPage: string;
   login: string;
   logout: string;
+  userDefaultName: string;
   heroTag: string;
   heroTitle1: string;
   heroTitleHighlight: string;
   heroDesc: string;
   btnExplore: string;
-  btnAbout: string;
-  popularTitle: string;
-  popularSub: string;
-  viewAll: string;
-  feature1Title: string;
-  feature1Desc: string;
-  feature2Title: string;
-  feature2Desc: string;
-  feature3Title: string;
-  feature3Desc: string;
-  faqTitle: string;
-  faqDesc: string;
-  getAppBtn: string;
+  trustBadge1Title: string;
+  trustBadge1Sub: string;
+  trustBadge2Title: string;
+  trustBadge2Sub: string;
+  trustBadge3Title: string;
+  trustBadge3Sub: string;
+  trustBadge4Title: string;
+  trustBadge4Sub: string;
+  popularCatalogTitle: string;
+  popularCatalogSub: string;
+  viewAllApps: string;
+  catalogTitle: string;
+  catalogSubtitle: string;
   searchPlaceholder: string;
-  categoryAll: string;
-  purchased: string;
   buyBtn: string;
-  payModalTitle: string;
-  payModalSub: string;
-  paySuccessTitle: string;
-  paySuccessSub: string;
-  myDownloadsTitle: string;
-  licenseKey: string;
+  purchasedLabel: string;
   downloadFile: string;
-  priceTag: string;
+  licenseKey: string;
+  ratingLabel: string;
+  downloadCountLabel: string;
+  downloadCountSuffix: string;
+  categoryMobile: string;
+  categoryAi: string;
+  categoryDesign: string;
+  categoryDev: string;
+  categoryAuto: string;
+  categoryUtil: string;
 }
 
-const TRANSLATIONS: Record<Language, TranslationSet> = {
+const translations: Record<Language, TranslationSet> = {
   ja: {
     brandTitle: 'アプリ 100円ショップ',
     brandTagline: 'AI Apps at Just 100 Yen',
-    navHome: 'ホーム',
-    navApps: 'アプリダウンロード',
+    navApps: 'アプリ一覧',
     navMyPage: 'マイダウンロード',
     login: 'ログイン',
     logout: 'ログアウト',
+    userDefaultName: 'グーグルユーザー',
     heroTag: 'AIアプリ全品 100円均一ショップ',
     heroTitle1: '一人で使うには勿体ない！',
     heroTitleHighlight: 'アプリ 100円ショップ',
     heroDesc: '背景除去ツールからPDF AI要約機、自動化ツールまで！必要なアプリを100円で永久ダウンロード。',
     btnExplore: 'アプリを探してダウンロード',
-    btnAbout: '100円ショップとは？',
-    popularTitle: '人気アプリ 100円キュレーション',
-    popularSub: 'MUST HAVE APPS',
-    viewAll: 'すべてのアプリを見る',
-    feature1Title: '100円 均一価格',
-    feature1Desc: 'サブスクなし！すべてのアプリが100円の単品価格です。',
-    feature2Title: 'AI生産性アップ',
-    feature2Desc: 'AI技術を融合した検証済みのデスクトップ＆ウェブツール。',
-    feature3Title: '永久所蔵＆安全決済',
-    feature3Desc: '一度購入すればライセンスキー発行＆いつでも再ダウンロード可能。',
-    faqTitle: 'Q. 100円決済後のダウンロード方法は？',
-    faqDesc: '決済完了後、すぐにインストールファイルとライセンスキーがマイページに生成されます！',
-    getAppBtn: '今すぐ100円でダウンロード',
+    trustBadge1Title: 'たった100円 / $1',
+    trustBadge1Sub: '手軽な一律価格',
+    trustBadge2Title: 'ワンクリック即時利用',
+    trustBadge2Sub: 'インストール不要ウェブアプリ',
+    trustBadge3Title: '生涯無料アップデート',
+    trustBadge3Sub: '一度の購入で永久所有',
+    trustBadge4Title: '実行ファイル同梱',
+    trustBadge4Sub: 'Pythonデスクトッププログラム',
+    popularCatalogTitle: '🔥 人気100円アプリラインナップ',
+    popularCatalogSub: '100円ですぐに利用できる高性能ユーティリティです。',
+    viewAllApps: 'すべてのアプリを見る',
+    catalogTitle: '100円アプリ カタログ',
+    catalogSubtitle: '100円ですぐにダウンロード可能な高品質ユーティリティラインナップです。',
     searchPlaceholder: 'アプリ名または機能を検索...',
-    categoryAll: 'すべて',
-    purchased: '購入済み',
     buyBtn: '100円で購入',
-    payModalTitle: '100円 簡単決済',
-    payModalSub: '安全ワンクリック決済で即時ダウンロード',
-    paySuccessTitle: '決済完了！',
-    paySuccessSub: 'アプリの購入が正常に完了しました。',
-    myDownloadsTitle: 'マイ アプリダウンロード一覧',
-    licenseKey: 'ライセンスキー',
+    purchasedLabel: '購入済み',
     downloadFile: 'インストールファイルのダウンロード',
-    priceTag: '100円',
+    licenseKey: 'ライセンスキー',
+    ratingLabel: '評価',
+    downloadCountLabel: 'ダウンロード',
+    downloadCountSuffix: '回',
+    categoryMobile: 'モバイルアプリ',
+    categoryAi: 'AI生産性',
+    categoryDesign: 'デザイン＆メディア',
+    categoryDev: '開発＆ツール',
+    categoryAuto: '自動化',
+    categoryUtil: 'ユーティリティ',
   },
   ko: {
     brandTitle: '어플 100엔 샾',
-    brandTagline: 'AI Apps at Just 100 Yen (₩1,000)',
-    navHome: '홈',
+    brandTagline: 'AI Apps at Just 100 Yen',
     navApps: '어플 다운로드',
-    navMyPage: '내 다운로드',
+    navMyPage: '마이 다운로드',
     login: '로그인',
     logout: '로그아웃',
-    heroTag: 'AI 어플 전 상품 100엔(₩1,000) 숍',
-    heroTitle1: '나 혼자 쓰기 아까워서 다 풀었다!',
+    userDefaultName: '구글 사용자',
+    heroTag: 'AI 어플 전품목 100엔 균일가 샾',
+    heroTitle1: '혼자 쓰기 아까워 공개하는',
     heroTitleHighlight: '어플 100엔 샾',
-    heroDesc: '배경 제거 툴부터 PDF AI 요약기, 자동화 스크립트까지! 필요한 어플을 100엔(약 ₩1,000)에 다운로드하세요.',
-    btnExplore: '어플 둘러보고 다운로드',
-    btnAbout: '어플 100엔 샾이란?',
-    popularTitle: '인기 어플 100엔 숍 큐레이션',
-    popularSub: 'MUST HAVE APPS',
-    viewAll: '전체 어플 둘러보기',
-    feature1Title: '100엔(₩1,000) 균일가',
-    feature1Desc: '구독료 없이 딱 100엔 단일 가격으로 모든 어플을 제공합니다.',
-    feature2Title: 'AI 기반 높은 생산성',
-    feature2Desc: 'AI 기술을 결합하여 제작한 검증된 경량 유틸리티 프로그램.',
-    feature3Title: '평생 소장 & 안전 결제',
-    feature3Desc: '한 번 결제하면 전용 라이선스 키 발급 및 마이페이지 재다운로드.',
-    faqTitle: 'Q. 100엔 결제 후 어떻게 다운로드 받나요?',
-    faqDesc: '결제 완료 즉시 설치 파일 다운로드 링크와 전용 라이선스 키가 마이페이지에 생성됩니다!',
-    getAppBtn: '지금 100엔으로 어플 다운받기',
+    heroDesc: '배경 제거 툴부터 PDF AI 요약기, 자동화 툴까지! 필요한 어플을 단돈 100엔에 평생 영구 소장하세요.',
+    btnExplore: '어플 찾고 바로 다운로드',
+    trustBadge1Title: '단돈 100엔 / $1',
+    trustBadge1Sub: '부담 없는 초저가 정찰제',
+    trustBadge2Title: '원클릭 즉시 사용',
+    trustBadge2Sub: '무설치 브라우저 앱 지원',
+    trustBadge3Title: '평생 무료 업데이트',
+    trustBadge3Sub: '한 번 구매로 영구 소장',
+    trustBadge4Title: '실행 파일 포함',
+    trustBadge4Sub: 'Python 데스크톱 프로그램',
+    popularCatalogTitle: '🔥 인기 100엔 어플 라인업',
+    popularCatalogSub: '지금 바로 100엔으로 즉시 이용 가능한 고성능 유틸리티들입니다.',
+    viewAllApps: '전체 어플 보기',
+    catalogTitle: '100엔 어플 카탈로그',
+    catalogSubtitle: '100엔으로 즉시 다운로드 가능한 고품질 유틸리티 어플 라인업입니다.',
     searchPlaceholder: '어플 이름 또는 기능 검색...',
-    categoryAll: '전체',
-    purchased: '구매 완료',
-    buyBtn: '100엔 받기',
-    payModalTitle: '100엔 간편 결제',
-    payModalSub: '안전하고 원클릭으로 결제 후 즉시 다운로드',
-    paySuccessTitle: '결제 및 구매 완료!',
-    paySuccessSub: '어플리케이션 결제가 성공적으로 완료되었습니다.',
-    myDownloadsTitle: '내 어플 다운로드 목록',
+    buyBtn: '1000원에 구매',
+    purchasedLabel: '구매 완료',
+    downloadFile: '설치 파일 다운로드',
     licenseKey: '라이선스 키',
-    downloadFile: '설치/실행 파일 다운로드',
-    priceTag: '100엔 (₩1,000)',
+    ratingLabel: '평점',
+    downloadCountLabel: '다운로드',
+    downloadCountSuffix: '회',
+    categoryMobile: '모바일 앱',
+    categoryAi: 'AI 생산성',
+    categoryDesign: '디자인 & 미디어',
+    categoryDev: '개발 & 툴',
+    categoryAuto: '자동화',
+    categoryUtil: '유틸리티',
   },
   en: {
-    brandTitle: 'App $1 Dollar Shop',
-    brandTagline: 'AI Apps at Just $1 Dollar',
-    navHome: 'Home',
-    navApps: 'Apps Download',
+    brandTitle: 'App $1 Shop',
+    brandTagline: 'AI Apps at Just $1 USD',
+    navApps: 'Catalog',
     navMyPage: 'My Downloads',
     login: 'Login',
     logout: 'Logout',
-    heroTag: 'AI Apps at Flat $1 Dollar',
-    heroTitle1: 'Too Good to Keep to Myself!',
+    userDefaultName: 'Google User',
+    heroTag: 'All AI Apps Flat $1.00 USD',
+    heroTitle1: 'Too Good To Keep To Myself!',
     heroTitleHighlight: 'App $1 Dollar Shop',
-    heroDesc: 'From AI Background Removers to PDF Summarizers & Automation tools! Get lifetime access for just $1.',
+    heroDesc: 'From background removers to PDF AI summarizers and automation utilities! Get lifetime apps for just $1.',
     btnExplore: 'Explore & Download Apps',
-    btnAbout: 'What is $1 Shop?',
-    popularTitle: 'Popular $1 Apps Curation',
-    popularSub: 'MUST HAVE APPS',
-    viewAll: 'View All Apps',
-    feature1Title: '$1 Flat Price',
-    feature1Desc: 'No subscriptions! All utility apps available at just $1.00.',
-    feature2Title: 'Boost AI Productivity',
-    feature2Desc: 'Tested lightweight desktop & web tools powered by AI.',
-    feature3Title: 'Lifetime License & Safe Pay',
-    feature3Desc: 'Pay once, get your unique license key, and re-download anytime.',
-    faqTitle: 'Q. How do I download after $1 payment?',
-    faqDesc: 'Right after payment, your download link and unique license key are generated in My Downloads!',
-    getAppBtn: 'Download Now for $1',
-    searchPlaceholder: 'Search app name or features...',
-    categoryAll: 'All',
-    purchased: 'Purchased',
-    buyBtn: 'Get for $1',
-    payModalTitle: '$1 Easy Checkout',
-    payModalSub: 'Secure 1-click payment and instant download',
-    paySuccessTitle: 'Payment Successful!',
-    paySuccessSub: 'Your app purchase has been completed.',
-    myDownloadsTitle: 'My Downloaded Apps',
+    trustBadge1Title: 'Flat $1.00 USD / 100 JPY',
+    trustBadge1Sub: 'Affordable Flat Price',
+    trustBadge2Title: '1-Click Instant Run',
+    trustBadge2Sub: 'No-Install Web Apps',
+    trustBadge3Title: 'Lifetime Free Updates',
+    trustBadge3Sub: 'Own Forever with 1 Payment',
+    trustBadge4Title: 'Executables Included',
+    trustBadge4Sub: 'Python Desktop Utilities',
+    popularCatalogTitle: '🔥 Popular $1 Apps Lineup',
+    popularCatalogSub: 'High performance utilities ready to use for just $1.',
+    viewAllApps: 'View All Apps',
+    catalogTitle: '$1 App Catalog',
+    catalogSubtitle: 'High quality utility apps available for download at flat $1.',
+    searchPlaceholder: 'Search app title or features...',
+    buyBtn: 'Buy for $1',
+    purchasedLabel: 'Purchased',
+    downloadFile: 'Download Installer File',
     licenseKey: 'License Key',
-    downloadFile: 'Download Installer / App',
-    priceTag: '$1.00 USD',
+    ratingLabel: 'Rating',
+    downloadCountLabel: 'Downloads',
+    downloadCountSuffix: ' downloads',
+    categoryMobile: 'Mobile App',
+    categoryAi: 'AI Productivity',
+    categoryDesign: 'Design & Media',
+    categoryDev: 'Dev & Tools',
+    categoryAuto: 'Automation',
+    categoryUtil: 'Utilities',
   },
 };
 
 interface LanguageContextType {
   language: Language;
-  currency: Currency;
   setLanguage: (lang: Language) => void;
   t: TranslationSet;
   formatPrice: (app: AppItem) => string;
@@ -174,40 +181,43 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>('ja'); // 기본 일본어 100엔
-  const [currency, setCurrency] = useState<Currency>('JPY');
+  const [language, setLanguage] = useState<Language>('ja'); // Default Japanese for JP residence
 
   useEffect(() => {
-    const savedLang = localStorage.getItem('app100yen_lang') as Language;
-    if (savedLang && ['ja', 'ko', 'en'].includes(savedLang)) {
-      setLanguageState(savedLang);
-      if (savedLang === 'ja') setCurrency('JPY');
-      if (savedLang === 'ko') setCurrency('KRW');
-      if (savedLang === 'en') setCurrency('USD');
+    if (typeof window !== 'undefined') {
+      const savedLang = localStorage.getItem('app100yen_language') as Language;
+      if (savedLang && ['ja', 'ko', 'en'].includes(savedLang)) {
+        setLanguage(savedLang);
+      }
     }
   }, []);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('app100yen_lang', lang);
-    if (lang === 'ja') setCurrency('JPY');
-    if (lang === 'ko') setCurrency('KRW');
-    if (lang === 'en') setCurrency('USD');
+  const changeLanguage = (lang: Language) => {
+    setLanguage(lang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('app100yen_language', lang);
+    }
   };
 
   const formatPrice = (app: AppItem): string => {
-    if (currency === 'JPY') return `${app.priceJpy}円`;
-    if (currency === 'KRW') return `₩${app.priceKrw.toLocaleString()}`;
-    return `$${app.priceUsd.toFixed(2)}`;
+    switch (language) {
+      case 'ja':
+        return `${app.priceJpy}円`;
+      case 'ko':
+        return `₩${app.priceKrw.toLocaleString()}`;
+      case 'en':
+        return `$${app.priceUsd.toFixed(2)}`;
+      default:
+        return `${app.priceJpy}円`;
+    }
   };
 
   return (
     <LanguageContext.Provider
       value={{
         language,
-        currency,
-        setLanguage,
-        t: TRANSLATIONS[language],
+        setLanguage: changeLanguage,
+        t: translations[language],
         formatPrice,
       }}
     >
@@ -219,7 +229,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error('useLanguage must be used within LanguageProvider');
   }
   return context;
 };

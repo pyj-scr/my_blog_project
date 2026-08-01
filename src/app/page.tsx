@@ -126,32 +126,32 @@ export default function Home() {
               <div className="flex items-center justify-center gap-2.5 p-3 rounded-xl bg-slate-900/40 border border-slate-800">
                 <Gift className="h-5 w-5 text-amber-400 shrink-0" />
                 <div className="text-left">
-                  <h4 className="text-xs font-bold text-white">단돈 100엔 / $1</h4>
-                  <p className="text-[10px] text-slate-400">부담 없는 초저가 정찰제</p>
+                  <h4 className="text-xs font-bold text-white">{t.trustBadge1Title}</h4>
+                  <p className="text-[10px] text-slate-400">{t.trustBadge1Sub}</p>
                 </div>
               </div>
 
               <div className="flex items-center justify-center gap-2.5 p-3 rounded-xl bg-slate-900/40 border border-slate-800">
                 <Zap className="h-5 w-5 text-rose-400 shrink-0" />
                 <div className="text-left">
-                  <h4 className="text-xs font-bold text-white">원클릭 즉시 사용</h4>
-                  <p className="text-[10px] text-slate-400">무설치 브라우저 앱 지원</p>
+                  <h4 className="text-xs font-bold text-white">{t.trustBadge2Title}</h4>
+                  <p className="text-[10px] text-slate-400">{t.trustBadge2Sub}</p>
                 </div>
               </div>
 
               <div className="flex items-center justify-center gap-2.5 p-3 rounded-xl bg-slate-900/40 border border-slate-800">
                 <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
                 <div className="text-left">
-                  <h4 className="text-xs font-bold text-white">평생 무료 업데이트</h4>
-                  <p className="text-[10px] text-slate-400">한 번 구매로 영구 소장</p>
+                  <h4 className="text-xs font-bold text-white">{t.trustBadge3Title}</h4>
+                  <p className="text-[10px] text-slate-400">{t.trustBadge3Sub}</p>
                 </div>
               </div>
 
               <div className="flex items-center justify-center gap-2.5 p-3 rounded-xl bg-slate-900/40 border border-slate-800">
                 <Layers className="h-5 w-5 text-purple-400 shrink-0" />
                 <div className="text-left">
-                  <h4 className="text-xs font-bold text-white">실행 파일 포함</h4>
-                  <p className="text-[10px] text-slate-400">Python 데스크톱 프로그램</p>
+                  <h4 className="text-xs font-bold text-white">{t.trustBadge4Title}</h4>
+                  <p className="text-[10px] text-slate-400">{t.trustBadge4Sub}</p>
                 </div>
               </div>
             </div>
@@ -166,10 +166,10 @@ export default function Home() {
             <div className="flex items-end justify-between mb-8">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-black text-white">
-                  🔥 인기 100엔 어플 라인업
+                  {t.popularCatalogTitle}
                 </h2>
                 <p className="text-sm text-slate-400 mt-1">
-                  지금 바로 100엔으로 즉시 이용 가능한 고성능 유틸리티들입니다.
+                  {t.popularCatalogSub}
                 </p>
               </div>
 
@@ -177,7 +177,7 @@ export default function Home() {
                 href="/apps"
                 className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors"
               >
-                <span>전체 어플 보기</span>
+                <span>{t.viewAllApps}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

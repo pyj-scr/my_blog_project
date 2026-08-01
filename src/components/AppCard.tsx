@@ -35,6 +35,18 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
     }
   };
 
+  const getCategoryTranslation = (cat: string) => {
+    switch (cat) {
+      case '모바일 앱': return t.categoryMobile;
+      case 'AI 생산성': return t.categoryAi;
+      case '디자인 & 미디어': return t.categoryDesign;
+      case '개발 & 툴': return t.categoryDev;
+      case '자동화': return t.categoryAuto;
+      case '유틸리티': return t.categoryUtil;
+      default: return cat;
+    }
+  };
+
   return (
     <div
       onClick={() => onSelectDetail && onSelectDetail(app)}
@@ -47,26 +59,24 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
             alt={title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-
-          {/* Dynamic Price Badge */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-600 px-3.5 py-1.5 text-sm font-black text-white shadow-lg shadow-rose-600/30">
-            <Sparkles className="h-4 w-4 fill-white" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+          
+          <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-rose-600 px-3 py-1 text-xs font-black text-white shadow-md">
+            <Sparkles className="h-3.5 w-3.5" />
             <span>{formatPrice(app)}</span>
           </div>
 
-          <div className="absolute top-3 right-3 flex gap-1.5">
-            {app.isPopular && (
-              <span className="rounded-full bg-rose-500/90 px-3 py-1 text-xs font-bold text-white shadow">
-                TOP
-              </span>
-            )}
-            {app.isNew && (
-              <span className="rounded-full bg-indigo-500/90 px-3 py-1 text-xs font-bold text-white shadow">
-                NEW
-              </span>
-            )}
-          </div>
+          {app.isPopular && (
+            <div className="absolute top-3 right-3 rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-xs font-bold text-amber-300">
+              TOP
+            </div>
+          )}
+
+          {app.isNew && (
+            <div className="absolute top-3 right-16 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-0.5 text-xs font-bold text-indigo-300">
+              NEW
+            </div>
+          )}
 
           <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-slate-950/80 backdrop-blur-md px-2.5 py-1 text-xs text-slate-200">
             {app.os.includes('Android') && <span className="text-emerald-400 font-bold">🤖</span>}
@@ -81,7 +91,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
 
         <div className="mb-2 flex items-center justify-between">
           <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">
-            {app.category}
+            {getCategoryTranslation(app.category)}
           </span>
           <div className="flex items-center gap-1 text-xs font-bold text-amber-400">
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
@@ -101,8 +111,8 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
 
       <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3">
         <div className="flex flex-col">
-          <span className="text-xs text-slate-400">다운로드</span>
-          <span className="text-sm font-bold text-slate-200">{app.downloads.toLocaleString()}회</span>
+          <span className="text-xs text-slate-400">{t.downloadCountLabel}</span>
+          <span className="text-sm font-bold text-slate-200">{app.downloads.toLocaleString()}{t.downloadCountSuffix}</span>
         </div>
 
         <button
@@ -116,7 +126,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
           {purchased ? (
             <>
               <CheckCircle className="h-4 w-4" />
-              <span>{t.purchased}</span>
+              <span>{t.purchasedLabel}</span>
             </>
           ) : (
             <>
