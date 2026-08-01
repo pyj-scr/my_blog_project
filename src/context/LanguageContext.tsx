@@ -27,6 +27,7 @@ export interface TranslationSet {
   popularCatalogTitle: string;
   popularCatalogSub: string;
   viewAllApps: string;
+  catalogBadge: string;
   catalogTitle: string;
   catalogSubtitle: string;
   searchPlaceholder: string;
@@ -37,6 +38,7 @@ export interface TranslationSet {
   ratingLabel: string;
   downloadCountLabel: string;
   downloadCountSuffix: string;
+  categoryAll: string;
   categoryMobile: string;
   categoryAi: string;
   categoryDesign: string;
@@ -120,7 +122,8 @@ const translations: Record<Language, TranslationSet> = {
     popularCatalogTitle: '🔥 人気100円アプリラインナップ',
     popularCatalogSub: '100円ですぐに利用できる高性能ユーティリティです。',
     viewAllApps: 'すべてのアプリを見る',
-    catalogTitle: '100円アプリ カタログ',
+    catalogBadge: '100円一律デジタルアプリストア',
+    catalogTitle: 'アプリ一覧',
     catalogSubtitle: '100円ですぐにダウンロード可能な高品質ユーティリティラインナップです。',
     searchPlaceholder: 'アプリ名または機能を検索...',
     buyBtn: '100円で購入',
@@ -130,6 +133,7 @@ const translations: Record<Language, TranslationSet> = {
     ratingLabel: '評価',
     downloadCountLabel: 'ダウンロード',
     downloadCountSuffix: '回',
+    categoryAll: 'すべて',
     categoryMobile: 'モバイルアプリ',
     categoryAi: 'AI生産性',
     categoryDesign: 'デザイン＆メディア',
@@ -211,7 +215,8 @@ const translations: Record<Language, TranslationSet> = {
     popularCatalogTitle: '🔥 인기 100엔 어플 라인업',
     popularCatalogSub: '지금 바로 100엔으로 즉시 이용 가능한 고성능 유틸리티들입니다.',
     viewAllApps: '전체 어플 보기',
-    catalogTitle: '100엔 어플 카탈로그',
+    catalogBadge: '100엔 정찰제 디지털 앱 스토어',
+    catalogTitle: '어플 카탈로그',
     catalogSubtitle: '100엔으로 즉시 다운로드 가능한 고품질 유틸리티 어플 라인업입니다.',
     searchPlaceholder: '어플 이름 또는 기능 검색...',
     buyBtn: '1000원에 구매',
@@ -221,6 +226,7 @@ const translations: Record<Language, TranslationSet> = {
     ratingLabel: '평점',
     downloadCountLabel: '다운로드',
     downloadCountSuffix: '회',
+    categoryAll: '전체',
     categoryMobile: '모바일 앱',
     categoryAi: 'AI 생산성',
     categoryDesign: '디자인 & 미디어',
@@ -302,7 +308,8 @@ const translations: Record<Language, TranslationSet> = {
     popularCatalogTitle: '🔥 Popular $1 Apps Lineup',
     popularCatalogSub: 'High performance utilities ready to use for just $1.',
     viewAllApps: 'View All Apps',
-    catalogTitle: '$1 App Catalog',
+    catalogBadge: 'Flat $1.00 Digital App Store',
+    catalogTitle: 'App Catalog',
     catalogSubtitle: 'High quality utility apps available for download at flat $1.',
     searchPlaceholder: 'Search app title or features...',
     buyBtn: 'Buy for $1',
@@ -312,6 +319,7 @@ const translations: Record<Language, TranslationSet> = {
     ratingLabel: 'Rating',
     downloadCountLabel: 'Downloads',
     downloadCountSuffix: ' downloads',
+    categoryAll: 'All',
     categoryMobile: 'Mobile App',
     categoryAi: 'AI Productivity',
     categoryDesign: 'Design & Media',

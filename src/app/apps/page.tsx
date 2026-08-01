@@ -85,6 +85,19 @@ export default function AppsCatalogPage() {
     };
   }, []);
 
+  const getCategoryTranslation = (cat: AppCategory) => {
+    switch (cat) {
+      case '전체': return t.categoryAll;
+      case '모바일 앱': return t.categoryMobile;
+      case 'AI 생산성': return t.categoryAi;
+      case '디자인 & 미디어': return t.categoryDesign;
+      case '개발 & 툴': return t.categoryDev;
+      case '자동화': return t.categoryAuto;
+      case '유틸리티': return t.categoryUtil;
+      default: return cat;
+    }
+  };
+
   const filteredApps = useMemo(() => {
     return appList.filter((app) => {
       const matchCategory =
@@ -107,13 +120,13 @@ export default function AppsCatalogPage() {
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-bold text-amber-300 mb-3">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>100엔 정찰제 디지털 앱 스토어</span>
+            <span>{t.catalogBadge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-white">
-            {t.navApps} 카탈로그
+            {t.catalogTitle}
           </h1>
           <p className="text-sm text-slate-400 mt-2">
-            100엔으로 즉시 다운로드 가능한 고품질 유틸리티 어플 라인업입니다.
+            {t.catalogSubtitle}
           </p>
         </div>
 
@@ -143,7 +156,7 @@ export default function AppsCatalogPage() {
                 : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
             }`}
           >
-            {category}
+            {getCategoryTranslation(category)}
           </button>
         ))}
       </div>
