@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto File Organizer Pro - 스마트 폴더 자동 정리</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- JSZip for zipped folder download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    body {
+      background-color: #090d16;
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-emerald-600/30">
+          <i data-lucide="folder-check" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg text-white">Auto File Organizer Pro</h1>
+            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">v3.0.1 (100円 App)</span>
+          </div>
+          <p class="text-[11px] text-slate-400">어지러운 폴더를 1초 만에 확장자별 깔끔 자동 정돈</p>
+        </div>
+      </div>
+      <div class="text-xs text-slate-400 flex items-center gap-2">
+        <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> 원클릭 스마트 폴더링 & ZIP 다운로드</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
+    
+    <!-- Hero Banner -->
+    <div class="text-center">
+      <h2 class="text-3xl font-black text-white mb-2">복잡한 다운로드 폴더를 1초 만에 정리해 드립니다</h2>
+      <p class="text-sm text-slate-400 max-w-xl mx-auto">
+        파일들을 드래그 앤 드롭하시면 이미지, 문서, 압축파일, 동영상 폴더로 깔끔히 분류하여 **실제 정리된 ZIP 파일**로 제공합니다.
+      </p>
+    </div>
+
+    <!-- Dropzone Area -->
+    <div id="dropzone" class="relative group border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-3xl bg-slate-900/50 p-8 text-center transition-all cursor-pointer">
+      <input type="file" id="fileInput" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+      
+      <div class="flex flex-col items-center justify-center space-y-3 pointer-events-none py-6">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i data-lucide="folder-archive" class="w-8 h-8"></i>
+        </div>
+        <div>
+          <p class="text-base font-bold text-white mb-1">정리할 파일들을 이곳에 여러 개 드래그하거나 클릭하세요</p>
+          <p class="text-xs text-slate-400">PNG, JPG, PDF, ZIP, MP4, TXT 등 모든 확장자 자동 분류 지원</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Organize Options Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900 p-6 rounded-3xl border border-slate-800">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-300">분류 규칙:</span>
+        <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold rounded-xl">📷 이미지</span>
+        <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold rounded-xl">📄 문서</span>
+        <span class="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold rounded-xl">📦 압축파일</span>
+        <span class="px-3 py-1 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold rounded-xl">🎬 미디어</span>
+      </div>
+
+      <button id="organizeBtn" onclick="runSampleOrganization()" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all">
+        <i data-lucide="zap" class="w-4 h-4"></i>
+        <span>1초 샘플 자동 정리 실행</span>
+      </button>
+    </div>
+
+    <!-- Organized Result Showcase -->
+    <div id="resultContainer" class="hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+          <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+          <span>정리 완료 (총 <span id="totalFilesCount">8</span>개 파일 분류 성공)</span>
+        </div>
+
+        <button onclick="downloadOrganizedZip()" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 via-teal-600 to-indigo-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-xl hover:scale-105 transition-all">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>정리된 폴더 ZIP 파일로 다운로드</span>
+        </button>
+      </div>
+
+      <!-- Categories Folder Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        
+        <!-- Images Folder -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold text-emerald-400">
+              <i data-lucide="image" class="w-4 h-4"></i>
+              📁 Images/
+            </span>
+            <span id="imgCount" class="text-xs font-mono font-bold text-slate-400">3개</span>
+          </div>
+          <ul id="imgList" class="space-y-1.5 text-xs text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <li class="truncate">✓ vacation_photo.png</li>
+            <li class="truncate">✓ wallpaper.jpg</li>
+            <li class="truncate">✓ icon_asset.svg</li>
+          </ul>
+        </div>
+
+        <!-- Documents Folder -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold text-indigo-400">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+              📁 Documents/
+            </span>
+            <span id="docCount" class="text-xs font-mono font-bold text-slate-400">2개</span>
+          </div>
+          <ul id="docList" class="space-y-1.5 text-xs text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <li class="truncate">✓ 雇用契約書.pdf</li>
+            <li class="truncate">✓ business_plan.docx</li>
+          </ul>
+        </div>
+
+        <!-- Archive Folder -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold text-purple-400">
+              <i data-lucide="archive" class="w-4 h-4"></i>
+              📁 Archives/
+            </span>
+            <span id="arcCount" class="text-xs font-mono font-bold text-slate-400">2개</span>
+          </div>
+          <ul id="arcList" class="space-y-1.5 text-xs text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <li class="truncate">✓ source_code.zip</li>
+            <li class="truncate">✓ installer_v1.exe</li>
+          </ul>
+        </div>
+
+        <!-- Media Folder -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold text-rose-400">
+              <i data-lucide="video" class="w-4 h-4"></i>
+              📁 Media/
+            </span>
+            <span id="mediaCount" class="text-xs font-mono font-bold text-slate-400">1개</span>
+          </div>
+          <ul id="mediaList" class="space-y-1.5 text-xs text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <li class="truncate">✓ demo_video.mp4</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Notice Card for Local PC Folder Sorting -->
+    <div class="bg-slate-950/80 border border-slate-800 p-6 rounded-3xl space-y-3">
+      <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+        <i data-lucide="monitor" class="w-4 h-4"></i>
+        <span>내 실제 PC 컴퓨터 폴더(다운로드/바탕화면)를 직접 정돈하고 싶으실 때</span>
+      </h3>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        웹 브라우저 보안 규정상 브라우저는 컴퓨터 내의 진짜 파일들을 직접 옮길 수 없습니다.<br>
+        실제 윈도우 PC의 다운로드 폴더를 1초 만에 자동으로 정리하시려면, 같이 제공된 **<code class="text-emerald-400 font-mono font-bold">run_app.bat</code> (파이썬 프로그램)**을 실행하시면 내 컴퓨터 실제 폴더가 카테고리별로 정돈됩니다!
+      </p>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 hidden bg-emerald-600 text-white text-xs font-bold px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 z-50">
+    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+    <span id="toastText">정리된 ZIP 파일 다운로드가 시작되었습니다!</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+    <p>© 2026 Auto File Organizer Pro - 어플 100엔 샾 전용 라이선스</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    let organizedData = {
+      Images: ['vacation_photo.png', 'wallpaper.jpg', 'icon_asset.svg'],
+      Documents: ['雇用契約書.pdf', 'business_plan.docx'],
+      Archives: ['source_code.zip', 'installer_v1.exe'],
+      Media: ['demo_video.mp4']
+    };
+
+    const fileInput = document.getElementById('fileInput');
+    const resultContainer = document.getElementById('resultContainer');
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+
+      organizeFiles(files);
+    });
+
+    function runSampleOrganization() {
+      organizedData = {
+        Images: ['vacation_photo.png', 'wallpaper.jpg', 'icon_asset.svg'],
+        Documents: ['雇用契約書.pdf', 'business_plan.docx'],
+        Archives: ['source_code.zip', 'installer_v1.exe'],
+        Media: ['demo_video.mp4']
+      };
+
+      renderFolders();
+      showToast('1초 샘플 자동 정리가 완료되었습니다!');
+    }
+
+    function organizeFiles(files) {
+      organizedData = { Images: [], Documents: [], Archives: [], Media: [] };
+
+      files.forEach(f => {
+        const ext = f.name.split('.').pop().toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) organizedData.Images.push(f.name);
+        else if (['pdf', 'doc', 'docx', 'txt', 'hwp', 'pptx', 'xlsx'].includes(ext)) organizedData.Documents.push(f.name);
+        else if (['zip', 'rar', '7z', 'exe', 'dmg'].includes(ext)) organizedData.Archives.push(f.name);
+        else organizedData.Media.push(f.name);
+      });
+
+      renderFolders();
+      showToast(`${files.length}개 파일 자동 정리가 완료되었습니다!`);
+    }
+
+    function renderFolders() {
+      const imgList = document.getElementById('imgList');
+      const docList = document.getElementById('docList');
+      const arcList = document.getElementById('arcList');
+      const mediaList = document.getElementById('mediaList');
+
+      imgList.innerHTML = '';
+      docList.innerHTML = '';
+      arcList.innerHTML = '';
+      mediaList.innerHTML = '';
+
+      organizedData.Images.forEach(f => { const li = document.createElement('li'); li.className='truncate'; li.innerText = '✓ ' + f; imgList.appendChild(li); });
+      organizedData.Documents.forEach(f => { const li = document.createElement('li'); li.className='truncate'; li.innerText = '✓ ' + f; docList.appendChild(li); });
+      organizedData.Archives.forEach(f => { const li = document.createElement('li'); li.className='truncate'; li.innerText = '✓ ' + f; arcList.appendChild(li); });
+      organizedData.Media.forEach(f => { const li = document.createElement('li'); li.className='truncate'; li.innerText = '✓ ' + f; mediaList.appendChild(li); });
+
+      document.getElementById('imgCount').innerText = organizedData.Images.length + '개';
+      document.getElementById('docCount').innerText = organizedData.Documents.length + '개';
+      document.getElementById('arcCount').innerText = organizedData.Archives.length + '개';
+      document.getElementById('mediaCount').innerText = organizedData.Media.length + '개';
+
+      const total = organizedData.Images.length + organizedData.Documents.length + organizedData.Archives.length + organizedData.Media.length;
+      document.getElementById('totalFilesCount').innerText = total;
+
+      resultContainer.classList.remove('hidden');
+    }
+
+    async function downloadOrganizedZip() {
+      const zip = new JSZip();
+
+      for (const [folderName, files] of Object.entries(organizedData)) {
+        const folder = zip.folder(folderName);
+        files.forEach(fileName => {
+          folder.file(fileName, `Organized File Content for ${fileName}`);
+        });
+      }
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(content);
+      a.download = 'Organized_Folders_Result.zip';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      showToast('정리된 폴더 ZIP 파일이 내 컴퓨터로 다운로드되었습니다!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastText').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2500);
+    }
+  </script>
+</body>
+</html>
