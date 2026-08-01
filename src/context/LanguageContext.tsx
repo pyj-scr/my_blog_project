@@ -43,6 +43,47 @@ export interface TranslationSet {
   categoryDev: string;
   categoryAuto: string;
   categoryUtil: string;
+  
+  // MyPage
+  resetTestPurchases: string;
+  purchasedAppsTotal: string;
+  proMember: string;
+
+  // Upload App Modal
+  uploadModalTitle: string;
+  uploadModalSub: string;
+  uploadModalEditTitle: string;
+  uploadModalEditSub: string;
+  appNameLabel: string;
+  appNamePlaceholder: string;
+  categoryLabel: string;
+  priceAndRevenueLabel: string;
+  revenueShareText: string;
+  supportedOSLabel: string;
+  shortDescLabel: string;
+  shortDescPlaceholder: string;
+  fullDescLabel: string;
+  fullDescPlaceholder: string;
+  usageGuideLabel: string;
+  usageGuidePlaceholder: string;
+  fileUploadLabel: string;
+  fileUploadDropText: string;
+  cancelBtn: string;
+  submitUploadBtn: string;
+  submitSaveBtn: string;
+
+  // App Detail Modal
+  appIntroTitle: string;
+  keyFeaturesTitle: string;
+  usageGuideTitle: string;
+  guaranteeTitle: string;
+  guaranteeDesc: string;
+  closeBtn: string;
+  editBtn: string;
+  deleteBtn: string;
+  downloadNowBtn: string;
+
+  // Footer
   footerDesc: string;
   footerTrustHeader: string;
   footerTrust1: string;
@@ -95,6 +136,47 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: '開発＆ツール',
     categoryAuto: '自動化',
     categoryUtil: 'ユーティリティ',
+    
+    // MyPage
+    resetTestPurchases: '🔄 履歴リセット',
+    purchasedAppsTotal: '保有アプリ数',
+    proMember: 'PROメンバー',
+
+    // Upload App Modal
+    uploadModalTitle: '新規スマホ/PCアプリ登録',
+    uploadModalSub: '100円ショップに新しいアプリを登録して公開します',
+    uploadModalEditTitle: 'アプリ情報の編集',
+    uploadModalEditSub: '登録済みアプリの情報と説明書を編集します',
+    appNameLabel: 'アプリ名',
+    appNamePlaceholder: '例: One Month\'s Todo / スマホカレンダー Pro',
+    categoryLabel: 'カテゴリ',
+    priceAndRevenueLabel: '販売価格＆収益配分 (手数料10%)',
+    revenueShareText: '売上の90%を開発者に還元 / プラットフォーム手数料10%',
+    supportedOSLabel: '対応OS・端末選択',
+    shortDescLabel: 'アプリの一行紹介',
+    shortDescPlaceholder: 'アプリのコア機能や特徴を一行で説明...',
+    fullDescLabel: 'アプリの詳細紹介',
+    fullDescPlaceholder: 'アプリの詳細な特徴や紹介文を入力してください...',
+    usageGuideLabel: 'アプリの使い方・ガイド (使用説明)',
+    usageGuidePlaceholder: 'ユーザーがアプリを起動して使用する手順やガイドを入力してください...',
+    fileUploadLabel: 'アプリ実行/インストールファイルのアップロード (.APK, .IPA, .ZIP)',
+    fileUploadDropText: 'APK、IPA、ZIPファイルをアップロードまたはクリックしてください',
+    cancelBtn: 'キャンセル',
+    submitUploadBtn: '100円アプリとして登録',
+    submitSaveBtn: 'アプリ情報を保存',
+
+    // App Detail Modal
+    appIntroTitle: 'アプリケーション紹介',
+    keyFeaturesTitle: '主なコア機能',
+    usageGuideTitle: 'アプリの使い方・ガイド (How to Use)',
+    guaranteeTitle: '100%無制限永久ライセンス保証',
+    guaranteeDesc: 'たった一度の100円購入で永久所有および生涯無料アップデートを提供します。',
+    closeBtn: '閉じる',
+    editBtn: '編集',
+    deleteBtn: '削除',
+    downloadNowBtn: 'ダウンロードする',
+
+    // Footer
     footerDesc: 'AI技術で丁寧に開発された高品質ユーティリティ＆生産性アプリを、誰でも気軽に100円でお得に入手できるマーケットプレイスです。',
     footerTrustHeader: '安心決済＆サービス',
     footerTrust1: '100円一律定額制 (追加料金なし)',
@@ -145,6 +227,47 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: '개발 & 툴',
     categoryAuto: '자동화',
     categoryUtil: '유틸리티',
+    
+    // MyPage
+    resetTestPurchases: '🔄 구매 내역 리셋',
+    purchasedAppsTotal: '보유 어플 수',
+    proMember: 'PRO 멤버',
+
+    // Upload App Modal
+    uploadModalTitle: '신규 핸드폰 / PC 어플 등록',
+    uploadModalSub: '100엔 마켓에 새로운 어플을 등록하여 출시합니다',
+    uploadModalEditTitle: '어플 정보 수정',
+    uploadModalEditSub: '등록된 어플의 정보와 설명서를 수정합니다',
+    appNameLabel: '어플 이름',
+    appNamePlaceholder: '예: One Month\'s Todo / 스마트 캘린더 Pro',
+    categoryLabel: '카테고리',
+    priceAndRevenueLabel: '판매 가격 & 수익 배분 (수수료 10%)',
+    revenueShareText: '판매 금액의 90% 개발자 정산 / 플랫폼 수수료 10%',
+    supportedOSLabel: '지원 기기 / OS 선택',
+    shortDescLabel: '어플 한 줄 소개',
+    shortDescPlaceholder: '어플의 핵심 기능 및 특징 한 줄 설명...',
+    fullDescLabel: '어플 상세 소개 (어플리케이션 소개)',
+    fullDescPlaceholder: '어플리케이션에 대한 자세한 소개 및 특징을 입력하세요...',
+    usageGuideLabel: '어플 사용 방법 및 안내 가이드 (사용 설명)',
+    usageGuidePlaceholder: '사용자가 어플을 실행하고 사용하는 자세한 순서나 가이드를 입력하세요...',
+    fileUploadLabel: '어플 실행/설치 파일 업로드 (.APK, .IPA, .ZIP)',
+    fileUploadDropText: 'APK, IPA, ZIP 파일 업로드 또는 클릭하세요',
+    cancelBtn: '취소',
+    submitUploadBtn: '100엔 어플 등록하기',
+    submitSaveBtn: '어플 정보 저장하기',
+
+    // App Detail Modal
+    appIntroTitle: '어플리케이션 소개',
+    keyFeaturesTitle: '주요 핵심 기능',
+    usageGuideTitle: '어플 사용 방법 및 안내 (How to Use)',
+    guaranteeTitle: '100% 무제한 영구 라이선스 보장',
+    guaranteeDesc: '단 한 번 100엔 결제로 평생 소장 및 평생 무료 업데이트를 제공합니다.',
+    closeBtn: '닫기',
+    editBtn: '수정',
+    deleteBtn: '삭제',
+    downloadNowBtn: '다운로드 하기',
+
+    // Footer
     footerDesc: 'AI 기술로 정성껏 개발된 고품질 유틸리티 & 생산성 어플리케이션을 누구나 부담 없이 100엔(₩1,000)에 득템할 수 있는 마켓플레이스입니다.',
     footerTrustHeader: '안심 결제 & 서비스',
     footerTrust1: '100엔 단일 정가제 (추가금 X)',
@@ -195,6 +318,47 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: 'Dev & Tools',
     categoryAuto: 'Automation',
     categoryUtil: 'Utilities',
+
+    // MyPage
+    resetTestPurchases: '🔄 Reset Purchases',
+    purchasedAppsTotal: 'Owned Apps',
+    proMember: 'PRO Member',
+
+    // Upload App Modal
+    uploadModalTitle: 'Register New Mobile/PC App',
+    uploadModalSub: 'Publish your new application on $1 App Shop',
+    uploadModalEditTitle: 'Edit App Details',
+    uploadModalEditSub: 'Update app details and manual instructions',
+    appNameLabel: 'App Name',
+    appNamePlaceholder: 'e.g. One Month\'s Todo / Smart Calendar Pro',
+    categoryLabel: 'Category',
+    priceAndRevenueLabel: 'Price & Revenue Share (10% Fee)',
+    revenueShareText: '90% revenue payout to creator / 10% platform fee',
+    supportedOSLabel: 'Supported Devices / OS',
+    shortDescLabel: 'Short Summary',
+    shortDescPlaceholder: 'One-line core feature summary...',
+    fullDescLabel: 'Full Description',
+    fullDescPlaceholder: 'Provide detailed features and overview of your app...',
+    usageGuideLabel: 'Usage Manual & Instructions (How to Use)',
+    usageGuidePlaceholder: 'Provide step-by-step instructions for users to run your app...',
+    fileUploadLabel: 'Upload Executable / Installer (.APK, .IPA, .ZIP)',
+    fileUploadDropText: 'Drop or click to upload APK, IPA, or ZIP files',
+    cancelBtn: 'Cancel',
+    submitUploadBtn: 'Publish for $1 App',
+    submitSaveBtn: 'Save App Info',
+
+    // App Detail Modal
+    appIntroTitle: 'Application Overview',
+    keyFeaturesTitle: 'Key Features',
+    usageGuideTitle: 'Usage Guide & Instructions (How to Use)',
+    guaranteeTitle: '100% Lifetime License Guarantee',
+    guaranteeDesc: 'Get lifetime access and free updates with a single $1.00 USD purchase.',
+    closeBtn: 'Close',
+    editBtn: 'Edit',
+    deleteBtn: 'Delete',
+    downloadNowBtn: 'Download Now',
+
+    // Footer
     footerDesc: 'A marketplace where anyone can get high-quality AI utility & productivity apps for flat 100 Yen ($1.00 USD).',
     footerTrustHeader: 'Secure Payment & Service',
     footerTrust1: 'Flat 100 Yen Price (No hidden fees)',
@@ -217,7 +381,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('ja'); // Default Japanese for JP residence
+  const [language, setLanguage] = useState<Language>('ja');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

@@ -46,7 +46,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
   };
 
   const handleDelete = () => {
-    if (confirm(`'${title}' 어플을 정말로 삭제하시겠습니까?`)) {
+    if (confirm(`'${title}'`)) {
       if (onAppDeleted) {
         onAppDeleted(app.id);
       } else {
@@ -105,12 +105,12 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
               <div className="flex items-center gap-1.5">
                 <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                 <span className="font-bold text-white">{app.rating}</span>
-                <span className="text-slate-500">({app.reviewsCount} 평점)</span>
+                <span className="text-slate-500">({app.reviewsCount} {t.ratingLabel})</span>
               </div>
 
               <div>
-                <span>다운로드: </span>
-                <strong className="text-white">{app.downloads.toLocaleString()}회</strong>
+                <span>{t.downloadCountLabel}: </span>
+                <strong className="text-white">{app.downloads.toLocaleString()}{t.downloadCountSuffix}</strong>
               </div>
 
               <div className="flex items-center gap-2">
@@ -124,7 +124,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
 
             {/* Description */}
             <div>
-              <h3 className="text-sm font-bold text-white mb-2">어플리케이션 소개</h3>
+              <h3 className="text-sm font-bold text-white mb-2">{t.appIntroTitle}</h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/50 p-4 rounded-2xl border border-slate-800/60">
                 {fullDesc}
               </p>
@@ -132,7 +132,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
 
             {/* Features */}
             <div>
-              <h3 className="text-sm font-bold text-white mb-3">주요 핵심 기능</h3>
+              <h3 className="text-sm font-bold text-white mb-3">{t.keyFeaturesTitle}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {app.features.map((feature, idx) => (
                   <div
@@ -151,7 +151,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
               <div className="rounded-2xl bg-amber-500/10 border border-amber-500/20 p-4 space-y-2">
                 <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                   <BookOpen className="h-4 w-4 text-amber-400" />
-                  <span>어플 사용 방법 및 안내 (How to Use)</span>
+                  <span>{t.usageGuideTitle}</span>
                 </h3>
                 <p className="text-xs text-amber-100/90 whitespace-pre-wrap leading-relaxed">
                   {usageGuide}
@@ -163,8 +163,8 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             <div className="flex items-center gap-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-emerald-300 text-xs">
               <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
               <div>
-                <p className="font-bold">100% 무제한 영구 라이선스 보장</p>
-                <p className="text-[10px] text-emerald-300/80">단 한 번 {formatPrice(app)} 결제로 평생 소장 및 평생 무료 업데이트를 제공합니다.</p>
+                <p className="font-bold">{t.guaranteeTitle}</p>
+                <p className="text-[10px] text-emerald-300/80">{t.guaranteeDesc}</p>
               </div>
             </div>
 
@@ -179,7 +179,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                 onClick={onClose}
                 className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-xs font-bold text-slate-300 hover:bg-slate-800 hover:text-white transition-all"
               >
-                닫기
+                {t.closeBtn}
               </button>
 
               <button
@@ -187,7 +187,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                 className="flex items-center gap-1 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-xs font-bold text-emerald-400 hover:bg-emerald-500/20 transition-all"
               >
                 <Edit3 className="h-3.5 w-3.5" />
-                <span>수정</span>
+                <span>{t.editBtn}</span>
               </button>
 
               <button
@@ -195,7 +195,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                 className="flex items-center gap-1 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/20 transition-all"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                <span>삭제</span>
+                <span>{t.deleteBtn}</span>
               </button>
             </div>
 
@@ -211,7 +211,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
               {purchased ? (
                 <>
                   <Download className="h-4 w-4" />
-                  <span>다운로드 하기</span>
+                  <span>{t.downloadNowBtn}</span>
                 </>
               ) : (
                 <>

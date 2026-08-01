@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Smartphone, Monitor, CheckCircle, Sparkles, Plus, Edit3, BookOpen } from 'lucide-react';
+import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen } from 'lucide-react';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -18,7 +18,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   onAppUpdated,
   editApp,
 }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<AppCategory>('유틸리티');
@@ -142,10 +142,10 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">
-                {editApp ? '어플 정보 수정' : '신규 핸드폰 / PC 어플 등록'}
+                {editApp ? t.uploadModalEditTitle : t.uploadModalTitle}
               </h2>
               <p className="text-xs text-slate-400">
-                {editApp ? '등록된 어플의 정보와 설명서를 수정합니다' : '100엔 마켓에 새로운 어플을 등록하여 출시합니다'}
+                {editApp ? t.uploadModalEditSub : t.uploadModalSub}
               </p>
             </div>
           </div>
@@ -164,9 +164,9 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
               <CheckCircle className="h-10 w-10" />
             </div>
             <h3 className="text-xl font-extrabold text-white">
-              {editApp ? '어플 정보가 성공적으로 수정되었습니다!' : '어플 등록이 완료되었습니다!'}
+              {editApp ? '어플 정보가 수정되었습니다!' : '어플 등록이 완료되었습니다!'}
             </h3>
-            <p className="text-sm text-slate-300">상점 카탈로그 및 어플 상세페이지에 반영되었습니다.</p>
+            <p className="text-sm text-slate-300">상점 카탈로그 및 상세페이지에 반영되었습니다.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
@@ -174,12 +174,12 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             {/* Title */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                어플 이름 <span className="text-rose-400">*</span>
+                {t.appNameLabel} <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
                 required
-                placeholder="예: One Month's Todo / 스마트 캘린더 Pro"
+                placeholder={t.appNamePlaceholder}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none"
@@ -189,32 +189,32 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             {/* Category & Price & Revenue Policy */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">카테고리</label>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">{t.categoryLabel}</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as AppCategory)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-emerald-500 focus:outline-none"
                 >
-                  <option value="모바일 앱">📱 모바일 핸드폰 앱</option>
-                  <option value="AI 생산성">🤖 AI 생산성</option>
-                  <option value="디자인 & 미디어">🎨 디자인 & 미디어</option>
-                  <option value="자동화">⚡ 자동화</option>
-                  <option value="유틸리티">🛠️ 유틸리티</option>
-                  <option value="개발 & 툴">💻 개발 & 툴</option>
+                  <option value="모바일 앱">📱 {t.categoryMobile}</option>
+                  <option value="AI 생산성">🤖 {t.categoryAi}</option>
+                  <option value="디자인 & 미디어">🎨 {t.categoryDesign}</option>
+                  <option value="자동화">⚡ {t.categoryAuto}</option>
+                  <option value="유틸리티">🛠️ {t.categoryUtil}</option>
+                  <option value="개발 & 툴">💻 {t.categoryDev}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-emerald-400 mb-1.5">
-                  판매 가격 & 수익 배분 (수수료 10%)
+                  {t.priceAndRevenueLabel}
                 </label>
                 <div className="flex flex-col justify-center bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white space-y-1">
                   <div className="flex items-center justify-between font-extrabold text-amber-400">
                     <span>100円 / ₩1,000 / $1.00 USD</span>
-                    <span className="text-[10px] text-emerald-400">90% 정산</span>
+                    <span className="text-[10px] text-emerald-400">90%</span>
                   </div>
                   <p className="text-[10px] text-slate-400">
-                    판매 금액의 90% 개발자 정산 / 플랫폼 수수료 10%
+                    {t.revenueShareText}
                   </p>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
 
             {/* Supported OS */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">지원 기기 / OS 선택</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">{t.supportedOSLabel}</label>
               <div className="flex flex-wrap gap-2">
                 {['Android', 'iOS', 'Windows', 'Mac', 'Web'].map((os) => {
                   const active = selectedOS.includes(os);
@@ -251,12 +251,12 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             {/* Short Description */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                어플 한 줄 소개 <span className="text-rose-400">*</span>
+                {t.shortDescLabel} <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
                 required
-                placeholder="어플의 핵심 기능 및 특징 한 줄 설명..."
+                placeholder={t.shortDescPlaceholder}
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none"
@@ -266,11 +266,11 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             {/* Detailed Description */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                어플 상세 소개 (어플리케이션 소개)
+                {t.fullDescLabel}
               </label>
               <textarea
                 rows={3}
-                placeholder="어플리케이션에 대한 자세한 소개 및 특징을 입력하세요..."
+                placeholder={t.fullDescPlaceholder}
                 value={fullDesc}
                 onChange={(e) => setFullDesc(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-emerald-500 focus:outline-none"
@@ -281,11 +281,11 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             <div>
               <label className="block text-xs font-bold text-amber-400 mb-1.5 flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
-                <span>어플 사용 방법 및 안내 가이드 (사용 설명)</span>
+                <span>{t.usageGuideLabel}</span>
               </label>
               <textarea
                 rows={3}
-                placeholder="사용자가 어플을 실행하고 사용하는 자세한 순서나 가이드를 입력하세요 (예: 1. 파일 다운로드 후 실행 2. 목표 등록...)"
+                placeholder={t.usageGuidePlaceholder}
                 value={usageGuide}
                 onChange={(e) => setUsageGuide(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-emerald-500 focus:outline-none"
@@ -295,7 +295,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             {/* App File Upload Box */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                어플 실행/설치 파일 업로드 (.APK, .IPA, .ZIP)
+                {t.fileUploadLabel}
               </label>
               <div className="relative border-2 border-dashed border-slate-800 hover:border-emerald-500 rounded-2xl bg-slate-950 p-4 text-center cursor-pointer transition-colors">
                 <input
@@ -306,7 +306,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
                 <div className="flex flex-col items-center justify-center space-y-1.5 pointer-events-none">
                   <Upload className="h-5 w-5 text-emerald-400" />
                   <span className="text-xs text-slate-300 font-bold">
-                    {fileName ? `선택된 파일: ${fileName}` : 'APK, IPA, ZIP 파일 업로드 또는 클릭하세요'}
+                    {fileName ? `선택된 파일: ${fileName}` : t.fileUploadDropText}
                   </span>
                 </div>
               </div>
@@ -319,14 +319,14 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
                 onClick={onClose}
                 className="px-5 py-2.5 text-xs font-bold text-slate-400 hover:text-white"
               >
-                취소
+                {t.cancelBtn}
               </button>
               <button
                 type="submit"
                 className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-lg hover:opacity-90 transition-all"
               >
                 {editApp ? <Edit3 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                <span>{editApp ? '어플 정보 저장하기' : '100엔 어플 등록하기'}</span>
+                <span>{editApp ? t.submitSaveBtn : t.submitUploadBtn}</span>
               </button>
             </div>
 
