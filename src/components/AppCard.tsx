@@ -2,10 +2,9 @@
 
 import React from 'react';
 import { AppItem } from '@/types/app';
-import { Download, Star, CheckCircle, Monitor, Apple, Globe, Sparkles } from 'lucide-react';
-import { usePurchase } from '@/context/PurchaseContext';
-import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { usePurchase } from '@/context/PurchaseContext';
+import { Sparkles, Star, Monitor, Apple, Globe, CheckCircle } from 'lucide-react';
 
 interface AppCardProps {
   app: AppItem;
@@ -13,27 +12,25 @@ interface AppCardProps {
 }
 
 export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
-  const { isPurchased, openPaymentModal } = usePurchase();
-  const { user, openLoginModal } = useAuth();
   const { language, formatPrice, t } = useLanguage();
+  const { isPurchased, openPaymentModal } = usePurchase();
 
   const purchased = isPurchased(app.id);
 
-  const title = language === 'ja' && app.titleJa ? app.titleJa : language === 'en' && app.titleEn ? app.titleEn : app.title;
-  const shortDesc = language === 'ja' && app.shortDescriptionJa ? app.shortDescriptionJa : language === 'en' && app.shortDescriptionEn ? app.shortDescriptionEn : app.shortDescription;
+  // Dynamic 3-Language Resolution based on selected Language
+  const title =
+    language === 'ko'
+      ? app.titleKo || app.title
+      : language === 'ja'
+      ? app.titleJa || app.title
+      : app.titleEn || app.title;
 
-  const handleDownloadClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!user) {
-      openLoginModal();
-      return;
-    }
-    if (purchased) {
-      window.location.href = '/mypage';
-    } else {
-      openPaymentModal(app);
-    }
-  };
+  const shortDesc =
+    language === 'ko'
+      ? app.shortDescriptionKo || app.shortDescription
+      : language === 'ja'
+      ? app.shortDescriptionJa || app.shortDescription
+      : app.shortDescriptionEn || app.shortDescription;
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {
@@ -44,6 +41,15 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
       case '자동화': return t.categoryAuto;
       case '유틸리티': return t.categoryUtil;
       default: return cat;
+    }
+  };
+
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (purchased) {
+      window.location.href = '/mypage';
+    } else {
+      openPaymentModal(app);
     }
   };
 
@@ -130,7 +136,6 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
             </>
           ) : (
             <>
-              <Download className="h-4 w-4" />
               <span>{formatPrice(app)}</span>
             </>
           )}

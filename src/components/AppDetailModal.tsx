@@ -28,33 +28,34 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
 
   const purchased = isPurchased(app.id);
 
+  // Dynamic 3-Language Resolution based on selected Language
   const title =
-    language === 'ja' && app.titleJa
-      ? app.titleJa
-      : language === 'en' && app.titleEn
-      ? app.titleEn
-      : app.title;
+    language === 'ko'
+      ? app.titleKo || app.title
+      : language === 'ja'
+      ? app.titleJa || app.title
+      : app.titleEn || app.title;
 
   const fullDesc =
-    language === 'ja' && app.fullDescriptionJa
-      ? app.fullDescriptionJa
-      : language === 'en' && app.fullDescriptionEn
-      ? app.fullDescriptionEn
-      : app.fullDescription;
+    language === 'ko'
+      ? app.fullDescriptionKo || app.fullDescription
+      : language === 'ja'
+      ? app.fullDescriptionJa || app.fullDescription
+      : app.fullDescriptionEn || app.fullDescription;
 
   const usageGuide =
-    language === 'ja' && app.usageGuideJa
-      ? app.usageGuideJa
-      : language === 'en' && app.usageGuideEn
-      ? app.usageGuideEn
-      : app.usageGuide;
+    language === 'ko'
+      ? app.usageGuideKo || app.usageGuide
+      : language === 'ja'
+      ? app.usageGuideJa || app.usageGuide
+      : app.usageGuideEn || app.usageGuide;
 
   const features =
-    language === 'ja' && app.featuresJa
-      ? app.featuresJa
-      : language === 'en' && app.featuresEn
-      ? app.featuresEn
-      : app.features;
+    language === 'ko'
+      ? app.featuresKo || app.features
+      : language === 'ja'
+      ? app.featuresJa || app.features
+      : app.featuresEn || app.features;
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {
