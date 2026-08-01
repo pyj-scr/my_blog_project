@@ -28,6 +28,9 @@ export interface AppItem {
   downloads: number;
   thumbnailUrl: string;
   features: string[];
+  usageGuide?: string;
+  usageGuideJa?: string;
+  usageGuideEn?: string;
   downloadUrl: string;
   isPopular?: boolean;
   isNew?: boolean;

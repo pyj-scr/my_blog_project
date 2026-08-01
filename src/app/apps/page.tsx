@@ -27,12 +27,23 @@ export default function AppsCatalogPage() {
 
   React.useEffect(() => {
     const handleAppCreated = (e: any) => {
-      if (e.detail) {
-        setAppList((prev) => [e.detail, ...prev]);
-      }
+      if (e.detail) setAppList((prev) => [e.detail, ...prev]);
     };
+    const handleAppUpdated = (e: any) => {
+      if (e.detail) setAppList((prev) => prev.map((a) => (a.id === e.detail.id ? e.detail : a)));
+    };
+    const handleAppDeleted = (e: any) => {
+      if (e.detail) setAppList((prev) => prev.filter((a) => a.id !== e.detail));
+    };
+
     window.addEventListener('app-created', handleAppCreated);
-    return () => window.removeEventListener('app-created', handleAppCreated);
+    window.addEventListener('app-updated', handleAppUpdated);
+    window.addEventListener('app-deleted', handleAppDeleted);
+    return () => {
+      window.removeEventListener('app-created', handleAppCreated);
+      window.removeEventListener('app-updated', handleAppUpdated);
+      window.removeEventListener('app-deleted', handleAppDeleted);
+    };
   }, []);
 
   const filteredApps = useMemo(() => {

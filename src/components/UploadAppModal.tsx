@@ -1,26 +1,48 @@
 'use client';
 
-import React, { useState } from 'react';
-import { X, Upload, Smartphone, Monitor, CheckCircle, Sparkles, Plus, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Upload, Smartphone, Monitor, CheckCircle, Sparkles, Plus, Edit3, BookOpen } from 'lucide-react';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface UploadAppModalProps {
   onClose: () => void;
-  onAppCreated: (newApp: AppItem) => void;
+  onAppCreated?: (newApp: AppItem) => void;
+  onAppUpdated?: (updatedApp: AppItem) => void;
+  editApp?: AppItem | null;
 }
 
-export const UploadAppModal: React.FC<UploadAppModalProps> = ({ onClose, onAppCreated }) => {
+export const UploadAppModal: React.FC<UploadAppModalProps> = ({
+  onClose,
+  onAppCreated,
+  onAppUpdated,
+  editApp,
+}) => {
   const { t, language } = useLanguage();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<AppCategory>('유틸리티');
   const [shortDesc, setShortDesc] = useState('');
   const [fullDesc, setFullDesc] = useState('');
+  const [usageGuide, setUsageGuide] = useState('');
   const [selectedOS, setSelectedOS] = useState<string[]>(['Android', 'iOS']);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [thumbnailUrl, setThumbnailUrl] = useState('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80');
+  const [thumbnailUrl, setThumbnailUrl] = useState(
+    'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80'
+  );
   const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    if (editApp) {
+      setTitle(editApp.title);
+      setCategory(editApp.category);
+      setShortDesc(editApp.shortDescription);
+      setFullDesc(editApp.fullDescription);
+      setUsageGuide(editApp.usageGuide || '');
+      setSelectedOS(editApp.os as string[]);
+      if (editApp.thumbnailUrl) setThumbnailUrl(editApp.thumbnailUrl);
+    }
+  }, [editApp]);
 
   const toggleOS = (os: string) => {
     if (selectedOS.includes(os)) {
@@ -40,43 +62,72 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({ onClose, onAppCr
     e.preventDefault();
     if (!title || !shortDesc) return;
 
-    const newApp: AppItem = {
-      id: `app-custom-${Date.now()}`,
-      title: title,
-      titleJa: title,
-      titleEn: title,
-      shortDescription: shortDesc,
-      shortDescriptionJa: shortDesc,
-      shortDescriptionEn: shortDesc,
-      fullDescription: fullDesc || shortDesc,
-      fullDescriptionJa: fullDesc || shortDesc,
-      fullDescriptionEn: fullDesc || shortDesc,
-      priceJpy: 100,
-      priceKrw: 1000,
-      priceUsd: 1.00,
-      category: category,
-      version: 'v1.0.0',
-      size: fileName ? '15.2 MB' : '10.0 MB',
-      os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
-      rating: 5.0,
-      reviewsCount: 1,
-      downloads: 1,
-      thumbnailUrl: thumbnailUrl,
-      features: [
-        '모바일 & 스마트폰 어플 원클릭 실행',
-        '독점 100엔 정찰제 다운로드',
-        '안전 검증 무설치 / 직속 패키지'
-      ],
-      downloadUrl: '#download-custom',
-      isNew: true,
-      updatedAt: new Date().toISOString().split('T')[0]
-    };
+    if (editApp && onAppUpdated) {
+      const updated: AppItem = {
+        ...editApp,
+        title: title,
+        titleJa: title,
+        titleEn: title,
+        shortDescription: shortDesc,
+        shortDescriptionJa: shortDesc,
+        shortDescriptionEn: shortDesc,
+        fullDescription: fullDesc || shortDesc,
+        fullDescriptionJa: fullDesc || shortDesc,
+        fullDescriptionEn: fullDesc || shortDesc,
+        usageGuide: usageGuide,
+        usageGuideJa: usageGuide,
+        usageGuideEn: usageGuide,
+        category: category,
+        os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
+        thumbnailUrl: thumbnailUrl,
+      };
+      onAppUpdated(updated);
+      setIsSuccess(true);
+      setTimeout(() => {
+        onClose();
+      }, 1200);
+    } else if (onAppCreated) {
+      const newApp: AppItem = {
+        id: `app-custom-${Date.now()}`,
+        title: title,
+        titleJa: title,
+        titleEn: title,
+        shortDescription: shortDesc,
+        shortDescriptionJa: shortDesc,
+        shortDescriptionEn: shortDesc,
+        fullDescription: fullDesc || shortDesc,
+        fullDescriptionJa: fullDesc || shortDesc,
+        fullDescriptionEn: fullDesc || shortDesc,
+        usageGuide: usageGuide,
+        usageGuideJa: usageGuide,
+        usageGuideEn: usageGuide,
+        priceJpy: 100,
+        priceKrw: 1000,
+        priceUsd: 1.0,
+        category: category,
+        version: 'v1.0.0',
+        size: fileName ? '15.2 MB' : '10.0 MB',
+        os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
+        rating: 5.0,
+        reviewsCount: 1,
+        downloads: 1,
+        thumbnailUrl: thumbnailUrl,
+        features: [
+          '모바일 & 스마트폰 어플 원클릭 실행',
+          '독점 100엔 정찰제 다운로드',
+          '안전 검증 무설치 / 직속 패키지',
+        ],
+        downloadUrl: '#download-custom',
+        isNew: true,
+        updatedAt: new Date().toISOString().split('T')[0],
+      };
 
-    onAppCreated(newApp);
-    setIsSuccess(true);
-    setTimeout(() => {
-      onClose();
-    }, 1500);
+      onAppCreated(newApp);
+      setIsSuccess(true);
+      setTimeout(() => {
+        onClose();
+      }, 1200);
+    }
   };
 
   return (
@@ -87,11 +138,15 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({ onClose, onAppCr
         <div className="flex items-center justify-between border-b border-slate-800 px-6 py-5 bg-slate-950/60">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-600/30">
-              <Plus className="h-5 w-5" />
+              {editApp ? <Edit3 className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">신규 핸드폰 / PC 어플 등록</h2>
-              <p className="text-xs text-slate-400">100엔 마켓에 새로운 어플을 등록하여 출시합니다</p>
+              <h2 className="text-lg font-bold text-white">
+                {editApp ? '어플 정보 수정' : '신규 핸드폰 / PC 어플 등록'}
+              </h2>
+              <p className="text-xs text-slate-400">
+                {editApp ? '등록된 어플의 정보와 설명서를 수정합니다' : '100엔 마켓에 새로운 어플을 등록하여 출시합니다'}
+              </p>
             </div>
           </div>
           <button
@@ -108,8 +163,10 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({ onClose, onAppCr
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               <CheckCircle className="h-10 w-10" />
             </div>
-            <h3 className="text-xl font-extrabold text-white">어플 등록이 완료되었습니다!</h3>
-            <p className="text-sm text-slate-300">상점 카탈로그에 100엔 어플로 즉시 등록되었습니다.</p>
+            <h3 className="text-xl font-extrabold text-white">
+              {editApp ? '어플 정보가 성공적으로 수정되었습니다!' : '어플 등록이 완료되었습니다!'}
+            </h3>
+            <p className="text-sm text-slate-300">상점 카탈로그 및 어플 상세페이지에 반영되었습니다.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
@@ -122,7 +179,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({ onClose, onAppCr
               <input
                 type="text"
                 required
-                placeholder="예: 스마트 캘린더 Pro / Smart Note AI"
+                placeholder="예: One Month's Todo / 스마트 캘린더 Pro"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none"
@@ -199,17 +256,48 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({ onClose, onAppCr
               />
             </div>
 
+            {/* Detailed Description */}
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                어플 상세 소개 (어플리케이션 소개)
+              </label>
+              <textarea
+                rows={3}
+                placeholder="어플리케이션에 대한 자세한 소개 및 특징을 입력하세요..."
+                value={fullDesc}
+                onChange={(e) => setFullDesc(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+
+            {/* Usage Guide / Manual */}
+            <div>
+              <label className="block text-xs font-bold text-amber-400 mb-1.5 flex items-center gap-1.5">
+                <BookOpen className="h-4 w-4" />
+                <span>어플 사용 방법 및 안내 가이드 (사용 설명)</span>
+              </label>
+              <textarea
+                rows={3}
+                placeholder="사용자가 어플을 실행하고 사용하는 자세한 순서나 가이드를 입력하세요 (예: 1. 파일 다운로드 후 실행 2. 목표 등록...)"
+                value={usageGuide}
+                onChange={(e) => setUsageGuide(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+
             {/* App File Upload Box */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">어플 실행/설치 파일 업로드 (.APK, .IPA, .ZIP)</label>
-              <div className="relative border-2 border-dashed border-slate-800 hover:border-emerald-500 rounded-2xl bg-slate-950 p-5 text-center cursor-pointer transition-colors">
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                어플 실행/설치 파일 업로드 (.APK, .IPA, .ZIP)
+              </label>
+              <div className="relative border-2 border-dashed border-slate-800 hover:border-emerald-500 rounded-2xl bg-slate-950 p-4 text-center cursor-pointer transition-colors">
                 <input
                   type="file"
                   onChange={handleFileDrop}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
-                  <Upload className="h-6 w-6 text-emerald-400" />
+                <div className="flex flex-col items-center justify-center space-y-1.5 pointer-events-none">
+                  <Upload className="h-5 w-5 text-emerald-400" />
                   <span className="text-xs text-slate-300 font-bold">
                     {fileName ? `선택된 파일: ${fileName}` : 'APK, IPA, ZIP 파일 업로드 또는 클릭하세요'}
                   </span>
@@ -230,8 +318,8 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({ onClose, onAppCr
                 type="submit"
                 className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-lg hover:opacity-90 transition-all"
               >
-                <Plus className="h-4 w-4" />
-                <span>100엔 어플 등록하기</span>
+                {editApp ? <Edit3 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                <span>{editApp ? '어플 정보 저장하기' : '100엔 어플 등록하기'}</span>
               </button>
             </div>
 

@@ -21,6 +21,29 @@ export default function Home() {
     setAppList([newApp, ...appList]);
   };
 
+  const handleAppUpdated = (updatedApp: AppItem) => {
+    setAppList(appList.map((a) => (a.id === updatedApp.id ? updatedApp : a)));
+  };
+
+  const handleAppDeleted = (appId: string) => {
+    setAppList(appList.filter((a) => a.id !== appId));
+  };
+
+  React.useEffect(() => {
+    const onUpdated = (e: any) => {
+      if (e.detail) handleAppUpdated(e.detail);
+    };
+    const onDeleted = (e: any) => {
+      if (e.detail) handleAppDeleted(e.detail);
+    };
+    window.addEventListener('app-updated', onUpdated);
+    window.addEventListener('app-deleted', onDeleted);
+    return () => {
+      window.removeEventListener('app-updated', onUpdated);
+      window.removeEventListener('app-deleted', onDeleted);
+    };
+  }, [appList]);
+
   return (
     <div className="min-h-screen flex flex-col justify-between text-slate-100 selection:bg-rose-500 selection:text-white">
       
@@ -146,6 +169,8 @@ export default function Home() {
         <AppDetailModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}
+          onAppUpdated={handleAppUpdated}
+          onAppDeleted={handleAppDeleted}
         />
       )}
 
