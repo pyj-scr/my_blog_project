@@ -37,9 +37,8 @@ export async function POST(req: Request) {
       curr = 'jpy';
     }
 
-    // Direct REST API Payload for Stripe Checkout Sessions
+    // Direct REST API Payload for Stripe Managed Payments (Remove unsupported payment_method_types)
     const params = new URLSearchParams();
-    params.append('payment_method_types[0]', 'card');
     params.append('line_items[0][price_data][currency]', curr);
     params.append('line_items[0][price_data][product_data][name]', `${title} (100円 App Shop License)`);
     params.append('line_items[0][price_data][product_data][description]', `100엔 마켓 - ${title} 평생 이용 권한`);
