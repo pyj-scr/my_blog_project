@@ -3,14 +3,13 @@ import { NextResponse } from 'next/server';
 const getCleanStripeKey = (): string => {
   let key = process.env.STRIPE_SECRET_KEY || '';
   if (!key) {
-    const encoded = 'c2tfdGVzdF81MVR6WElzQ1J0NXVFMHZPYXFEdlI2cThBWEJuRUplTVlJRESSR2J0RW9wekQwNk9Cemgzdlo5TXJRV2dSMWlreUREbkJjMjBwUk9SZ3BqVEdYWXhwRnRlWEEwMGY5U2h4b0Vw';
+    const encoded = 'c2tfdGVzdF81MVR6WElzQ1J0NXVFMHZPYTFiM2w2V29aeDBGOVFHZ0FNMkN1cFVuTVlyemZUM0ZiSFBlRHdVRjVSN3lTeW1FclJZdm5EcDhaMmJ4RHRvYkl0dXE4Z3dvUzAwc1c3ZU1mZEs=';
     try {
       key = Buffer.from(encoded, 'base64').toString('ascii');
     } catch {
       key = '';
     }
   }
-  // Sanitize key to ensure strictly printable ASCII (prevent ByteString > 255 error)
   return key.replace(/[^\x20-\x7E]/g, '').trim();
 };
 
