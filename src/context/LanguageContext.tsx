@@ -43,6 +43,15 @@ export interface TranslationSet {
   categoryDev: string;
   categoryAuto: string;
   categoryUtil: string;
+  footerDesc: string;
+  footerTrustHeader: string;
+  footerTrust1: string;
+  footerTrust2: string;
+  footerCategoryHeader: string;
+  footerCategory1: string;
+  footerCategory2: string;
+  footerCategory3: string;
+  footerCopyright: string;
 }
 
 const translations: Record<Language, TranslationSet> = {
@@ -86,6 +95,15 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: '開発＆ツール',
     categoryAuto: '自動化',
     categoryUtil: 'ユーティリティ',
+    footerDesc: 'AI技術で丁寧に開発された高品質ユーティリティ＆生産性アプリを、誰でも気軽に100円でお得に入手できるマーケットプレイスです。',
+    footerTrustHeader: '安心決済＆サービス',
+    footerTrust1: '100円一律定額制 (追加料金なし)',
+    footerTrust2: '即時ダウンロード＆無制限アップデート',
+    footerCategoryHeader: 'カテゴリ',
+    footerCategory1: 'AI生産性ツール',
+    footerCategory2: 'デザイン＆メディア',
+    footerCategory3: '自動化ユーティリティ',
+    footerCopyright: '© 2026 アプリ 100円ショップ (100-Yen App Shop). All rights reserved.',
   },
   ko: {
     brandTitle: '어플 100엔 샾',
@@ -127,6 +145,15 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: '개발 & 툴',
     categoryAuto: '자동화',
     categoryUtil: '유틸리티',
+    footerDesc: 'AI 기술로 정성껏 개발된 고품질 유틸리티 & 생산성 어플리케이션을 누구나 부담 없이 100엔(₩1,000)에 득템할 수 있는 마켓플레이스입니다.',
+    footerTrustHeader: '안심 결제 & 서비스',
+    footerTrust1: '100엔 단일 정가제 (추가금 X)',
+    footerTrust2: '즉시 다운로드 & 무제한 업데이트',
+    footerCategoryHeader: '카테고리',
+    footerCategory1: 'AI 생산성 도구',
+    footerCategory2: '디자인 & 미디어',
+    footerCategory3: '자동화 유틸리티',
+    footerCopyright: '© 2026 어플 100엔 샾 (100-Yen App Shop). All rights reserved.',
   },
   en: {
     brandTitle: 'App $1 Shop',
@@ -168,6 +195,15 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: 'Dev & Tools',
     categoryAuto: 'Automation',
     categoryUtil: 'Utilities',
+    footerDesc: 'A marketplace where anyone can get high-quality AI utility & productivity apps for flat 100 Yen ($1.00 USD).',
+    footerTrustHeader: 'Secure Payment & Service',
+    footerTrust1: 'Flat 100 Yen Price (No hidden fees)',
+    footerTrust2: 'Instant Download & Unlimited Updates',
+    footerCategoryHeader: 'Categories',
+    footerCategory1: 'AI Productivity Tools',
+    footerCategory2: 'Design & Media',
+    footerCategory3: 'Automation Utilities',
+    footerCopyright: '© 2026 App $1 Shop (100-Yen App Shop). All rights reserved.',
   },
 };
 
