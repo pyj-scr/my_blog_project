@@ -8,7 +8,6 @@ import { AppItem, AppCategory } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { Navbar } from '@/components/Navbar';
 import { Search, Sparkles, Filter, SlidersHorizontal } from 'lucide-react';
-
 import { autoTranslateApp } from '@/utils/autoTranslateApp';
 
 const CATEGORIES: AppCategory[] = [
@@ -28,7 +27,7 @@ export default function AppsCatalogPage() {
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
-  // Load custom/modified apps from localStorage on client mount
+  // Load custom/modified apps from localStorage on client mount & merge with latest MOCK_APPS
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedApps = localStorage.getItem('app100yen_modified_apps');
@@ -36,7 +35,12 @@ export default function AppsCatalogPage() {
         try {
           const parsed: AppItem[] = JSON.parse(savedApps);
           if (parsed && parsed.length > 0) {
-            setAppList(parsed.map(autoTranslateApp));
+            // Merge custom apps with latest MOCK_APPS
+            const mockIds = MOCK_APPS.map((m) => m.id);
+            const customOnly = parsed.filter((a) => !mockIds.includes(a.id));
+            const freshList = [...customOnly, ...MOCK_APPS].map(autoTranslateApp);
+            setAppList(freshList);
+            localStorage.setItem('app100yen_modified_apps', JSON.stringify(freshList));
           }
         } catch (err) {
           console.error(err);
@@ -53,7 +57,7 @@ export default function AppsCatalogPage() {
     const handleAppCreated = (e: any) => {
       if (e.detail) {
         setAppList((prev) => {
-          const updated = [e.detail, ...prev];
+          const updated = [autoTranslateApp(e.detail), ...prev];
           saveAppsToStorage(updated);
           return updated;
         });
@@ -62,7 +66,7 @@ export default function AppsCatalogPage() {
     const handleAppUpdated = (e: any) => {
       if (e.detail) {
         setAppList((prev) => {
-          const updated = prev.map((a) => (a.id === e.detail.id ? e.detail : a));
+          const updated = prev.map((a) => (a.id === e.detail.id ? autoTranslateApp(e.detail) : a));
           saveAppsToStorage(updated);
           return updated;
         });
@@ -189,7 +193,7 @@ export default function AppsCatalogPage() {
           app={selectedApp}
           onClose={() => setSelectedApp(null)}
           onAppUpdated={(updated) => {
-            const newList = appList.map((a) => (a.id === updated.id ? updated : a));
+            const newList = appList.map((a) => (a.id === updated.id ? autoTranslateApp(updated) : a));
             setAppList(newList);
             saveAppsToStorage(newList);
           }}

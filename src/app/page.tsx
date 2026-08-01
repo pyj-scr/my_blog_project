@@ -8,8 +8,7 @@ import { AppDetailModal } from '@/components/AppDetailModal';
 import { Navbar } from '@/components/Navbar';
 import { AppItem } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
-import { ArrowRight, Sparkles, Zap, ShieldCheck, Gift, Layers, CheckCircle } from 'lucide-react';
-
+import { ArrowRight, Sparkles, Zap, ShieldCheck, Gift, Layers } from 'lucide-react';
 import { autoTranslateApp } from '@/utils/autoTranslateApp';
 
 export default function Home() {
@@ -24,7 +23,11 @@ export default function Home() {
         try {
           const parsed: AppItem[] = JSON.parse(savedApps);
           if (parsed && parsed.length > 0) {
-            setAppList(parsed.map(autoTranslateApp));
+            const mockIds = MOCK_APPS.map((m) => m.id);
+            const customOnly = parsed.filter((a) => !mockIds.includes(a.id));
+            const freshList = [...customOnly, ...MOCK_APPS].map(autoTranslateApp);
+            setAppList(freshList);
+            localStorage.setItem('app100yen_modified_apps', JSON.stringify(freshList));
           }
         } catch (err) {
           console.error(err);
@@ -171,7 +174,7 @@ export default function Home() {
           app={selectedApp}
           onClose={() => setSelectedApp(null)}
           onAppUpdated={(updated) => {
-            const newList = appList.map((a) => (a.id === updated.id ? updated : a));
+            const newList = appList.map((a) => (a.id === updated.id ? autoTranslateApp(updated) : a));
             setAppList(newList);
             saveAppsToStorage(newList);
           }}
