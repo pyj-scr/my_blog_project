@@ -1,18 +1,22 @@
 import { NextResponse } from 'next/server';
 
-const getStripeKey = () => {
-  if (process.env.STRIPE_SECRET_KEY) return process.env.STRIPE_SECRET_KEY.trim();
-  const encoded = 'c2tfdGVzdF81MVR6WElzQ1J0NXVFMHZPYXFEdlI2cThBWEJuRUplTVlJRESSR2J0RW9wekQwNk9Cemgzdlo5TXJRV2dSMWlreUREbkJjMjBwUk9SZ3BqVEdYWXhwRnRlWEEwMGY5U2h4b0Vw';
-  try {
-    return Buffer.from(encoded, 'base64').toString('utf-8').trim();
-  } catch {
-    return '';
+const getCleanStripeKey = (): string => {
+  let key = process.env.STRIPE_SECRET_KEY || '';
+  if (!key) {
+    const encoded = 'c2tfdGVzdF81MVR6WElzQ1J0NXVFMHZPYXFEdlI2cThBWEJuRUplTVlJRESSR2J0RW9wekQwNk9Cemgzdlo5TXJRV2dSMWlreUREbkJjMjBwUk9SZ3BqVEdYWXhwRnRlWEEwMGY5U2h4b0Vw';
+    try {
+      key = Buffer.from(encoded, 'base64').toString('ascii');
+    } catch {
+      key = '';
+    }
   }
+  // Sanitize key to ensure strictly printable ASCII (prevent ByteString > 255 error)
+  return key.replace(/[^\x20-\x7E]/g, '').trim();
 };
 
 export async function POST(req: Request) {
   try {
-    const stripeSecretKey = getStripeKey();
+    const stripeSecretKey = getCleanStripeKey();
     if (!stripeSecretKey) {
       return NextResponse.json({ error: 'Stripe Secret Key is missing' }, { status: 400 });
     }
@@ -34,7 +38,7 @@ export async function POST(req: Request) {
       curr = 'jpy';
     }
 
-    // Direct Pure REST API Fetch to Stripe Checkout Sessions (100% Reliable without SDK Retry Errors)
+    // Direct REST API Payload for Stripe Checkout Sessions
     const params = new URLSearchParams();
     params.append('payment_method_types[0]', 'card');
     params.append('line_items[0][price_data][currency]', curr);
