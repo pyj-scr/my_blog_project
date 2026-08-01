@@ -6,6 +6,7 @@ import { usePurchase } from '@/context/PurchaseContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { MOCK_APPS } from '@/data/mockApps';
+import { Navbar } from '@/components/Navbar';
 import { Download, Key, Calendar, ShoppingBag, ArrowRight, User as UserIcon } from 'lucide-react';
 
 export default function MyPage() {
@@ -34,7 +35,9 @@ export default function MyPage() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+    <div className="min-h-screen flex flex-col justify-between text-slate-100 selection:bg-rose-500 selection:text-white">
+      <Navbar />
+      <main className="flex-1 max-w-5xl mx-auto px-4 py-12 w-full space-y-8">
       
       {/* User Header */}
       <div className="mb-10 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -126,6 +129,7 @@ export default function MyPage() {
         )}
       </div>
 
+      </main>
     </div>
   );
 }

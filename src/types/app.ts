@@ -1,7 +1,9 @@
-export type AppCategory = '전체' | 'AI 생산성' | '디자인 & 미디어' | '개발 & 툴' | '자동화' | '유틸리티';
+export type AppCategory = '전체' | '모바일 앱' | 'AI 생산성' | '디자인 & 미디어' | '개발 & 툴' | '자동화' | '유틸리티';
 
 export type Language = 'ja' | 'ko' | 'en';
 export type Currency = 'JPY' | 'KRW' | 'USD';
+
+export type OSType = 'Windows' | 'Mac' | 'Web' | 'Chrome Extension' | 'Android' | 'iOS' | 'Mobile';
 
 export interface AppItem {
   id: string;
@@ -20,7 +22,7 @@ export interface AppItem {
   category: AppCategory;
   version: string;
   size: string;
-  os: ('Windows' | 'Mac' | 'Web' | 'Chrome Extension')[];
+  os: OSType[];
   rating: number;
   reviewsCount: number;
   downloads: number;

@@ -69,6 +69,8 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
           </div>
 
           <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-slate-950/80 backdrop-blur-md px-2.5 py-1 text-xs text-slate-200">
+            {app.os.includes('Android') && <span className="text-emerald-400 font-bold">🤖</span>}
+            {app.os.includes('iOS') && <span className="text-rose-400 font-bold">🍎</span>}
             {app.os.includes('Windows') && <Monitor className="h-4 w-4" />}
             {app.os.includes('Mac') && <Apple className="h-4 w-4" />}
             {app.os.includes('Web') && <Globe className="h-4 w-4" />}

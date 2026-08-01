@@ -2,13 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Globe, User, Download, Sparkles } from 'lucide-react';
+import { ShoppingBag, Globe, User, Download, Sparkles, PlusCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { usePurchase } from '@/context/PurchaseContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Language } from '@/types/app';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  onOpenUploadModal?: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ onOpenUploadModal }) => {
   const { user, openLoginModal, logout } = useAuth();
   const { purchases } = usePurchase();
   const { language, setLanguage, t } = useLanguage();
@@ -38,7 +42,7 @@ export const Navbar: React.FC = () => {
         </Link>
 
         {/* Right Menu */}
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-3 sm:gap-4">
           
           {/* Language Selector */}
           <div className="relative flex items-center rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-sm text-slate-200">
@@ -61,6 +65,17 @@ export const Navbar: React.FC = () => {
             <Sparkles className="h-4 w-4 text-amber-400" />
             <span>{t.navApps}</span>
           </Link>
+
+          {/* New App Upload Button */}
+          {onOpenUploadModal && (
+            <button
+              onClick={onOpenUploadModal}
+              className="flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-sm font-bold text-emerald-400 hover:bg-emerald-500/20 transition-all"
+            >
+              <PlusCircle className="h-4.5 w-4.5" />
+              <span>{language === 'ja' ? 'アプリ登録' : language === 'en' ? 'Upload App' : '어플 등록'}</span>
+            </button>
+          )}
 
           <Link
             href="/mypage"
@@ -90,7 +105,7 @@ export const Navbar: React.FC = () => {
           ) : (
             <button
               onClick={openLoginModal}
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 px-4.5 py-2 text-sm font-bold text-white shadow-lg shadow-rose-600/20 hover:opacity-90 transition-all"
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-rose-600/20 hover:opacity-90 transition-all"
             >
               <User className="h-4.5 w-4.5" />
               <span>{t.login}</span>

@@ -2,38 +2,6 @@ import { AppItem } from '@/types/app';
 
 export const MOCK_APPS: AppItem[] = [
   {
-    id: 'app-1',
-    title: 'AI Smart Remover (배경 제거 툴)',
-    titleJa: 'AI Smart Remover (背景消去ツール)',
-    titleEn: 'AI Smart Remover (Background Remover)',
-    shortDescription: '한 번의 클릭으로 상품 사진이나 인물 배경을 1초 만에 깔끔하게 제거합니다.',
-    shortDescriptionJa: 'ワンクリックで商品写真や人物の背景を1秒で綺麗に消去します。',
-    shortDescriptionEn: 'Remove background from product photos or portraits in 1 second.',
-    fullDescription: 'AI 딥러닝 기술을 활용해 이미지 배경을 완벽하게 누끼 따주는 가벼운 데스크톱 유틸리티입니다. 쇼핑몰 운영자, 디자이너, 블로거 필수 아이템!',
-    fullDescriptionJa: 'AIディープラーニング技術を活用し、画像の背景を完全に切り抜く軽量デスクトップユーティリティ。ネットショップ運営者やデザイナーの必須アイテム！',
-    fullDescriptionEn: 'Lightweight utility powered by deep learning AI to instantly cut out image backgrounds.',
-    priceJpy: 100,
-    priceKrw: 1000,
-    priceUsd: 1.00,
-    category: '디자인 & 미디어',
-    version: 'v1.4.0',
-    size: '18.4 MB',
-    os: ['Windows', 'Mac'],
-    rating: 4.9,
-    reviewsCount: 128,
-    downloads: 1420,
-    thumbnailUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    features: [
-      '배경 1초 자동 오토 누끼',
-      '투명 PNG / 흰색 배경 일괄 변환 지원',
-      '드래그 앤 드롭 대량 작업 모드',
-      '오프라인 AI 엔진 탑재 (데이터 유출 걱정 무)'
-    ],
-    downloadUrl: '/apps_store/ai_background_remover/index.html',
-    isPopular: true,
-    updatedAt: '2026-07-28'
-  },
-  {
     id: 'app-2',
     title: 'PDF AI Summarizer (원클릭 요약기)',
     titleJa: 'PDF AI Summarizer (ワンクリック要約機)',
@@ -156,35 +124,5 @@ export const MOCK_APPS: AppItem[] = [
     downloadUrl: '/apps_store/context_native_translator/index.html',
     isNew: true,
     updatedAt: '2026-07-30'
-  },
-  {
-    id: 'app-6',
-    title: 'Code Snippet Vault (코드 캡슐)',
-    titleJa: 'Code Snippet Vault (開発者コード保管庫)',
-    titleEn: 'Code Snippet Vault',
-    shortDescription: '자주 쓰는 코드 조각과 환경 변수를 보안 캡슐 형태로 저장하고 검색합니다.',
-    shortDescriptionJa: 'よく使うコードスニペットや環境変数を暗号化して保存・検索。',
-    shortDescriptionEn: 'Store & search code snippets and secret keys in local encrypted vault.',
-    fullDescription: '개발 시 반복해서 검색하는 정규식, API 래퍼 함수, 설정 스니펫을 로컬 암호화 DB에 보관하고 초스피드로 꺼내 쓰는 개발자 유틸리티.',
-    fullDescriptionJa: '開発時によく検索する正規表現やAPI関数をローカル暗号化DBに保管し素早く検索する開発者ツール。',
-    fullDescriptionEn: 'Secure local vault for code snippets, environment configs, and cheat sheets.',
-    priceJpy: 100,
-    priceKrw: 1000,
-    priceUsd: 1.00,
-    category: '개발 & 툴',
-    version: 'v1.1.0',
-    size: '14.5 MB',
-    os: ['Windows', 'Mac'],
-    rating: 4.9,
-    reviewsCount: 42,
-    downloads: 510,
-    thumbnailUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80',
-    features: [
-      'AES-256 로컬 암호화 보안 저장을 통한 개인정보 보호',
-      'Syntax Highlighting & 다국어 태그 지원',
-      '커맨드 팔레트 (Ctrl+K) 검색'
-    ],
-    downloadUrl: '/apps_store/code_snippet_vault/index.html',
-    updatedAt: '2026-07-22'
   }
 ];

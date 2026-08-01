@@ -6,6 +6,7 @@ import { AppCard } from '@/components/AppCard';
 import { AppDetailModal } from '@/components/AppDetailModal';
 import { AppItem, AppCategory } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
+import { Navbar } from '@/components/Navbar';
 import { Search, Sparkles, Filter, SlidersHorizontal } from 'lucide-react';
 
 const CATEGORIES: AppCategory[] = [
@@ -36,7 +37,9 @@ export default function AppsCatalogPage() {
   }, [selectedCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen flex flex-col justify-between text-slate-100 selection:bg-rose-500 selection:text-white">
+      <Navbar />
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 w-full">
       
       {/* Header Banner */}
       <div className="mb-10 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-slate-800/80 pb-8">
@@ -118,6 +121,7 @@ export default function AppsCatalogPage() {
           onClose={() => setSelectedApp(null)}
         />
       )}
+      </main>
     </div>
   );
 }

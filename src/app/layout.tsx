@@ -3,7 +3,6 @@ import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { PurchaseProvider } from '@/context/PurchaseContext';
 import { LanguageProvider } from '@/context/LanguageContext';
-import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { PaymentModal } from '@/components/PaymentModal';
 import { LoginModal } from '@/components/LoginModal';
@@ -24,7 +23,6 @@ export default function RootLayout({
         <LanguageProvider>
           <AuthProvider>
             <PurchaseProvider>
-              <Navbar />
               <main className="flex-1">
                 {children}
               </main>

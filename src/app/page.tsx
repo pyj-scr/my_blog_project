@@ -4,9 +4,7 @@ import React, { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { AppCard } from '@/components/AppCard';
 import { AppDetailModal } from '@/components/AppDetailModal';
-import { PaymentModal } from '@/components/PaymentModal';
-import { LoginModal } from '@/components/LoginModal';
-import { Footer } from '@/components/Footer';
+import { UploadAppModal } from '@/components/UploadAppModal';
 import { MOCK_APPS } from '@/data/mockApps';
 import { AppItem } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
@@ -14,12 +12,20 @@ import { Sparkles, ShieldCheck, Zap, Layers, Gift, ArrowRight } from 'lucide-rea
 import Link from 'next/link';
 
 export default function Home() {
+  const [appList, setAppList] = useState<AppItem[]>(MOCK_APPS);
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const { t } = useLanguage();
 
+  const handleAppCreated = (newApp: AppItem) => {
+    setAppList([newApp, ...appList]);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-950 text-slate-100 selection:bg-rose-500 selection:text-white">
-      <Navbar />
+    <div className="min-h-screen flex flex-col justify-between text-slate-100 selection:bg-rose-500 selection:text-white">
+      
+      {/* Dynamic Navbar with Upload Trigger */}
+      <Navbar onOpenUploadModal={() => setIsUploadModalOpen(true)} />
 
       <main className="flex-1">
         
@@ -121,7 +127,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {MOCK_APPS.map((app) => (
+              {appList.map((app) => (
                 <AppCard
                   key={app.id}
                   app={app}
@@ -135,17 +141,22 @@ export default function Home() {
 
       </main>
 
-      {/* Modals */}
+      {/* App Detail Modal */}
       {selectedApp && (
         <AppDetailModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}
         />
       )}
-      <PaymentModal />
-      <LoginModal />
 
-      <Footer />
+      {/* New App Upload Modal */}
+      {isUploadModalOpen && (
+        <UploadAppModal
+          onClose={() => setIsUploadModalOpen(false)}
+          onAppCreated={handleAppCreated}
+        />
+      )}
+
     </div>
   );
 }
