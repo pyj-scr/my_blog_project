@@ -75,7 +75,18 @@ export default function MyPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-6 border-t sm:border-t-0 sm:border-l border-slate-800 pt-4 sm:pt-0 sm:pl-6 text-center">
+        <div className="flex items-center gap-4 border-t sm:border-t-0 sm:border-l border-slate-800 pt-4 sm:pt-0 sm:pl-6 text-center">
+          <button
+            onClick={() => {
+              if (confirm('테스트 구매 내역을 초기화하시겠습니까? (Stripe 실제 100엔 결제 테스트가 가능해집니다)')) {
+                localStorage.removeItem('app100yen_purchases');
+                window.location.href = '/apps';
+              }
+            }}
+            className="px-3 py-1.5 text-xs font-bold text-slate-400 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all"
+          >
+            🔄 구매 내역 리셋
+          </button>
           <div>
             <span className="text-[10px] text-slate-500 block">Purchased Apps</span>
             <span className="text-xl font-extrabold text-white">{purchases.length}</span>

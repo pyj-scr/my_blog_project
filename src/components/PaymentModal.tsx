@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, CreditCard, Lock, ShieldCheck, Sparkles, CheckCircle2, Loader2 } from 'lucide-react';
+import { X, CreditCard, Lock, ShieldCheck, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import { usePurchase } from '@/context/PurchaseContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export const PaymentModal: React.FC = () => {
-  const { paymentModalApp, closePaymentModal, processPayment } = usePurchase();
+  const { paymentModalApp, closePaymentModal } = usePurchase();
   const { language, formatPrice, t } = useLanguage();
   const [cardHolder, setCardHolder] = useState('YOYOGI YJ');
   const [isStripeRedirecting, setIsStripeRedirecting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!paymentModalApp) return null;
 
@@ -18,6 +19,7 @@ export const PaymentModal: React.FC = () => {
   const handleStripeCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsStripeRedirecting(true);
+    setErrorMessage(null);
 
     try {
       const res = await fetch('/api/checkout', {
@@ -33,18 +35,15 @@ export const PaymentModal: React.FC = () => {
 
       const data = await res.json();
       if (data.url) {
-        // Instant redirect to Stripe Secure Checkout Page!
+        // Redirect directly to Stripe Checkout Page
         window.location.href = data.url;
       } else {
-        // Fallback simulated payment if API is offline
-        await processPayment(paymentModalApp, cardHolder);
-        closePaymentModal();
+        setErrorMessage(data.error || 'Stripe 결제 세션 생성 실패');
+        setIsStripeRedirecting(false);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      await processPayment(paymentModalApp, cardHolder);
-      closePaymentModal();
-    } finally {
+      setErrorMessage('결제 서버 연결 오류가 발생했습니다.');
       setIsStripeRedirecting(false);
     }
   };
@@ -61,7 +60,7 @@ export const PaymentModal: React.FC = () => {
             </div>
             <div>
               <h2 className="text-base font-bold text-white">Stripe 100엔 공식 안심 결제</h2>
-              <p className="text-xs text-slate-400">SSL 256-bit 암호화 안전 수금 처리</p>
+              <p className="text-xs text-slate-400">SSL 256-bit 암호화 카드 수금 처리</p>
             </div>
           </div>
           <button
@@ -93,6 +92,13 @@ export const PaymentModal: React.FC = () => {
             </div>
           </div>
 
+          {errorMessage && (
+            <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
           {/* Name Input */}
           <div>
             <label className="block text-xs font-bold text-slate-300 mb-1.5">
@@ -111,8 +117,8 @@ export const PaymentModal: React.FC = () => {
           <div className="flex items-center gap-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 p-3.5 text-indigo-300 text-xs">
             <ShieldCheck className="h-5 w-5 text-indigo-400 shrink-0" />
             <div>
-              <p className="font-bold">Stripe 100엔 결제 페이지로 안전 연결</p>
-              <p className="text-[10px] text-indigo-300/80">버튼을 누르면 Stripe SSL 보안 결제 창으로 즉시 이동합니다.</p>
+              <p className="font-bold">Stripe 100엔 공식 카드 결제 창으로 연결</p>
+              <p className="text-[10px] text-indigo-300/80">버튼을 누르면 Stripe 보안 결제 페이지로 이동합니다.</p>
             </div>
           </div>
 
