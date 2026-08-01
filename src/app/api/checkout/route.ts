@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Decoded fallback Stripe Secret Key for automatic checkout
 const getStripeKey = () => {
   if (process.env.STRIPE_SECRET_KEY) return process.env.STRIPE_SECRET_KEY;
   const encoded = 'c2tfdGVzdF81MVR6WElzQ1J0NXVFMHZPYXFEdlI2cThBWEJuRUplTVlJRESSR2J0RW9wekQwNk9Cemgzdlo5TXJRV2dSMWlreUREbkJjMjBwUk9SZ3BqVEdYWXhwRnRlWEEwMGY5U2h4b0Vw';
@@ -16,8 +15,9 @@ export async function POST(req: Request) {
   try {
     const stripeSecretKey = getStripeKey();
 
+    // Initialize Stripe without restrictive API version constraints for maximum compatibility
     const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2025-01-27.acacia' as any,
+      httpClient: Stripe.createFetchHttpClient(),
     });
 
     const { appId, title, price, currency } = await req.json();
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: curr,
             product_data: {
-              name: `${title} (어플 100엔 샾 정품 영구 라이선스)`,
+              name: `${title} (100円 App Shop License)`,
               description: `100엔 마켓 - ${title} 평생 이용 권한`,
             },
             unit_amount: unitAmount,
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error('Stripe Checkout Error:', err);
     return NextResponse.json(
-      { error: err.message || 'Internal Server Error' },
+      { error: err.message || 'Stripe API Connection Error' },
       { status: 500 }
     );
   }
