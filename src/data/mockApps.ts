@@ -2,6 +2,76 @@ import { AppItem } from '@/types/app';
 
 export const MOCK_APPS: AppItem[] = [
   {
+    id: 'app-7',
+    title: "My Prayer (마이 프레이어 - 기도 응답 캘린더)",
+    titleJa: "My Prayer (祈り・願望成就カレンダー)",
+    titleEn: "My Prayer (Prayer & Goal Tracker)",
+    shortDescription: "My Prayer에서 기도와 목표가 이루어진 것을 매일 확인하고 기록해 보세요.",
+    shortDescriptionJa: "My Prayerで祈りと目標が達成されたことを 매일確認し記録してみましょう。",
+    shortDescriptionEn: "Track and confirm your daily targeted prayers and habit achievements.",
+    fullDescription: "매일 이루고 싶은 소망과 기도를 등록하고, 목표를 달성할 때마다 체크하며 성취감을 누릴 수 있는 고성능 스마트폰 모바일 다이어리 앱입니다.",
+    fullDescriptionJa: "毎日達成したい願いと祈りを登録し、目標を達成するたびにチェックして達成感を味わえるスマートフォン日記アプリ。",
+    fullDescriptionEn: "A specialized daily mobile tracker app for target habit confirmations and prayer achievements.",
+    priceJpy: 100,
+    priceKrw: 1000,
+    priceUsd: 1.00,
+    category: '모바일 앱',
+    version: 'v1.0.0',
+    size: '15.2 MB',
+    os: ['Android', 'iOS'],
+    rating: 5.0,
+    reviewsCount: 12,
+    downloads: 140,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
+    features: [
+      '모바일 & 스마트폰 어플 원클릭 터치 실행',
+      '기도 달성 캘린더 및 일일 체크리스트',
+      '안전 검증 무설치 직속 모바일 패키지'
+    ],
+    usageGuide: '1. 다운로드 버튼을 눌러 앱 패키지를 받습니다.\n2. 스마트폰에서 앱을 실행하고 매일 기도 및 목표 달성을 체크하세요.',
+    usageGuideJa: '1. ダウンロードボタンを押してアプリを保存します。\n2. スマホでアプリを起動し、毎日の目標をチェックしてください。',
+    usageGuideEn: '1. Tap Download to save the app.\n2. Open the app on your mobile device and log daily achievements.',
+    downloadUrl: '/apps_store/my_prayer/index.html',
+    isPopular: true,
+    isNew: true,
+    updatedAt: '2026-08-01'
+  },
+  {
+    id: 'app-8',
+    title: "One Month's Todo (원 먼스 투두)",
+    titleJa: "One Month's Todo (1ヶ月ToDoカレンダー)",
+    titleEn: "One Month's Todo (30-Day Goal Tracker)",
+    shortDescription: "A month's Todo list. You can check how many times you carried out the targeted tasks.",
+    shortDescriptionJa: "1ヶ月のToDoリスト。目標タスクを実行した 횟수를 一目で確認できます。",
+    shortDescriptionEn: "A month's Todo list. Easily check how many times you carried out targeted tasks.",
+    fullDescription: "한 달 동안의 투두 리스트 및 목표 달성 횟수를 카운트하고, 습관 형성을 도와주는 모바일 심플 할 일 관리 어플입니다.",
+    fullDescriptionJa: "1ヶ月間のToDoリストと目標達成回数をカウントし、習慣形成をサポートするシンプルタスク管理アプリ。",
+    fullDescriptionEn: "Keep track of your monthly habits and count task execution frequency easily.",
+    priceJpy: 100,
+    priceKrw: 1000,
+    priceUsd: 1.00,
+    category: '모바일 앱',
+    version: 'v1.0.0',
+    size: '15.2 MB',
+    os: ['Android', 'iOS'],
+    rating: 5.0,
+    reviewsCount: 15,
+    downloads: 180,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=600&auto=format&fit=crop&q=80',
+    features: [
+      '30일 한 달 목표 카운터 & 체크 박스',
+      '직관적인 모바일 UI 다크 모드 지원',
+      '독점 100엔 정찰제 영구 소장'
+    ],
+    usageGuide: '1. 앱 실행 후 이번 달 목표 과제 3가지를 등록합니다.\n2. 하루 1회 완료 시 버튼을 터치하면 성취 그래프가 기록됩니다.',
+    usageGuideJa: '1. アプリ起動後、今月の目標タスクを登録します。\n2. 達成時にボタンをタップするとグラフが記録されます。',
+    usageGuideEn: '1. Enter 3 target goals for the month.\n2. Tap daily upon completion to track monthly progress.',
+    downloadUrl: '/apps_store/one_months_todo/index.html',
+    isPopular: true,
+    isNew: true,
+    updatedAt: '2026-08-01'
+  },
+  {
     id: 'app-2',
     title: 'PDF AI Summarizer (원클릭 요약기)',
     titleJa: 'PDF AI Summarizer (ワンクリック要約機)',
@@ -30,7 +100,6 @@ export const MOCK_APPS: AppItem[] = [
     ],
     downloadUrl: '/apps_store/pdf_ai_summarizer/index.html',
     isPopular: true,
-    isNew: true,
     updatedAt: '2026-07-29'
   },
   {
@@ -122,7 +191,6 @@ export const MOCK_APPS: AppItem[] = [
       '문맥 설명 툴팁 및 유사 표현 제시'
     ],
     downloadUrl: '/apps_store/context_native_translator/index.html',
-    isNew: true,
     updatedAt: '2026-07-30'
   }
 ];

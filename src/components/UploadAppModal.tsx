@@ -186,7 +186,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
               />
             </div>
 
-            {/* Category & Price */}
+            {/* Category & Price & Revenue Policy */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1.5">카테고리</label>
@@ -205,10 +205,17 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-emerald-400 mb-1.5">판매 가격 정찰제</label>
-                <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs font-extrabold text-white">
-                  <Sparkles className="h-4 w-4 text-amber-400" />
-                  <span>100円 / ₩1,000 / $1.00 USD</span>
+                <label className="block text-xs font-bold text-emerald-400 mb-1.5">
+                  판매 가격 & 수익 배분 (수수료 10%)
+                </label>
+                <div className="flex flex-col justify-center bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white space-y-1">
+                  <div className="flex items-center justify-between font-extrabold text-amber-400">
+                    <span>100円 / ₩1,000 / $1.00 USD</span>
+                    <span className="text-[10px] text-emerald-400">90% 정산</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    판매 금액의 90% 개발자 정산 / 플랫폼 수수료 10%
+                  </p>
                 </div>
               </div>
             </div>
