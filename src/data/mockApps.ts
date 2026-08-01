@@ -7,7 +7,7 @@ export const MOCK_APPS: AppItem[] = [
     titleJa: "My Prayer (祈り・願望成就カレンダー)",
     titleEn: "My Prayer (Prayer & Goal Tracker)",
     shortDescription: "My Prayer에서 기도와 목표가 이루어진 것을 매일 확인하고 기록해 보세요.",
-    shortDescriptionJa: "My Prayerで祈りと目標が達成されたことを 매일確認し記録してみましょう。",
+    shortDescriptionJa: "My Prayerで祈りと目標が達成されたことを毎日の達成ログに記録してみましょう。",
     shortDescriptionEn: "Track and confirm your daily targeted prayers and habit achievements.",
     fullDescription: "매일 이루고 싶은 소망과 기도를 등록하고, 목표를 달성할 때마다 체크하며 성취감을 누릴 수 있는 고성능 스마트폰 모바일 다이어리 앱입니다.",
     fullDescriptionJa: "毎日達成したい願いと祈りを登録し、目標を達成するたびにチェックして達成感を味わえるスマートフォン日記アプリ。",
@@ -28,6 +28,16 @@ export const MOCK_APPS: AppItem[] = [
       '기도 달성 캘린더 및 일일 체크리스트',
       '안전 검증 무설치 직속 모바일 패키지'
     ],
+    featuresJa: [
+      'モバイル＆スマホアプリ ワンタッチ即時起動',
+      '祈り達成カレンダー＆デイリーチェックリスト',
+      '安全検証済み モ바일直接ダウンロード'
+    ],
+    featuresEn: [
+      '1-Touch instant Mobile & Smartphone execution',
+      'Prayer achievement calendar & daily checklists',
+      'Verified secure mobile package download'
+    ],
     usageGuide: '1. 다운로드 버튼을 눌러 앱 패키지를 받습니다.\n2. 스마트폰에서 앱을 실행하고 매일 기도 및 목표 달성을 체크하세요.',
     usageGuideJa: '1. ダウンロードボタンを押してアプリを保存します。\n2. スマホでアプリを起動し、毎日の目標をチェックしてください。',
     usageGuideEn: '1. Tap Download to save the app.\n2. Open the app on your mobile device and log daily achievements.',
@@ -42,7 +52,7 @@ export const MOCK_APPS: AppItem[] = [
     titleJa: "One Month's Todo (1ヶ月ToDoカレンダー)",
     titleEn: "One Month's Todo (30-Day Goal Tracker)",
     shortDescription: "A month's Todo list. You can check how many times you carried out the targeted tasks.",
-    shortDescriptionJa: "1ヶ月のToDoリスト。目標タスクを実行した 횟수를 一目で確認できます。",
+    shortDescriptionJa: "1ヶ月のToDoリスト。目標タスクを実行した回数を一目で確認できます。",
     shortDescriptionEn: "A month's Todo list. Easily check how many times you carried out targeted tasks.",
     fullDescription: "한 달 동안의 투두 리스트 및 목표 달성 횟수를 카운트하고, 습관 형성을 도와주는 모바일 심플 할 일 관리 어플입니다.",
     fullDescriptionJa: "1ヶ月間のToDoリストと目標達成回数をカウントし、習慣形成をサポートするシンプルタスク管理アプリ。",
@@ -62,6 +72,16 @@ export const MOCK_APPS: AppItem[] = [
       '30일 한 달 목표 카운터 & 체크 박스',
       '직관적인 모바일 UI 다크 모드 지원',
       '독점 100엔 정찰제 영구 소장'
+    ],
+    featuresJa: [
+      '30日間 1ヶ月目標カウンター＆チェックボックス',
+      '直感的なモバイルUI ダークモード対応',
+      '独占100円一律定額 永久所有'
+    ],
+    featuresEn: [
+      '30-Day monthly goal counter & checkboxes',
+      'Intuitive mobile dark mode UI',
+      'Exclusive flat $1 lifetime ownership'
     ],
     usageGuide: '1. 앱 실행 후 이번 달 목표 과제 3가지를 등록합니다.\n2. 하루 1회 완료 시 버튼을 터치하면 성취 그래프가 기록됩니다.',
     usageGuideJa: '1. アプリ起動後、今月の目標タスクを登録します。\n2. 達成時にボタンをタップするとグラフが記録されます。',
@@ -98,6 +118,16 @@ export const MOCK_APPS: AppItem[] = [
       '주요 인사이트 마인드맵 추출',
       '요약본 TXT, Markdown 및 PDF 저장 지원'
     ],
+    featuresJa: [
+      '日本語・英語・韓国語の多言語PDF本文要約',
+      '主要インサイトのマインドマップ抽出',
+      '要約文のTXT、Markdown、PDF保存対応'
+    ],
+    featuresEn: [
+      'Multilingual PDF text summarization (EN/JA/KO)',
+      'Key insight mindmap extraction',
+      'Export summaries to TXT, Markdown, and PDF'
+    ],
     downloadUrl: '/apps_store/pdf_ai_summarizer/index.html',
     isPopular: true,
     updatedAt: '2026-07-29'
@@ -129,6 +159,16 @@ export const MOCK_APPS: AppItem[] = [
       'ChatGPT 시나리오별 페르소나 프롬프트 라이브러리',
       '클립보드 원클릭 복사'
     ],
+    featuresJa: [
+      'Midjourney v6スタイルパラメータの自動組み合わせ',
+      'ChatGPTシナリオ別ペルソナプロンプトライブラリ',
+      'クリップボードへのワンクリックコピー'
+    ],
+    featuresEn: [
+      'Midjourney v6 style parameter presets',
+      'ChatGPT scenario persona prompt library',
+      'One-click clipboard copy'
+    ],
     downloadUrl: '/apps_store/prompt_magic_generator/index.html',
     updatedAt: '2026-07-20'
   },
@@ -158,6 +198,16 @@ export const MOCK_APPS: AppItem[] = [
       '확장자 및 파일 이름 분석 자동 폴더링',
       '중복 파일 탐지 및 용량 확보',
       '백그라운드 자동 감지 실행 옵션'
+    ],
+    featuresJa: [
+      '拡張子・ファイル名解析による自動フォルダ分け',
+      '重複ファイルの検知とディスク容量確保',
+      'バックグラウンド自動監視実行オプション'
+    ],
+    featuresEn: [
+      'Auto-folder sorting by extensions & filenames',
+      'Duplicate file detection to free disk space',
+      'Background auto-monitoring options'
     ],
     downloadUrl: '/apps_store/auto_file_organizer/index.html',
     isPopular: true,
@@ -189,6 +239,16 @@ export const MOCK_APPS: AppItem[] = [
       '단축키 핫키 팝업 번역',
       '비즈니스/캐주얼/학술 어조 변환',
       '문맥 설명 툴팁 및 유사 표현 제시'
+    ],
+    featuresJa: [
+      'ショートカットキーポップアップ即時翻訳',
+      'ビジネス・カジュアル・論文のトーン変換',
+      '文脈解説ツールチップと類似表現の提示'
+    ],
+    featuresEn: [
+      'Shortcut hotkey popup instant translation',
+      'Business, casual, academic tone switching',
+      'Context explanation tooltips and synonyms'
     ],
     downloadUrl: '/apps_store/context_native_translator/index.html',
     updatedAt: '2026-07-30'

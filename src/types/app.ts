@@ -28,6 +28,8 @@ export interface AppItem {
   downloads: number;
   thumbnailUrl: string;
   features: string[];
+  featuresJa?: string[];
+  featuresEn?: string[];
   usageGuide?: string;
   usageGuideJa?: string;
   usageGuideEn?: string;

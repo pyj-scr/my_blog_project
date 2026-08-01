@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Download, Star, ShieldCheck, Sparkles, Check, Monitor, Apple, Globe, Lock, Edit3, Trash2, BookOpen } from 'lucide-react';
+import { X, Download, Star, ShieldCheck, Sparkles, Check, Monitor, Apple, Globe, Edit3, Trash2, BookOpen } from 'lucide-react';
 import { AppItem } from '@/types/app';
 import { usePurchase } from '@/context/PurchaseContext';
 import { useAuth } from '@/context/AuthContext';
@@ -28,9 +28,45 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
 
   const purchased = isPurchased(app.id);
 
-  const title = language === 'ja' && app.titleJa ? app.titleJa : language === 'en' && app.titleEn ? app.titleEn : app.title;
-  const fullDesc = language === 'ja' && app.fullDescriptionJa ? app.fullDescriptionJa : language === 'en' && app.fullDescriptionEn ? app.fullDescriptionEn : app.fullDescription;
-  const usageGuide = language === 'ja' && app.usageGuideJa ? app.usageGuideJa : language === 'en' && app.usageGuideEn ? app.usageGuideEn : app.usageGuide;
+  const title =
+    language === 'ja' && app.titleJa
+      ? app.titleJa
+      : language === 'en' && app.titleEn
+      ? app.titleEn
+      : app.title;
+
+  const fullDesc =
+    language === 'ja' && app.fullDescriptionJa
+      ? app.fullDescriptionJa
+      : language === 'en' && app.fullDescriptionEn
+      ? app.fullDescriptionEn
+      : app.fullDescription;
+
+  const usageGuide =
+    language === 'ja' && app.usageGuideJa
+      ? app.usageGuideJa
+      : language === 'en' && app.usageGuideEn
+      ? app.usageGuideEn
+      : app.usageGuide;
+
+  const features =
+    language === 'ja' && app.featuresJa
+      ? app.featuresJa
+      : language === 'en' && app.featuresEn
+      ? app.featuresEn
+      : app.features;
+
+  const getCategoryTranslation = (cat: string) => {
+    switch (cat) {
+      case '모바일 앱': return t.categoryMobile;
+      case 'AI 생산성': return t.categoryAi;
+      case '디자인 & 미디어': return t.categoryDesign;
+      case '개발 & 툴': return t.categoryDev;
+      case '자동화': return t.categoryAuto;
+      case '유틸리티': return t.categoryUtil;
+      default: return cat;
+    }
+  };
 
   const handleBuyOrDownload = () => {
     if (!user) {
@@ -83,7 +119,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
               <div>
                 <span className="inline-block rounded-full bg-rose-500/20 border border-rose-500/30 px-3 py-1 text-xs font-bold text-rose-300 mb-2">
-                  {app.category}
+                  {getCategoryTranslation(app.category)}
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-black text-white">{title}</h2>
               </div>
@@ -134,7 +170,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             <div>
               <h3 className="text-sm font-bold text-white mb-3">{t.keyFeaturesTitle}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {app.features.map((feature, idx) => (
+                {features.map((feature, idx) => (
                   <div
                     key={idx}
                     className="flex items-start gap-2.5 rounded-xl bg-slate-950 p-3 border border-slate-800 text-xs text-slate-200"
