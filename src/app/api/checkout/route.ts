@@ -37,14 +37,16 @@ export async function POST(req: Request) {
       curr = 'jpy';
     }
 
-    // Direct REST API Payload for Stripe Managed Payments (Remove unsupported payment_method_types)
+    // Payload configured with Digital Software Tax Code & Standard Checkout Mode
     const params = new URLSearchParams();
     params.append('line_items[0][price_data][currency]', curr);
     params.append('line_items[0][price_data][product_data][name]', `${title} (100円 App Shop License)`);
     params.append('line_items[0][price_data][product_data][description]', `100엔 마켓 - ${title} 평생 이용 권한`);
+    params.append('line_items[0][price_data][product_data][tax_code]', 'txcd_10000000'); // General Electronically Supplied Services
     params.append('line_items[0][price_data][unit_amount]', unitAmount);
     params.append('line_items[0][quantity]', '1');
     params.append('mode', 'payment');
+    params.append('managed_payments[enabled]', 'false');
     params.append('success_url', `${origin}/mypage?success=true&appId=${appId}`);
     params.append('cancel_url', `${origin}/?canceled=true`);
 
