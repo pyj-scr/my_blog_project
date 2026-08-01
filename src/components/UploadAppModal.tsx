@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen } from 'lucide-react';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
-import { autoTranslateApp } from '@/utils/autoTranslateApp';
+import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
 
 interface UploadAppModalProps {
   onClose: () => void;
@@ -32,6 +32,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80'
   );
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
 
   useEffect(() => {
     if (editApp) {
@@ -59,9 +60,11 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !shortDesc) return;
+
+    setIsTranslating(true);
 
     if (editApp && onAppUpdated) {
       const rawUpdated: AppItem = {
@@ -75,7 +78,8 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         thumbnailUrl: thumbnailUrl,
       };
 
-      const translated = autoTranslateApp(rawUpdated);
+      const translated = await asyncTranslateApp(rawUpdated);
+      setIsTranslating(false);
       onAppUpdated(translated);
       setIsSuccess(true);
       setTimeout(() => {
@@ -109,7 +113,8 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         updatedAt: new Date().toISOString().split('T')[0],
       };
 
-      const translated = autoTranslateApp(rawNewApp);
+      const translated = await asyncTranslateApp(rawNewApp);
+      setIsTranslating(false);
       onAppCreated(translated);
       setIsSuccess(true);
       setTimeout(() => {
@@ -311,10 +316,23 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-lg hover:opacity-90 transition-all"
+                disabled={isTranslating}
+                className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-lg hover:opacity-90 transition-all disabled:opacity-50"
               >
-                {editApp ? <Edit3 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                <span>{editApp ? t.submitSaveBtn : t.submitUploadBtn}</span>
+                {isTranslating ? (
+                  <Sparkles className="h-4 w-4 animate-spin text-amber-300" />
+                ) : editApp ? (
+                  <Edit3 className="h-4 w-4" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                <span>
+                  {isTranslating
+                    ? 'AI 실시간 다국어 번역 중...'
+                    : editApp
+                    ? t.submitSaveBtn
+                    : t.submitUploadBtn}
+                </span>
               </button>
             </div>
 

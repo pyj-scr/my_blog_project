@@ -9,7 +9,7 @@ import { Navbar } from '@/components/Navbar';
 import { AppItem } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { ArrowRight, Sparkles, Zap, ShieldCheck, Gift, Layers } from 'lucide-react';
-import { autoTranslateApp } from '@/utils/autoTranslateApp';
+import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
 
 export default function Home() {
   const [appList, setAppList] = useState<AppItem[]>(() => MOCK_APPS.map(autoTranslateApp));
@@ -25,9 +25,12 @@ export default function Home() {
           if (parsed && parsed.length > 0) {
             const mockIds = MOCK_APPS.map((m) => m.id);
             const customOnly = parsed.filter((a) => !mockIds.includes(a.id));
-            const freshList = [...customOnly, ...MOCK_APPS].map(autoTranslateApp);
-            setAppList(freshList);
-            localStorage.setItem('app100yen_modified_apps', JSON.stringify(freshList));
+            
+            Promise.all(customOnly.map(asyncTranslateApp)).then((translatedCustoms) => {
+              const freshList = [...translatedCustoms, ...MOCK_APPS].map(autoTranslateApp);
+              setAppList(freshList);
+              localStorage.setItem('app100yen_modified_apps', JSON.stringify(freshList));
+            });
           }
         } catch (err) {
           console.error(err);
