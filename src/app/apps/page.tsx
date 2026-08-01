@@ -9,6 +9,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Navbar } from '@/components/Navbar';
 import { Search, Sparkles, Filter, SlidersHorizontal } from 'lucide-react';
 
+import { autoTranslateApp } from '@/utils/autoTranslateApp';
+
 const CATEGORIES: AppCategory[] = [
   '전체',
   '모바일 앱',
@@ -20,7 +22,7 @@ const CATEGORIES: AppCategory[] = [
 ];
 
 export default function AppsCatalogPage() {
-  const [appList, setAppList] = useState<AppItem[]>(MOCK_APPS);
+  const [appList, setAppList] = useState<AppItem[]>(() => MOCK_APPS.map(autoTranslateApp));
   const [selectedCategory, setSelectedCategory] = useState<AppCategory>('전체');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
@@ -34,7 +36,7 @@ export default function AppsCatalogPage() {
         try {
           const parsed: AppItem[] = JSON.parse(savedApps);
           if (parsed && parsed.length > 0) {
-            setAppList(parsed);
+            setAppList(parsed.map(autoTranslateApp));
           }
         } catch (err) {
           console.error(err);

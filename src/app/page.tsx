@@ -10,8 +10,10 @@ import { AppItem } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { ArrowRight, Sparkles, Zap, ShieldCheck, Gift, Layers, CheckCircle } from 'lucide-react';
 
+import { autoTranslateApp } from '@/utils/autoTranslateApp';
+
 export default function Home() {
-  const [appList, setAppList] = useState<AppItem[]>(MOCK_APPS);
+  const [appList, setAppList] = useState<AppItem[]>(() => MOCK_APPS.map(autoTranslateApp));
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
@@ -22,7 +24,7 @@ export default function Home() {
         try {
           const parsed: AppItem[] = JSON.parse(savedApps);
           if (parsed && parsed.length > 0) {
-            setAppList(parsed);
+            setAppList(parsed.map(autoTranslateApp));
           }
         } catch (err) {
           console.error(err);

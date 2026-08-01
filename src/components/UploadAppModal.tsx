@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen } from 'lucide-react';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
+import { autoTranslateApp } from '@/utils/autoTranslateApp';
 
 interface UploadAppModalProps {
   onClose: () => void;
@@ -63,44 +64,30 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     if (!title || !shortDesc) return;
 
     if (editApp && onAppUpdated) {
-      const updated: AppItem = {
+      const rawUpdated: AppItem = {
         ...editApp,
         title: title,
-        titleJa: title,
-        titleEn: title,
         shortDescription: shortDesc,
-        shortDescriptionJa: shortDesc,
-        shortDescriptionEn: shortDesc,
         fullDescription: fullDesc || shortDesc,
-        fullDescriptionJa: fullDesc || shortDesc,
-        fullDescriptionEn: fullDesc || shortDesc,
         usageGuide: usageGuide,
-        usageGuideJa: usageGuide,
-        usageGuideEn: usageGuide,
         category: category,
         os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
         thumbnailUrl: thumbnailUrl,
       };
-      onAppUpdated(updated);
+
+      const translated = autoTranslateApp(rawUpdated);
+      onAppUpdated(translated);
       setIsSuccess(true);
       setTimeout(() => {
         onClose();
       }, 1200);
     } else if (onAppCreated) {
-      const newApp: AppItem = {
+      const rawNewApp: AppItem = {
         id: `app-custom-${Date.now()}`,
         title: title,
-        titleJa: title,
-        titleEn: title,
         shortDescription: shortDesc,
-        shortDescriptionJa: shortDesc,
-        shortDescriptionEn: shortDesc,
         fullDescription: fullDesc || shortDesc,
-        fullDescriptionJa: fullDesc || shortDesc,
-        fullDescriptionEn: fullDesc || shortDesc,
         usageGuide: usageGuide,
-        usageGuideJa: usageGuide,
-        usageGuideEn: usageGuide,
         priceJpy: 100,
         priceKrw: 1000,
         priceUsd: 1.0,
@@ -122,7 +109,8 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         updatedAt: new Date().toISOString().split('T')[0],
       };
 
-      onAppCreated(newApp);
+      const translated = autoTranslateApp(rawNewApp);
+      onAppCreated(translated);
       setIsSuccess(true);
       setTimeout(() => {
         onClose();
