@@ -9,10 +9,27 @@ import { MOCK_APPS } from '@/data/mockApps';
 import { Navbar } from '@/components/Navbar';
 import { Download, Key, Calendar, ShoppingBag, ArrowRight, User as UserIcon } from 'lucide-react';
 
+import { useEffect } from 'react';
+
 export default function MyPage() {
-  const { purchases } = usePurchase();
+  const { purchases, processPayment } = usePurchase();
   const { user, openLoginModal } = useAuth();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const isSuccess = params.get('success');
+      const appId = params.get('appId');
+
+      if (isSuccess === 'true' && appId) {
+        const targetApp = MOCK_APPS.find((a) => a.id === appId);
+        if (targetApp && !purchases.some((p) => p.appId === appId)) {
+          processPayment(targetApp, user?.name || 'Stripe Customer');
+        }
+      }
+    }
+  }, [user, purchases, processPayment]);
 
   if (!user) {
     return (
