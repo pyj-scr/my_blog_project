@@ -4,12 +4,15 @@ export const MOCK_APPS: AppItem[] = [
   {
     id: 'app-7',
     title: "My Prayer (마이 프레이어 - 기도 응답 캘린더)",
+    titleKo: "My Prayer (마이 프레이어 - 기도 응답 캘린더)",
     titleJa: "My Prayer (祈り・願望成就カレンダー)",
     titleEn: "My Prayer (Prayer & Goal Tracker)",
     shortDescription: "My Prayer에서 기도와 목표가 이루어진 것을 매일 확인하고 기록해 보세요.",
+    shortDescriptionKo: "My Prayer에서 기도와 목표가 이루어진 것을 매일 확인하고 기록해 보세요.",
     shortDescriptionJa: "My Prayerで祈りと目標が達成されたことを毎日の達成ログに記録してみましょう。",
     shortDescriptionEn: "Track and confirm your daily targeted prayers and habit achievements.",
     fullDescription: "매일 이루고 싶은 소망과 기도를 등록하고, 목표를 달성할 때마다 체크하며 성취감을 누릴 수 있는 고성능 스마트폰 모바일 다이어리 앱입니다.",
+    fullDescriptionKo: "매일 이루고 싶은 소망과 기도를 등록하고, 목표를 달성할 때마다 체크하며 성취감을 누릴 수 있는 고성능 스마트폰 모바일 다이어리 앱입니다.",
     fullDescriptionJa: "毎日達成したい願いと祈りを登録し、目標を達成するたびにチェックして達成感を味わえるスマートフォン日記アプリ。",
     fullDescriptionEn: "A specialized daily mobile tracker app for target habit confirmations and prayer achievements.",
     priceJpy: 100,
@@ -28,10 +31,15 @@ export const MOCK_APPS: AppItem[] = [
       '기도 달성 캘린더 및 일일 체크리스트',
       '안전 검증 무설치 직속 모바일 패키지'
     ],
+    featuresKo: [
+      '모바일 & 스마트폰 어플 원클릭 터치 실행',
+      '기도 달성 캘린더 및 일일 체크리스트',
+      '안전 검증 무설치 직속 모바일 패키지'
+    ],
     featuresJa: [
       'モバイル＆スマホアプリ ワンタッチ即時起動',
       '祈り達成カレンダー＆デイリーチェックリスト',
-      '安全検証済み モ바일直接ダウンロード'
+      '安全検証済み モバイル直接ダウンロード'
     ],
     featuresEn: [
       '1-Touch instant Mobile & Smartphone execution',
@@ -39,6 +47,7 @@ export const MOCK_APPS: AppItem[] = [
       'Verified secure mobile package download'
     ],
     usageGuide: '1. 다운로드 버튼을 눌러 앱 패키지를 받습니다.\n2. 스마트폰에서 앱을 실행하고 매일 기도 및 목표 달성을 체크하세요.',
+    usageGuideKo: '1. 다운로드 버튼을 눌러 앱 패키지를 받습니다.\n2. 스마트폰에서 앱을 실행하고 매일 기도 및 목표 달성을 체크하세요.',
     usageGuideJa: '1. ダウンロードボタンを押してアプリを保存します。\n2. スマホでアプリを起動し、毎日の目標をチェックしてください。',
     usageGuideEn: '1. Tap Download to save the app.\n2. Open the app on your mobile device and log daily achievements.',
     downloadUrl: '/apps_store/my_prayer/index.html',
@@ -49,12 +58,15 @@ export const MOCK_APPS: AppItem[] = [
   {
     id: 'app-8',
     title: "One Month's Todo (원 먼스 투두)",
+    titleKo: "One Month's Todo (원 먼스 투두 - 한 달 목표 달성)",
     titleJa: "One Month's Todo (1ヶ月ToDoカレンダー)",
     titleEn: "One Month's Todo (30-Day Goal Tracker)",
     shortDescription: "A month's Todo list. You can check how many times you carried out the targeted tasks.",
+    shortDescriptionKo: "한 달 동안의 투두 리스트. 목표 과제 달성 횟수를 한눈에 확인하고 기록해 보세요.",
     shortDescriptionJa: "1ヶ月のToDoリスト。目標タスクを実行した回数を一目で確認できます。",
     shortDescriptionEn: "A month's Todo list. Easily check how many times you carried out targeted tasks.",
     fullDescription: "한 달 동안의 투두 리스트 및 목표 달성 횟수를 카운트하고, 습관 형성을 도와주는 모바일 심플 할 일 관리 어플입니다.",
+    fullDescriptionKo: "한 달 동안의 투두 리스트 및 목표 달성 횟수를 카운트하고, 습관 형성을 도와주는 모바일 심플 할 일 관리 어플입니다.",
     fullDescriptionJa: "1ヶ月間のToDoリストと目標達成回数をカウントし、習慣形成をサポートするシンプルタスク管理アプリ。",
     fullDescriptionEn: "Keep track of your monthly habits and count task execution frequency easily.",
     priceJpy: 100,
@@ -73,6 +85,11 @@ export const MOCK_APPS: AppItem[] = [
       '직관적인 모바일 UI 다크 모드 지원',
       '독점 100엔 정찰제 영구 소장'
     ],
+    featuresKo: [
+      '30일 한 달 목표 카운터 & 체크 박스',
+      '직관적인 모바일 UI 다크 모드 지원',
+      '독점 100엔 정찰제 영구 소장'
+    ],
     featuresJa: [
       '30日間 1ヶ月目標カウンター＆チェックボックス',
       '直感的なモバイルUI ダークモード対応',
@@ -84,6 +101,7 @@ export const MOCK_APPS: AppItem[] = [
       'Exclusive flat $1 lifetime ownership'
     ],
     usageGuide: '1. 앱 실행 후 이번 달 목표 과제 3가지를 등록합니다.\n2. 하루 1회 완료 시 버튼을 터치하면 성취 그래프가 기록됩니다.',
+    usageGuideKo: '1. 앱 실행 후 이번 달 목표 과제 3가지를 등록합니다.\n2. 하루 1회 완료 시 버튼을 터치하면 성취 그래프가 기록됩니다.',
     usageGuideJa: '1. アプリ起動後、今月の目標タスクを登録します。\n2. 達成時にボタンをタップするとグラフが記録されます。',
     usageGuideEn: '1. Enter 3 target goals for the month.\n2. Tap daily upon completion to track monthly progress.',
     downloadUrl: '/apps_store/one_months_todo/index.html',
@@ -94,12 +112,15 @@ export const MOCK_APPS: AppItem[] = [
   {
     id: 'app-2',
     title: 'PDF AI Summarizer (원클릭 요약기)',
+    titleKo: 'PDF AI Summarizer (원클릭 요약기)',
     titleJa: 'PDF AI Summarizer (ワンクリック要約機)',
     titleEn: 'PDF AI Summarizer (1-Click Summarizer)',
     shortDescription: '50페이지 분량의 긴 PDF도 10초 만에 핵심 요약 노트로 작성해 드립니다.',
+    shortDescriptionKo: '50페이지 분량의 긴 PDF도 10초 만에 핵심 요약 노트로 작성해 드립니다.',
     shortDescriptionJa: '50ページの長いPDFも10秒で要約ノートに自動作成します。',
     shortDescriptionEn: 'Summarize 50-page PDFs into key bullet notes within 10 seconds.',
     fullDescription: '논문, 계약서, 보고서 등 복잡하고 긴 문서를 AI가 핵심 요약, 액션 아이템, 질문 답변 형태로 즉시 변환해 주는 오피스 생산성 극대화 앱입니다.',
+    fullDescriptionKo: '논문, 계약서, 보고서 등 복잡하고 긴 문서를 AI가 핵심 요약, 액션 아이템, 질문 답변 형태로 즉시 변환해 주는 오피스 생산성 극대화 앱입니다.',
     fullDescriptionJa: '論文、契約書、レポートなどの複雑な長文をAIが核心要約、アクションアイテム、Q&A形式に即時変換する生産性向上アプリ。',
     fullDescriptionEn: 'Convert research papers, contracts, and long reports into key takeaways and Q&A.',
     priceJpy: 100,
@@ -118,6 +139,11 @@ export const MOCK_APPS: AppItem[] = [
       '주요 인사이트 마인드맵 추출',
       '요약본 TXT, Markdown 및 PDF 저장 지원'
     ],
+    featuresKo: [
+      '한국어/영어/일본어 다국어 PDF 원문 요약',
+      '주요 인사이트 마인드맵 추출',
+      '요약본 TXT, Markdown 및 PDF 저장 지원'
+    ],
     featuresJa: [
       '日本語・英語・韓国語の多言語PDF本文要約',
       '主要インサイトのマインドマップ抽出',
@@ -128,6 +154,10 @@ export const MOCK_APPS: AppItem[] = [
       'Key insight mindmap extraction',
       'Export summaries to TXT, Markdown, and PDF'
     ],
+    usageGuide: '1. PDF 파일을 프로그램에 드래그하여 놓습니다.\n2. [원클릭 요약] 버튼을 누르면 10초 만에 핵심 요약본이 생성됩니다.',
+    usageGuideKo: '1. PDF 파일을 프로그램에 드래그하여 놓습니다.\n2. [원클릭 요약] 버튼을 누르면 10초 만에 핵심 요약본이 생성됩니다.',
+    usageGuideJa: '1. PDFファイルをアプリにドラッグ＆ドロップします。\n2. 「ワンクリック要約」ボタンを押すと、10秒で要約ノートが生成されます。',
+    usageGuideEn: '1. Drag and drop your PDF file into the app.\n2. Click [Summarize] to generate key takeaway notes in 10 seconds.',
     downloadUrl: '/apps_store/pdf_ai_summarizer/index.html',
     isPopular: true,
     updatedAt: '2026-07-29'
@@ -135,12 +165,15 @@ export const MOCK_APPS: AppItem[] = [
   {
     id: 'app-3',
     title: 'Prompt Magic Generator (프롬프트 연동기)',
+    titleKo: 'Prompt Magic Generator (프롬프트 연동기)',
     titleJa: 'Prompt Magic Generator (プロンプト生成器)',
-    titleEn: 'Prompt Magic Generator',
+    titleEn: 'Prompt Magic Generator (Prompt Engineering Tool)',
     shortDescription: '원하는 아이디어만 입력하면 최상의 AI 생성 프롬프트를 만들어줍니다.',
+    shortDescriptionKo: '원하는 아이디어만 입력하면 최상의 AI 생성 프롬프트를 만들어줍니다.',
     shortDescriptionJa: 'アイデアを入力するだけで最適なAIプロンプトを自動生成します。',
     shortDescriptionEn: 'Generate optimal Midjourney & ChatGPT prompts instantly.',
     fullDescription: 'AI 이미지 생성 및 LLM 활용 시 퀄리티를 300% 높여주는 프롬프트 엔지니어링 템플릿 자동 생성 도구입니다.',
+    fullDescriptionKo: 'AI 이미지 생성 및 LLM 활용 시 퀄리티를 300% 높여주는 프롬프트 엔지니어링 템플릿 자동 생성 도구입니다.',
     fullDescriptionJa: 'AI画像生成やLLM活用のクオリティを300%高めるプロンプトエンジニアリングツール。',
     fullDescriptionEn: 'Boost AI prompt quality by 300% with optimized prompt parameter presets.',
     priceJpy: 100,
@@ -159,6 +192,11 @@ export const MOCK_APPS: AppItem[] = [
       'ChatGPT 시나리오별 페르소나 프롬프트 라이브러리',
       '클립보드 원클릭 복사'
     ],
+    featuresKo: [
+      'Midjourney v6 스타일 파라미터 자동 조합',
+      'ChatGPT 시나리오별 페르소나 프롬프트 라이브러리',
+      '클립보드 원클릭 복사'
+    ],
     featuresJa: [
       'Midjourney v6スタイルパラメータの自動組み合わせ',
       'ChatGPTシナリオ別ペルソナプロンプトライブラリ',
@@ -169,18 +207,25 @@ export const MOCK_APPS: AppItem[] = [
       'ChatGPT scenario persona prompt library',
       'One-click clipboard copy'
     ],
+    usageGuide: '1. 키워드나 원하는 콘셉트를 입력창에 적습니다.\n2. 스타일 옵션을 체크하고 [프롬프트 생성]을 누르면 즉시 완성됩니다.',
+    usageGuideKo: '1. 키워드나 원하는 콘셉트를 입력창에 적습니다.\n2. 스타일 옵션을 체크하고 [프롬프트 생성]을 누르면 즉시 완성됩니다.',
+    usageGuideJa: '1. キーワードやコンセプトを入力欄に記述します。\n2. スタイルを選択して「プロンプト生成」を押すと完成します。',
+    usageGuideEn: '1. Enter keywords or target concepts.\n2. Select styles and click [Generate Prompt] for instant output.',
     downloadUrl: '/apps_store/prompt_magic_generator/index.html',
     updatedAt: '2026-07-20'
   },
   {
     id: 'app-4',
     title: 'Auto File Organizer Pro (스마트 폴더 정리)',
+    titleKo: 'Auto File Organizer Pro (스마트 폴더 정리)',
     titleJa: 'Auto File Organizer Pro (フォルダ自動整理)',
-    titleEn: 'Auto File Organizer Pro',
+    titleEn: 'Auto File Organizer Pro (Smart Folder Sort)',
     shortDescription: '지저분한 다운로드 폴더를 날짜, 확장자, 내용별로 1초 만에 정리합니다.',
+    shortDescriptionKo: '지저분한 다운로드 폴더를 날짜, 확장자, 내용별로 1초 만에 정리합니다.',
     shortDescriptionJa: '散らかったダウンロードフォルダを拡張子や日付別に1秒で自動整理。',
     shortDescriptionEn: 'Sort desktop & download folder clutter in 1 second by extensions.',
     fullDescription: '어지럽혀진 바탕화면과 다운로드 폴더를 AI 카테고리 분류 규칙으로 정돈해 주는 경량 자동화 유틸리티 프로그램입니다.',
+    fullDescriptionKo: '어지럽혀진 바탕화면과 다운로드 폴더를 AI 카테고리 분류 규칙으로 정돈해 주는 경량 자동화 유틸리티 프로그램입니다.',
     fullDescriptionJa: 'デスクトップとダウンロードフォルダをAIカテゴリ分類でスッキリ整頓する軽量自動化ユーティリティ。',
     fullDescriptionEn: 'Keep your desktop organized automatically with AI category file rules.',
     priceJpy: 100,
@@ -199,6 +244,11 @@ export const MOCK_APPS: AppItem[] = [
       '중복 파일 탐지 및 용량 확보',
       '백그라운드 자동 감지 실행 옵션'
     ],
+    featuresKo: [
+      '확장자 및 파일 이름 분석 자동 폴더링',
+      '중복 파일 탐지 및 용량 확보',
+      '백그라운드 자동 감지 실행 옵션'
+    ],
     featuresJa: [
       '拡張子・ファイル名解析による自動フォルダ分け',
       '重複ファイルの検知とディスク容量確保',
@@ -209,6 +259,10 @@ export const MOCK_APPS: AppItem[] = [
       'Duplicate file detection to free disk space',
       'Background auto-monitoring options'
     ],
+    usageGuide: '1. 정리하고 싶은 다운로드 폴더 경로를 설정합니다.\n2. [자동 정리 실행]을 누르면 1초 만에 종류별 폴더가 생성되고 정리됩니다.',
+    usageGuideKo: '1. 정리하고 싶은 다운로드 폴더 경로를 설정합니다.\n2. [자동 정리 실행]을 누르면 1초 만에 종류별 폴더가 생성되고 정리됩니다.',
+    usageGuideJa: '1. 整理したいフォルダパスを指定します。\n2. 「自動整理」を押すと1秒で拡張子別に自動分類されます。',
+    usageGuideEn: '1. Select your target download folder path.\n2. Click [Auto Sort] to organize clutter by file types in 1 second.',
     downloadUrl: '/apps_store/auto_file_organizer/index.html',
     isPopular: true,
     updatedAt: '2026-07-25'
@@ -216,12 +270,15 @@ export const MOCK_APPS: AppItem[] = [
   {
     id: 'app-5',
     title: 'Context Native Translator (자연스러운 맥락 번역)',
+    titleKo: 'Context Native Translator (자연스러운 맥락 번역)',
     titleJa: 'Context Native Translator (自然な文脈翻訳)',
-    titleEn: 'Context Native Translator',
+    titleEn: 'Context Native Translator (Contextual Translation)',
     shortDescription: '직역이 아닌 상황과 문맥에 딱 맞는 자연스러운 번역을 제공합니다.',
+    shortDescriptionKo: '직역이 아닌 상황과 문맥에 딱 맞는 자연스러운 번역을 제공합니다.',
     shortDescriptionJa: '直訳ではなく状況と文脈にピッタリな自然な翻訳を提供します。',
     shortDescriptionEn: 'Native contextual translations for business and casual tone.',
     fullDescription: '단순 번역기를 넘어 비즈니스 메일, 캐주얼 대화, 학술 논문 등 어조를 선택하여 자연스러운 현지어 감성으로 번역해 줍니다.',
+    fullDescriptionKo: '단순 번역기를 넘어 비즈니스 메일, 캐주얼 대화, 학술 논문 등 어조를 선택하여 자연스러운 현지어 감성으로 번역해 줍니다.',
     fullDescriptionJa: 'ビジネスメール、日常会話、論文などニュアンスを選択して自然な現地語感で翻訳します。',
     fullDescriptionEn: 'Translate beyond word-for-word: select tone (business, casual, academic).',
     priceJpy: 100,
@@ -240,6 +297,11 @@ export const MOCK_APPS: AppItem[] = [
       '비즈니스/캐주얼/학술 어조 변환',
       '문맥 설명 툴팁 및 유사 표현 제시'
     ],
+    featuresKo: [
+      '단축키 핫키 팝업 번역',
+      '비즈니스/캐주얼/학술 어조 변환',
+      '문맥 설명 툴팁 및 유사 표현 제시'
+    ],
     featuresJa: [
       'ショートカットキーポップアップ即時翻訳',
       'ビジネス・カジュアル・論文のトーン変換',
@@ -250,6 +312,10 @@ export const MOCK_APPS: AppItem[] = [
       'Business, casual, academic tone switching',
       'Context explanation tooltips and synonyms'
     ],
+    usageGuide: '1. 번역하고 싶은 텍스트를 드래그 선택 후 단축키(Alt+T)를 누릅니다.\n2. 상황에 맞는 어조(비즈니스/일상)를 선택하면 자연스러운 뉘앙스로 번역됩니다.',
+    usageGuideKo: '1. 번역하고 싶은 텍스트를 드래그 선택 후 단축키(Alt+T)를 누릅니다.\n2. 상황에 맞는 어조(비즈니스/일상)를 선택하면 자연스러운 뉘앙스로 번역됩니다.',
+    usageGuideJa: '1. 翻訳したいテキストを選択し、ショートカットキー(Alt+T)を押します。\n2. トーン(ビジネス/日常)を選択すると、自然なニュアンスで翻訳されます。',
+    usageGuideEn: '1. Select text and press shortcut hotkey (Alt+T).\n2. Select tone (Business/Casual) to get native contextual translation.',
     downloadUrl: '/apps_store/context_native_translator/index.html',
     updatedAt: '2026-07-30'
   }
