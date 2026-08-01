@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { MOCK_APPS } from '@/data/mockApps';
 import { AppCard } from '@/components/AppCard';
 import { AppDetailModal } from '@/components/AppDetailModal';
@@ -11,6 +11,7 @@ import { Search, Sparkles, Filter, SlidersHorizontal } from 'lucide-react';
 
 const CATEGORIES: AppCategory[] = [
   '전체',
+  '모바일 앱',
   'AI 생산성',
   '디자인 & 미디어',
   '개발 & 툴',
@@ -25,15 +26,53 @@ export default function AppsCatalogPage() {
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
-  React.useEffect(() => {
+  // Load custom/uploaded apps from localStorage on client mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedCustom = localStorage.getItem('app100yen_custom_apps');
+      if (savedCustom) {
+        try {
+          const customApps: AppItem[] = JSON.parse(savedCustom);
+          setAppList([...customApps, ...MOCK_APPS]);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  }, []);
+
+  const saveCustomAppsToStorage = (newList: AppItem[]) => {
+    const customOnly = newList.filter((a) => a.id.startsWith('app-custom-'));
+    localStorage.setItem('app100yen_custom_apps', JSON.stringify(customOnly));
+  };
+
+  useEffect(() => {
     const handleAppCreated = (e: any) => {
-      if (e.detail) setAppList((prev) => [e.detail, ...prev]);
+      if (e.detail) {
+        setAppList((prev) => {
+          const updated = [e.detail, ...prev];
+          saveCustomAppsToStorage(updated);
+          return updated;
+        });
+      }
     };
     const handleAppUpdated = (e: any) => {
-      if (e.detail) setAppList((prev) => prev.map((a) => (a.id === e.detail.id ? e.detail : a)));
+      if (e.detail) {
+        setAppList((prev) => {
+          const updated = prev.map((a) => (a.id === e.detail.id ? e.detail : a));
+          saveCustomAppsToStorage(updated);
+          return updated;
+        });
+      }
     };
     const handleAppDeleted = (e: any) => {
-      if (e.detail) setAppList((prev) => prev.filter((a) => a.id !== e.detail));
+      if (e.detail) {
+        setAppList((prev) => {
+          const updated = prev.filter((a) => a.id !== e.detail);
+          saveCustomAppsToStorage(updated);
+          return updated;
+        });
+      }
     };
 
     window.addEventListener('app-created', handleAppCreated);
@@ -66,52 +105,52 @@ export default function AppsCatalogPage() {
       {/* Header Banner */}
       <div className="mb-10 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-slate-800/80 pb-8">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-400 mb-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-bold text-amber-300 mb-3">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>{t.brandTitle}</span>
+            <span>100엔 정찰제 디지털 앱 스토어</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-white">
-            {t.navApps}
+            {t.navApps} 카탈로그
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            {t.heroDesc}
+          <p className="text-sm text-slate-400 mt-2">
+            100엔으로 즉시 다운로드 가능한 고품질 유틸리티 어플 라인업입니다.
           </p>
         </div>
 
-        {/* Search Input */}
+        {/* Search Bar */}
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
+            placeholder={t.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t.searchPlaceholder}
-            className="w-full rounded-2xl bg-slate-900 border border-slate-800 pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-rose-500 focus:outline-none transition-colors"
+            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-rose-500 focus:outline-none transition-colors"
           />
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div className="mb-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        <SlidersHorizontal className="h-4 w-4 text-slate-500 shrink-0 mr-1" />
-        {CATEGORIES.map((cat) => (
+      {/* Category Filter Pills */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <Filter className="h-4 w-4 text-slate-500 shrink-0 mr-1" />
+        {CATEGORIES.map((category) => (
           <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-all ${
-              selectedCategory === cat
-                ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30'
-                : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
+            key={category}
+            onClick={() => setSelectedCategory(category)}
+            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+              selectedCategory === category
+                ? 'bg-rose-600 text-white border-rose-500 shadow-md shadow-rose-600/20'
+                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
             }`}
           >
-            {cat === '전체' ? t.categoryAll : cat}
+            {category}
           </button>
         ))}
       </div>
 
-      {/* Grid of Apps */}
+      {/* Apps Grid Catalog */}
       {filteredApps.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredApps.map((app) => (
             <AppCard
               key={app.id}
@@ -121,18 +160,10 @@ export default function AppsCatalogPage() {
           ))}
         </div>
       ) : (
-        <div className="py-20 text-center rounded-3xl border border-slate-800/80 bg-slate-900/40">
-          <Filter className="mx-auto h-12 w-12 text-slate-600 mb-3" />
-          <h3 className="text-lg font-bold text-white mb-1">No apps found</h3>
-          <button
-            onClick={() => {
-              setSelectedCategory('전체');
-              setSearchQuery('');
-            }}
-            className="px-4 py-2 text-xs font-semibold text-rose-400 bg-rose-500/10 rounded-xl border border-rose-500/20 mt-2"
-          >
-            Reset Filters
-          </button>
+        <div className="py-20 text-center rounded-3xl border border-slate-800 bg-slate-900/40">
+          <SlidersHorizontal className="mx-auto h-12 w-12 text-slate-600 mb-3" />
+          <h3 className="text-base font-bold text-white mb-1">검색된 어플리케이션이 없습니다</h3>
+          <p className="text-xs text-slate-400">다른 검색어나 카테고리를 선택해 보세요.</p>
         </div>
       )}
 
@@ -141,6 +172,16 @@ export default function AppsCatalogPage() {
         <AppDetailModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}
+          onAppUpdated={(updated) => {
+            const newList = appList.map((a) => (a.id === updated.id ? updated : a));
+            setAppList(newList);
+            saveCustomAppsToStorage(newList);
+          }}
+          onAppDeleted={(appId) => {
+            const newList = appList.filter((a) => a.id !== appId);
+            setAppList(newList);
+            saveCustomAppsToStorage(newList);
+          }}
         />
       )}
       </main>

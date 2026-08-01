@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { AppCard } from '@/components/AppCard';
 import { AppDetailModal } from '@/components/AppDetailModal';
@@ -17,28 +17,61 @@ export default function Home() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const { t } = useLanguage();
 
+  // Load custom/uploaded apps from localStorage on client mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedCustom = localStorage.getItem('app100yen_custom_apps');
+      if (savedCustom) {
+        try {
+          const customApps: AppItem[] = JSON.parse(savedCustom);
+          // Combine custom apps on top of mock apps
+          setAppList([...customApps, ...MOCK_APPS]);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  }, []);
+
+  const saveCustomAppsToStorage = (newList: AppItem[]) => {
+    const customOnly = newList.filter((a) => a.id.startsWith('app-custom-'));
+    localStorage.setItem('app100yen_custom_apps', JSON.stringify(customOnly));
+  };
+
   const handleAppCreated = (newApp: AppItem) => {
-    setAppList([newApp, ...appList]);
+    const updated = [newApp, ...appList];
+    setAppList(updated);
+    saveCustomAppsToStorage(updated);
   };
 
   const handleAppUpdated = (updatedApp: AppItem) => {
-    setAppList(appList.map((a) => (a.id === updatedApp.id ? updatedApp : a)));
+    const updated = appList.map((a) => (a.id === updatedApp.id ? updatedApp : a));
+    setAppList(updated);
+    saveCustomAppsToStorage(updated);
   };
 
   const handleAppDeleted = (appId: string) => {
-    setAppList(appList.filter((a) => a.id !== appId));
+    const updated = appList.filter((a) => a.id !== appId);
+    setAppList(updated);
+    saveCustomAppsToStorage(updated);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const onCreated = (e: any) => {
+      if (e.detail) handleAppCreated(e.detail);
+    };
     const onUpdated = (e: any) => {
       if (e.detail) handleAppUpdated(e.detail);
     };
     const onDeleted = (e: any) => {
       if (e.detail) handleAppDeleted(e.detail);
     };
+
+    window.addEventListener('app-created', onCreated);
     window.addEventListener('app-updated', onUpdated);
     window.addEventListener('app-deleted', onDeleted);
     return () => {
+      window.removeEventListener('app-created', onCreated);
       window.removeEventListener('app-updated', onUpdated);
       window.removeEventListener('app-deleted', onDeleted);
     };
