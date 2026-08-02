@@ -56,6 +56,9 @@ export interface TranslationSet {
   uploadModalSub: string;
   uploadModalEditTitle: string;
   uploadModalEditSub: string;
+  thumbnailLabel: string;
+  thumbnailDropText: string;
+  thumbnailAutoNotice: string;
   appNameLabel: string;
   appNamePlaceholder: string;
   categoryLabel: string;
@@ -151,6 +154,9 @@ const translations: Record<Language, TranslationSet> = {
     uploadModalSub: '100円ショップに新しいアプリを登録して公開します',
     uploadModalEditTitle: 'アプリ情報の編集',
     uploadModalEditSub: '登録済みアプリの情報と説明書を編集します',
+    thumbnailLabel: 'アプリの代表サムネイル画像 (任意)',
+    thumbnailDropText: 'クリックまたはドラッグして画像を選択 (.PNG, .JPG, .WebP)',
+    thumbnailAutoNotice: '※画像をアップロードしない場合、カテゴリに合った画像が自動設定されます。',
     appNameLabel: 'アプリ名',
     appNamePlaceholder: '例: One Month\'s Todo / スマホカレンダー Pro',
     categoryLabel: 'カテゴリ',
@@ -244,6 +250,9 @@ const translations: Record<Language, TranslationSet> = {
     uploadModalSub: '100엔 마켓에 새로운 어플을 등록하여 출시합니다',
     uploadModalEditTitle: '어플 정보 수정',
     uploadModalEditSub: '등록된 어플의 정보와 설명서를 수정합니다',
+    thumbnailLabel: '어플 대표 썸네일 이미지 (선택)',
+    thumbnailDropText: '클릭 또는 드래그하여 이미지 선택 (.PNG, .JPG, .WebP)',
+    thumbnailAutoNotice: '※ 이미지를 첨부하지 않으면 카테고리에 어울리는 고급 이미지가 자동 지정됩니다.',
     appNameLabel: '어플 이름',
     appNamePlaceholder: '예: One Month\'s Todo / 스마트 캘린더 Pro',
     categoryLabel: '카테고리',
@@ -337,6 +346,9 @@ const translations: Record<Language, TranslationSet> = {
     uploadModalSub: 'Publish your new application on $1 App Shop',
     uploadModalEditTitle: 'Edit App Details',
     uploadModalEditSub: 'Update app details and manual instructions',
+    thumbnailLabel: 'App Thumbnail Cover Image (Optional)',
+    thumbnailDropText: 'Click or drag image file (.PNG, .JPG, .WebP)',
+    thumbnailAutoNotice: '※ If no image is provided, a matching category image is assigned automatically.',
     appNameLabel: 'App Name',
     appNamePlaceholder: 'e.g. One Month\'s Todo / Smart Calendar Pro',
     categoryLabel: 'Category',

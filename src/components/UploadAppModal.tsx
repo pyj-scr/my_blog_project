@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen } from 'lucide-react';
+import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen, Image as ImageIcon, Trash2, RefreshCw } from 'lucide-react';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
@@ -12,6 +12,17 @@ interface UploadAppModalProps {
   onAppUpdated?: (updatedApp: AppItem) => void;
   editApp?: AppItem | null;
 }
+
+// Category fallback automatic high quality images
+const DEFAULT_CATEGORY_IMAGES: Record<AppCategory, string> = {
+  '모바일 앱': 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
+  'AI 생산성': 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&auto=format&fit=crop&q=80',
+  '디자인 & 미디어': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80',
+  '개발 & 툴': 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80',
+  '자동화': 'https://images.unsplash.com/photo-1544396821-4dd40b938ad3?w=600&auto=format&fit=crop&q=80',
+  '유틸리티': 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&auto=format&fit=crop&q=80',
+  '전체': 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
+};
 
 export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   onClose,
@@ -28,9 +39,9 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   const [usageGuide, setUsageGuide] = useState('');
   const [selectedOS, setSelectedOS] = useState<string[]>(['Android', 'iOS']);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [thumbnailUrl, setThumbnailUrl] = useState(
-    'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80'
-  );
+  
+  // Thumbnail State
+  const [customImage, setCustomImage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -42,7 +53,9 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
       setFullDesc(editApp.fullDescription);
       setUsageGuide(editApp.usageGuide || '');
       setSelectedOS(editApp.os as string[]);
-      if (editApp.thumbnailUrl) setThumbnailUrl(editApp.thumbnailUrl);
+      if (editApp.thumbnailUrl) {
+        setCustomImage(editApp.thumbnailUrl);
+      }
     }
   }, [editApp]);
 
@@ -54,11 +67,27 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     }
   };
 
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        if (uploadEvent.target?.result) {
+          setCustomImage(uploadEvent.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleFileDrop = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFileName(e.target.files[0].name);
     }
   };
+
+  // Get final thumbnail URL (Custom or Category Default)
+  const finalThumbnail = customImage || DEFAULT_CATEGORY_IMAGES[category] || DEFAULT_CATEGORY_IMAGES['유틸리티'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +104,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         usageGuide: usageGuide,
         category: category,
         os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
-        thumbnailUrl: thumbnailUrl,
+        thumbnailUrl: finalThumbnail,
       };
 
       const translated = await asyncTranslateApp(rawUpdated);
@@ -102,7 +131,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         rating: 5.0,
         reviewsCount: 1,
         downloads: 1,
-        thumbnailUrl: thumbnailUrl,
+        thumbnailUrl: finalThumbnail,
         features: [
           '모바일 & 스마트폰 어플 원클릭 실행',
           '독점 100엔 정찰제 다운로드',
@@ -164,6 +193,60 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
             
+            {/* Custom App Thumbnail Cover Upload Section (Before Title) */}
+            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                  <ImageIcon className="h-4 w-4" />
+                  <span>{t.thumbnailLabel}</span>
+                </label>
+                {customImage && (
+                  <button
+                    type="button"
+                    onClick={() => setCustomImage(null)}
+                    className="flex items-center gap-1 text-[11px] font-bold text-rose-400 hover:text-rose-300"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span>초기화 (자동 이미지)</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Image Preview & Upload Input */}
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="relative h-28 w-full sm:w-44 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shrink-0">
+                  <img
+                    src={finalThumbnail}
+                    alt="App Preview"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute top-2 left-2 rounded-full bg-slate-950/80 px-2 py-0.5 text-[9px] font-bold text-emerald-400 border border-emerald-500/30">
+                    {customImage ? '커스텀 이미지' : '자동 추천 이미지'}
+                  </div>
+                </div>
+
+                <div className="flex-1 w-full">
+                  <div className="relative border-2 border-dashed border-slate-800 hover:border-amber-500/80 rounded-xl bg-slate-900/50 p-4 text-center cursor-pointer transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFileChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div className="flex flex-col items-center justify-center space-y-1 pointer-events-none">
+                      <Upload className="h-4 w-4 text-amber-400" />
+                      <span className="text-xs text-slate-200 font-bold">
+                        {customImage ? '다른 이미지로 변경' : t.thumbnailDropText}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-2">
+                    {t.thumbnailAutoNotice}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Title */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
