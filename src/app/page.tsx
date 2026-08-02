@@ -9,39 +9,30 @@ import { Navbar } from '@/components/Navbar';
 import { AppItem } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { ArrowRight, Sparkles, Zap, ShieldCheck, Gift, Layers } from 'lucide-react';
-import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
+import { autoTranslateApp } from '@/utils/autoTranslateApp';
 
 export default function Home() {
   const [appList, setAppList] = useState<AppItem[]>(() => MOCK_APPS.map(autoTranslateApp));
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedApps = localStorage.getItem('app100yen_modified_apps');
-      if (savedApps) {
-        try {
-          const parsed: AppItem[] = JSON.parse(savedApps);
-          if (parsed && parsed.length > 0) {
-            const mockIds = MOCK_APPS.map((m) => m.id);
-            const customOnly = parsed.filter((a) => !mockIds.includes(a.id));
-            
-            Promise.all(customOnly.map(asyncTranslateApp)).then((translatedCustoms) => {
-              const freshList = [...translatedCustoms, ...MOCK_APPS].map(autoTranslateApp);
-              setAppList(freshList);
-              localStorage.setItem('app100yen_modified_apps', JSON.stringify(freshList));
-            });
-          }
-        } catch (err) {
-          console.error(err);
+  const fetchGlobalApps = async () => {
+    try {
+      const res = await fetch('/api/apps');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.apps && data.apps.length > 0) {
+          setAppList(data.apps.map(autoTranslateApp));
         }
       }
+    } catch (err) {
+      console.warn('Failed to load apps from global server API in Home', err);
     }
-  }, []);
-
-  const saveAppsToStorage = (newList: AppItem[]) => {
-    localStorage.setItem('app100yen_modified_apps', JSON.stringify(newList));
   };
+
+  useEffect(() => {
+    fetchGlobalApps();
+  }, []);
 
   const featuredApps = appList.slice(0, 6);
 
@@ -176,15 +167,9 @@ export default function Home() {
         <AppDetailModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}
-          onAppUpdated={(updated) => {
-            const newList = appList.map((a) => (a.id === updated.id ? autoTranslateApp(updated) : a));
-            setAppList(newList);
-            saveAppsToStorage(newList);
-          }}
+          onAppUpdated={() => fetchGlobalApps()}
           onAppDeleted={(appId) => {
-            const newList = appList.filter((a) => a.id !== appId);
-            setAppList(newList);
-            saveAppsToStorage(newList);
+            fetch('/api/apps?id=' + appId, { method: 'DELETE' }).then(() => fetchGlobalApps());
           }}
         />
       )}

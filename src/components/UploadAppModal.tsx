@@ -100,7 +100,6 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
 
     setIsTranslating(true);
 
-    // Prepare App Item with direct user title overrides
     const baseApp: AppItem = {
       id: editApp ? editApp.id : `app-custom-${Date.now()}`,
       title: title,
@@ -146,22 +145,41 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
       updatedAt: new Date().toISOString().split('T')[0],
     };
 
-    // Run async enrichment only if multi-lang fields are empty
+    // Enrich with dynamic translation
     const translated = await asyncTranslateApp(baseApp);
     
-    // Explicitly guarantee user entered title overrides are preserved 100%
     if (titleJa && titleJa.trim() !== '') translated.titleJa = titleJa;
     if (titleEn && titleEn.trim() !== '') translated.titleEn = titleEn;
     if (titleKo && titleKo.trim() !== '') translated.titleKo = titleKo;
 
-    setIsTranslating(false);
+    // Send to Global Server API Database Route (Real-Time Worldwide Sync)
+    try {
+      const endpoint = '/api/apps';
+      const method = editApp ? 'PUT' : 'POST';
+      const res = await fetch(endpoint, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(translated),
+      });
 
-    if (editApp && onAppUpdated) {
-      onAppUpdated(translated);
-    } else if (onAppCreated) {
-      onAppCreated(translated);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.app) {
+          if (editApp && onAppUpdated) {
+            onAppUpdated(data.app);
+          } else if (onAppCreated) {
+            onAppCreated(data.app);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Server sync failed:', err);
+      // Fallback local update
+      if (editApp && onAppUpdated) onAppUpdated(translated);
+      else if (onAppCreated) onAppCreated(translated);
     }
 
+    setIsTranslating(false);
     setIsSuccess(true);
     setTimeout(() => {
       onClose();
@@ -204,7 +222,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             <h3 className="text-xl font-extrabold text-white">
               {editApp ? '어플 정보가 수정되었습니다!' : '어플 등록이 완료되었습니다!'}
             </h3>
-            <p className="text-sm text-slate-300">상점 카탈로그 및 상세페이지에 반영되었습니다.</p>
+            <p className="text-sm text-slate-300">전 세계 모든 사용자 스토어에 실시간 등록되었습니다.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
@@ -296,7 +314,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
               {showAdvancedTitleEdit && (
                 <div className="mt-3 rounded-2xl bg-slate-950 border border-indigo-500/30 p-3.5 space-y-3 animate-fadeIn">
                   <p className="text-[11px] font-bold text-indigo-300">
-                    ※ 원하시는 일본어/영어/한국어 표기법을 직접 수정하시면 AI 자동 번역보다 최우선하여 적용됩니다.
+                    ※ 원하시는 일본어/영어/한국어 표기법을 직접 수정하시면 AI 자동 번역보다 최우선하여 전 세계 적용됩니다.
                   </p>
                   
                   <div>

@@ -8,7 +8,7 @@ import { AppItem, AppCategory } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { Navbar } from '@/components/Navbar';
 import { Search, Sparkles, Filter, SlidersHorizontal } from 'lucide-react';
-import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
+import { autoTranslateApp } from '@/utils/autoTranslateApp';
 
 const CATEGORIES: AppCategory[] = [
   '전체',
@@ -27,63 +27,29 @@ export default function AppsCatalogPage() {
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
-  // Load custom/modified apps from localStorage on client mount & merge with latest MOCK_APPS
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedApps = localStorage.getItem('app100yen_modified_apps');
-      if (savedApps) {
-        try {
-          const parsed: AppItem[] = JSON.parse(savedApps);
-          if (parsed && parsed.length > 0) {
-            const mockIds = MOCK_APPS.map((m) => m.id);
-            const customOnly = parsed.filter((a) => !mockIds.includes(a.id));
-            
-            // Enrich all custom apps with dynamic AI translation
-            Promise.all(customOnly.map(asyncTranslateApp)).then((translatedCustoms) => {
-              const freshList = [...translatedCustoms, ...MOCK_APPS].map(autoTranslateApp);
-              setAppList(freshList);
-              localStorage.setItem('app100yen_modified_apps', JSON.stringify(freshList));
-            });
-          }
-        } catch (err) {
-          console.error(err);
+  // Load apps from global server API route so all browsers worldwide display 100% identical real-time data
+  const fetchGlobalApps = async () => {
+    try {
+      const res = await fetch('/api/apps');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.apps && data.apps.length > 0) {
+          setAppList(data.apps.map(autoTranslateApp));
         }
       }
+    } catch (err) {
+      console.warn('Failed to load apps from global server API, fallback to default', err);
     }
-  }, []);
-
-  const saveAppsToStorage = (newList: AppItem[]) => {
-    localStorage.setItem('app100yen_modified_apps', JSON.stringify(newList));
   };
 
   useEffect(() => {
-    const handleAppCreated = (e: any) => {
-      if (e.detail) {
-        setAppList((prev) => {
-          const updated = [autoTranslateApp(e.detail), ...prev];
-          saveAppsToStorage(updated);
-          return updated;
-        });
-      }
-    };
-    const handleAppUpdated = (e: any) => {
-      if (e.detail) {
-        setAppList((prev) => {
-          const updated = prev.map((a) => (a.id === e.detail.id ? autoTranslateApp(e.detail) : a));
-          saveAppsToStorage(updated);
-          return updated;
-        });
-      }
-    };
-    const handleAppDeleted = (e: any) => {
-      if (e.detail) {
-        setAppList((prev) => {
-          const updated = prev.filter((a) => a.id !== e.detail);
-          saveAppsToStorage(updated);
-          return updated;
-        });
-      }
-    };
+    fetchGlobalApps();
+  }, []);
+
+  useEffect(() => {
+    const handleAppCreated = () => fetchGlobalApps();
+    const handleAppUpdated = () => fetchGlobalApps();
+    const handleAppDeleted = () => fetchGlobalApps();
 
     window.addEventListener('app-created', handleAppCreated);
     window.addEventListener('app-updated', handleAppUpdated);
@@ -195,15 +161,9 @@ export default function AppsCatalogPage() {
         <AppDetailModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}
-          onAppUpdated={(updated) => {
-            const newList = appList.map((a) => (a.id === updated.id ? autoTranslateApp(updated) : a));
-            setAppList(newList);
-            saveAppsToStorage(newList);
-          }}
+          onAppUpdated={() => fetchGlobalApps()}
           onAppDeleted={(appId) => {
-            const newList = appList.filter((a) => a.id !== appId);
-            setAppList(newList);
-            saveAppsToStorage(newList);
+            fetch('/api/apps?id=' + appId, { method: 'DELETE' }).then(() => fetchGlobalApps());
           }}
         />
       )}
