@@ -2,6 +2,114 @@ import { AppItem } from '@/types/app';
 
 export const MOCK_APPS: AppItem[] = [
   {
+    id: 'app-9',
+    title: "Prayer List (그룹용 기도 리스트)",
+    titleKo: "Prayer List (그룹용 기도 리스트)",
+    titleJa: "Prayer List (グループ用 お祈りリスト)",
+    titleEn: "Prayer List (Group Edition)",
+    shortDescription: "7일간의 기도 리스트 서로를 위해서 기도 하고 서로의 기도 응답을 확인하세요.",
+    shortDescriptionKo: "7일간의 기도 리스트 서로를 위해서 기도 하고 서로의 기도 응답을 확인하세요.",
+    shortDescriptionJa: "7日間の祈りリスト。お互いのために祈り合い、祈りの応答を確認しましょう。",
+    shortDescriptionEn: "7-day prayer list. Pray for one another and check each other's prayer answers.",
+    fullDescription: "7인의 그룹 멤버가 함께 기도 제목을 공유하고 매일 응답받은 기도를 체크할 수 있는 그룹 전용 기도 체크리스트 어플입니다.",
+    fullDescriptionKo: "7인의 그룹 멤버가 함께 기도 제목을 공유하고 매일 응답받은 기도를 체크할 수 있는 그룹 전용 기도 체크리스트 어플입니다.",
+    fullDescriptionJa: "7人のグループメンバーが一緒に祈りの題目を共有し、毎日の答えをチェックできるグループ専用のお祈りアプリ。",
+    fullDescriptionEn: "A group prayer list app for 7 members to share and log answered prayers daily.",
+    priceJpy: 100,
+    priceKrw: 1000,
+    priceUsd: 1.00,
+    category: '유틸리티',
+    version: 'v1.0.0',
+    size: '10.0 MB',
+    os: ['iOS', 'Android', 'Web'],
+    rating: 5.0,
+    reviewsCount: 1,
+    downloads: 1,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
+    features: [
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
+    ],
+    featuresKo: [
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
+    ],
+    featuresJa: [
+      'モバイル＆スマホアプリ ワンタッチ即時起動',
+      '独占100円一律定額ダウンロード',
+      '安全検証済み インストール不要パッケージ'
+    ],
+    featuresEn: [
+      '1-Touch instant Mobile & Smartphone execution',
+      'Exclusive flat $1 download',
+      'Verified secure no-install package'
+    ],
+    usageGuide: 'iPhone의 설치 방법 (공통)\n1. Safari로 다음의 주소 중 목적의 앱 주소를 엽니다.\n2. 화면 하단 공유 버튼을 누릅니다.\n3. 메뉴에서 [홈 화면에 추가]를 선택합니다.',
+    usageGuideKo: 'iPhone의 설치 방법 (공통)\n1. Safari로 다음의 주소 중 목적의 앱 주소를 엽니다.\n2. 화면 하단 공유 버튼을 누릅니다.\n3. 메뉴에서 [홈 화면에 추가]를 선택합니다.',
+    usageGuideJa: 'iPhoneのインストール方法（共通）\n1. Safariで以下のアドレスのうち、目的のアプリアドレスを開きます。（他のブラウザではありません - 必ずSafari）\n2. 画面下部（または上部）共有ボタンを押します。\n3. メニューから「ホーム画面に追加」を選択します。',
+    usageGuideEn: 'iPhone Installation Guide:\n1. Open app URL in Safari browser.\n2. Tap Share button.\n3. Select Add to Home Screen.',
+    downloadUrl: '/apps_store/my_prayer/index.html',
+    isPopular: true,
+    isNew: true,
+    updatedAt: '2026-08-02'
+  },
+  {
+    id: 'app-10',
+    title: "나의 기도 (iPhone용 기도 캘린더)",
+    titleKo: "나의 기도 (iPhone용 기도 캘린더)",
+    titleJa: "私の祈り (iPhone専用 お祈りカレンダー)",
+    titleEn: "My Prayer (iPhone Edition)",
+    shortDescription: "My Prayer 나의 기도가 이루어짐을 확인해 보세요.",
+    shortDescriptionKo: "My Prayer 나의 기도가 이루어짐을 확인해 보세요.",
+    shortDescriptionJa: "My Prayer 私のお祈りがなされることを確認してください。",
+    shortDescriptionEn: "Confirm your daily prayer answers on iPhone.",
+    fullDescription: "iPhone 전용 기도 응답 및 목표 달성 캘린더 다이어리 어플입니다.",
+    fullDescriptionKo: "iPhone 전용 기도 응답 및 목표 달성 캘린더 다이어리 어플입니다.",
+    fullDescriptionJa: "iPhone専用のお祈り成就および目標達成カレンダーアプリ。",
+    fullDescriptionEn: "Specialized iPhone edition prayer log calendar.",
+    priceJpy: 100,
+    priceKrw: 1000,
+    priceUsd: 1.00,
+    category: '유틸리티',
+    version: 'v1.0.0',
+    size: '10.0 MB',
+    os: ['iOS', 'Web'],
+    rating: 5.0,
+    reviewsCount: 1,
+    downloads: 1,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
+    features: [
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
+    ],
+    featuresKo: [
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
+    ],
+    featuresJa: [
+      'モバイル＆スマホアプリ ワンタッチ即時起動',
+      '独占100円一律定額ダウンロード',
+      '安全検証済み インストール不要パッケージ'
+    ],
+    featuresEn: [
+      '1-Touch instant Mobile & Smartphone execution',
+      'Exclusive flat $1 download',
+      'Verified secure no-install package'
+    ],
+    usageGuide: 'iPhone의 설치 방법 (공통)\n1. Safari로 다음의 주소 중 목적의 앱 주소를 엽니다.\n2. 화면 하단 공유 버튼을 누릅니다.\n3. 메뉴에서 [홈 화면에 추가]를 선택합니다.',
+    usageGuideKo: 'iPhone의 설치 방법 (공통)\n1. Safari로 다음의 주소 중 목적의 앱 주소를 엽니다.\n2. 화면 하단 공유 버튼을 누릅니다.\n3. 메뉴에서 [홈 화면에 추가]를 선택합니다.',
+    usageGuideJa: 'iPhoneのインストール方法（共通）\n1. Safariで以下のアドレスのうち、目的のアプリアドレスを開きます。（他のブラウザではありません - 必ずSafari）\n2. 画面下部（または上部）共有ボタンを押します。\n3. メニューから「ホーム画面に追加」を選択します。',
+    usageGuideEn: 'iPhone Installation Guide:\n1. Open app URL in Safari browser.\n2. Tap Share button.\n3. Select Add to Home Screen.',
+    downloadUrl: '/apps_store/my_prayer/index.html',
+    isPopular: true,
+    isNew: true,
+    updatedAt: '2026-08-02'
+  },
+  {
     id: 'app-7',
     title: "My Prayer (마이 프레이어 - 기도 응답 캘린더)",
     titleKo: "My Prayer (마이 프레이어 - 기도 응답 캘린더)",
