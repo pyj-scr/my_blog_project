@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen, Image as ImageIcon, Trash2, RefreshCw } from 'lucide-react';
+import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen, Image as ImageIcon, Trash2, Globe } from 'lucide-react';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
-import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
+import { autoTranslateApp, asyncTranslateApp, translateToJa, translateToEn, translateToKo } from '@/utils/autoTranslateApp';
 
 interface UploadAppModalProps {
   onClose: () => void;
@@ -13,7 +13,6 @@ interface UploadAppModalProps {
   editApp?: AppItem | null;
 }
 
-// Category fallback automatic high quality images
 const DEFAULT_CATEGORY_IMAGES: Record<AppCategory, string> = {
   '모바일 앱': 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
   'AI 생산성': 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&auto=format&fit=crop&q=80',
@@ -33,14 +32,18 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   const { t } = useLanguage();
 
   const [title, setTitle] = useState('');
+  const [titleJa, setTitleJa] = useState('');
+  const [titleEn, setTitleEn] = useState('');
+  const [titleKo, setTitleKo] = useState('');
+
   const [category, setCategory] = useState<AppCategory>('유틸리티');
   const [shortDesc, setShortDesc] = useState('');
   const [fullDesc, setFullDesc] = useState('');
   const [usageGuide, setUsageGuide] = useState('');
   const [selectedOS, setSelectedOS] = useState<string[]>(['Android', 'iOS']);
   const [fileName, setFileName] = useState<string | null>(null);
-  
-  // Thumbnail State
+
+  const [showAdvancedTitleEdit, setShowAdvancedTitleEdit] = useState(false);
   const [customImage, setCustomImage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -48,6 +51,9 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   useEffect(() => {
     if (editApp) {
       setTitle(editApp.title);
+      setTitleKo(editApp.titleKo || editApp.title);
+      setTitleJa(editApp.titleJa || editApp.title);
+      setTitleEn(editApp.titleEn || editApp.title);
       setCategory(editApp.category);
       setShortDesc(editApp.shortDescription);
       setFullDesc(editApp.fullDescription);
@@ -86,7 +92,6 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     }
   };
 
-  // Get final thumbnail URL (Custom or Category Default)
   const finalThumbnail = customImage || DEFAULT_CATEGORY_IMAGES[category] || DEFAULT_CATEGORY_IMAGES['유틸리티'];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,61 +100,72 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
 
     setIsTranslating(true);
 
+    // Prepare App Item with direct user title overrides
+    const baseApp: AppItem = {
+      id: editApp ? editApp.id : `app-custom-${Date.now()}`,
+      title: title,
+      titleKo: titleKo || translateToKo(title),
+      titleJa: titleJa || translateToJa(title),
+      titleEn: titleEn || translateToEn(title),
+      shortDescription: shortDesc,
+      fullDescription: fullDesc || shortDesc,
+      usageGuide: usageGuide,
+      priceJpy: 100,
+      priceKrw: 1000,
+      priceUsd: 1.0,
+      category: category,
+      version: 'v1.0.0',
+      size: fileName ? '15.2 MB' : '10.0 MB',
+      os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
+      rating: editApp ? editApp.rating : 5.0,
+      reviewsCount: editApp ? editApp.reviewsCount : 1,
+      downloads: editApp ? editApp.downloads : 1,
+      thumbnailUrl: finalThumbnail,
+      features: [
+        '모바일 & 스마트폰 어플 원클릭 실행',
+        '독점 100엔 정찰제 다운로드',
+        '안전 검증 무설치 / 직속 패키지',
+      ],
+      featuresKo: [
+        '모바일 & 스마트폰 어플 원클릭 실행',
+        '독점 100엔 정찰제 다운로드',
+        '안전 검증 무설치 / 직속 패키지',
+      ],
+      featuresJa: [
+        'モバイル＆スマホアプリ ワンタッチ即時起動',
+        '独占100円一律定額ダウンロード',
+        '安全検証済み インストール不要パッケージ',
+      ],
+      featuresEn: [
+        '1-Touch instant Mobile & Smartphone execution',
+        'Exclusive flat $1 download',
+        'Verified secure no-install package',
+      ],
+      downloadUrl: editApp ? editApp.downloadUrl : '#download-custom',
+      isNew: editApp ? editApp.isNew : true,
+      updatedAt: new Date().toISOString().split('T')[0],
+    };
+
+    // Run async enrichment only if multi-lang fields are empty
+    const translated = await asyncTranslateApp(baseApp);
+    
+    // Explicitly guarantee user entered title overrides are preserved 100%
+    if (titleJa && titleJa.trim() !== '') translated.titleJa = titleJa;
+    if (titleEn && titleEn.trim() !== '') translated.titleEn = titleEn;
+    if (titleKo && titleKo.trim() !== '') translated.titleKo = titleKo;
+
+    setIsTranslating(false);
+
     if (editApp && onAppUpdated) {
-      const rawUpdated: AppItem = {
-        ...editApp,
-        title: title,
-        shortDescription: shortDesc,
-        fullDescription: fullDesc || shortDesc,
-        usageGuide: usageGuide,
-        category: category,
-        os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
-        thumbnailUrl: finalThumbnail,
-      };
-
-      const translated = await asyncTranslateApp(rawUpdated);
-      setIsTranslating(false);
       onAppUpdated(translated);
-      setIsSuccess(true);
-      setTimeout(() => {
-        onClose();
-      }, 1200);
     } else if (onAppCreated) {
-      const rawNewApp: AppItem = {
-        id: `app-custom-${Date.now()}`,
-        title: title,
-        shortDescription: shortDesc,
-        fullDescription: fullDesc || shortDesc,
-        usageGuide: usageGuide,
-        priceJpy: 100,
-        priceKrw: 1000,
-        priceUsd: 1.0,
-        category: category,
-        version: 'v1.0.0',
-        size: fileName ? '15.2 MB' : '10.0 MB',
-        os: (selectedOS.length > 0 ? selectedOS : ['Android', 'iOS']) as OSType[],
-        rating: 5.0,
-        reviewsCount: 1,
-        downloads: 1,
-        thumbnailUrl: finalThumbnail,
-        features: [
-          '모바일 & 스마트폰 어플 원클릭 실행',
-          '독점 100엔 정찰제 다운로드',
-          '안전 검증 무설치 / 직속 패키지',
-        ],
-        downloadUrl: '#download-custom',
-        isNew: true,
-        updatedAt: new Date().toISOString().split('T')[0],
-      };
-
-      const translated = await asyncTranslateApp(rawNewApp);
-      setIsTranslating(false);
       onAppCreated(translated);
-      setIsSuccess(true);
-      setTimeout(() => {
-        onClose();
-      }, 1200);
     }
+
+    setIsSuccess(true);
+    setTimeout(() => {
+      onClose();
+    }, 1200);
   };
 
   return (
@@ -193,7 +209,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
             
-            {/* Custom App Thumbnail Cover Upload Section (Before Title) */}
+            {/* Custom App Thumbnail Cover Upload Section */}
             <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
@@ -212,13 +228,12 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
                 )}
               </div>
 
-              {/* Image Preview & Upload Input */}
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="relative h-28 w-full sm:w-44 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shrink-0">
+                <div className="relative h-28 w-full sm:w-44 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shrink-0 flex items-center justify-center p-2">
                   <img
                     src={finalThumbnail}
                     alt="App Preview"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                   <div className="absolute top-2 left-2 rounded-full bg-slate-950/80 px-2 py-0.5 text-[9px] font-bold text-emerald-400 border border-emerald-500/30">
                     {customImage ? '커스텀 이미지' : '자동 추천 이미지'}
@@ -247,19 +262,77 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
               </div>
             </div>
 
-            {/* Title */}
+            {/* App Title Main Input */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                {t.appNameLabel} <span className="text-rose-400">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-slate-300">
+                  {t.appNameLabel} <span className="text-rose-400">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowAdvancedTitleEdit(!showAdvancedTitleEdit)}
+                  className="flex items-center gap-1 text-[11px] font-bold text-indigo-400 hover:text-indigo-300"
+                >
+                  <Globe className="h-3 w-3" />
+                  <span>{showAdvancedTitleEdit ? '언어별 수동 직접 입력 닫기' : '🌐 언어별 어플 이름 직접 입력/수정'}</span>
+                </button>
+              </div>
+              
               <input
                 type="text"
                 required
                 placeholder={t.appNamePlaceholder}
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (!titleJa) setTitleJa(translateToJa(e.target.value));
+                  if (!titleEn) setTitleEn(translateToEn(e.target.value));
+                  if (!titleKo) setTitleKo(translateToKo(e.target.value));
+                }}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none"
               />
+
+              {/* Language Direct Manual Edit Section */}
+              {showAdvancedTitleEdit && (
+                <div className="mt-3 rounded-2xl bg-slate-950 border border-indigo-500/30 p-3.5 space-y-3 animate-fadeIn">
+                  <p className="text-[11px] font-bold text-indigo-300">
+                    ※ 원하시는 일본어/영어/한국어 표기법을 직접 수정하시면 AI 자동 번역보다 최우선하여 적용됩니다.
+                  </p>
+                  
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">🇯🇵 日本語 アプリ名 (일본어 표기 직접 수정)</label>
+                    <input
+                      type="text"
+                      placeholder="예: Prayer List (グループ用 お祈りリスト)"
+                      value={titleJa}
+                      onChange={(e) => setTitleJa(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">🇺🇸 English App Title (영어 표기 직접 수정)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Prayer List (Group Edition)"
+                      value={titleEn}
+                      onChange={(e) => setTitleEn(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">🇰🇷 한국어 어플 이름 (한국어 표기 직접 수정)</label>
+                    <input
+                      type="text"
+                      placeholder="예: Prayer List (그룹용 기도 리스트)"
+                      value={titleKo}
+                      onChange={(e) => setTitleKo(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Category & Price & Revenue Policy */}

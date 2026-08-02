@@ -17,7 +17,7 @@ export async function translateTextDynamic(text: string, targetLang: 'ja' | 'en'
       if (data && data[0] && Array.isArray(data[0])) {
         const translated = data[0].map((item: any) => item[0]).join('');
         if (translated && translated.trim() !== '') {
-          return translated;
+          return fallbackTranslate(translated, targetLang);
         }
       }
     }
@@ -44,28 +44,29 @@ export function autoTranslateApp(app: AppItem): AppItem {
   const baseFull = result.fullDescription || baseShort;
   const baseGuide = result.usageGuide || '';
 
-  result.titleKo = translateToKo(result.titleKo || baseTitle);
-  result.titleJa = translateToJa(result.titleJa || baseTitle);
-  result.titleEn = translateToEn(result.titleEn || baseTitle);
+  // Preserve user custom manual overrides if provided
+  if (!result.titleKo) result.titleKo = translateToKo(baseTitle);
+  if (!result.titleJa) result.titleJa = translateToJa(baseTitle);
+  if (!result.titleEn) result.titleEn = translateToEn(baseTitle);
 
-  result.shortDescriptionKo = translateToKo(result.shortDescriptionKo || baseShort);
-  result.shortDescriptionJa = translateToJa(result.shortDescriptionJa || baseShort);
-  result.shortDescriptionEn = translateToEn(result.shortDescriptionEn || baseShort);
+  if (!result.shortDescriptionKo) result.shortDescriptionKo = translateToKo(baseShort);
+  if (!result.shortDescriptionJa) result.shortDescriptionJa = translateToJa(baseShort);
+  if (!result.shortDescriptionEn) result.shortDescriptionEn = translateToEn(baseShort);
 
-  result.fullDescriptionKo = translateToKo(result.fullDescriptionKo || baseFull);
-  result.fullDescriptionJa = translateToJa(result.fullDescriptionJa || baseFull);
-  result.fullDescriptionEn = translateToEn(result.fullDescriptionEn || baseFull);
+  if (!result.fullDescriptionKo) result.fullDescriptionKo = translateToKo(baseFull);
+  if (!result.fullDescriptionJa) result.fullDescriptionJa = translateToJa(baseFull);
+  if (!result.fullDescriptionEn) result.fullDescriptionEn = translateToEn(baseFull);
 
   if (baseGuide) {
-    result.usageGuideKo = translateToKo(result.usageGuideKo || baseGuide);
-    result.usageGuideJa = translateToJa(result.usageGuideJa || baseGuide);
-    result.usageGuideEn = translateToEn(result.usageGuideEn || baseGuide);
+    if (!result.usageGuideKo) result.usageGuideKo = translateToKo(baseGuide);
+    if (!result.usageGuideJa) result.usageGuideJa = translateToJa(baseGuide);
+    if (!result.usageGuideEn) result.usageGuideEn = translateToEn(baseGuide);
   }
 
   if (result.features && result.features.length > 0) {
-    result.featuresKo = (result.featuresKo && result.featuresKo.length > 0 ? result.featuresKo : result.features).map(f => translateToKo(f));
-    result.featuresJa = (result.featuresJa && result.featuresJa.length > 0 ? result.featuresJa : result.features).map(f => translateToJa(f));
-    result.featuresEn = (result.featuresEn && result.featuresEn.length > 0 ? result.featuresEn : result.features).map(f => translateToEn(f));
+    result.featuresKo = result.featuresKo && result.featuresKo.length > 0 ? result.featuresKo.map(f => translateToKo(f)) : result.features.map(f => translateToKo(f));
+    result.featuresJa = result.featuresJa && result.featuresJa.length > 0 ? result.featuresJa.map(f => translateToJa(f)) : result.features.map(f => translateToJa(f));
+    result.featuresEn = result.featuresEn && result.featuresEn.length > 0 ? result.featuresEn.map(f => translateToEn(f)) : result.features.map(f => translateToEn(f));
   }
 
   return result;
@@ -76,49 +77,41 @@ export async function asyncTranslateApp(app: AppItem): Promise<AppItem> {
   const result = { ...app };
 
   try {
-    const [titleKo, titleJa, titleEn] = await Promise.all([
-      translateTextDynamic(app.title, 'ko'),
-      translateTextDynamic(app.title, 'ja'),
-      translateTextDynamic(app.title, 'en'),
-    ]);
-    result.titleKo = titleKo;
-    result.titleJa = titleJa;
-    result.titleEn = titleEn;
+    if (!result.titleKo) result.titleKo = await translateTextDynamic(app.title, 'ko');
+    if (!result.titleJa) result.titleJa = await translateTextDynamic(app.title, 'ja');
+    if (!result.titleEn) result.titleEn = await translateTextDynamic(app.title, 'en');
 
-    const [shortKo, shortJa, shortEn] = await Promise.all([
-      translateTextDynamic(app.shortDescription, 'ko'),
-      translateTextDynamic(app.shortDescription, 'ja'),
-      translateTextDynamic(app.shortDescription, 'en'),
-    ]);
-    result.shortDescriptionKo = shortKo;
-    result.shortDescriptionJa = shortJa;
-    result.shortDescriptionEn = shortEn;
+    if (!result.shortDescriptionKo) result.shortDescriptionKo = await translateTextDynamic(app.shortDescription, 'ko');
+    if (!result.shortDescriptionJa) result.shortDescriptionJa = await translateTextDynamic(app.shortDescription, 'ja');
+    if (!result.shortDescriptionEn) result.shortDescriptionEn = await translateTextDynamic(app.shortDescription, 'en');
 
     const baseFull = app.fullDescription || app.shortDescription;
-    const [fullKo, fullJa, fullEn] = await Promise.all([
-      translateTextDynamic(baseFull, 'ko'),
-      translateTextDynamic(baseFull, 'ja'),
-      translateTextDynamic(baseFull, 'en'),
-    ]);
-    result.fullDescriptionKo = fullKo;
-    result.fullDescriptionJa = fullJa;
-    result.fullDescriptionEn = fullEn;
+    if (!result.fullDescriptionKo) result.fullDescriptionKo = await translateTextDynamic(baseFull, 'ko');
+    if (!result.fullDescriptionJa) result.fullDescriptionJa = await translateTextDynamic(baseFull, 'ja');
+    if (!result.fullDescriptionEn) result.fullDescriptionEn = await translateTextDynamic(baseFull, 'en');
 
     if (app.usageGuide) {
-      const [guideKo, guideJa, guideEn] = await Promise.all([
-        translateTextDynamic(app.usageGuide, 'ko'),
-        translateTextDynamic(app.usageGuide, 'ja'),
-        translateTextDynamic(app.usageGuide, 'en'),
-      ]);
-      result.usageGuideKo = guideKo;
-      result.usageGuideJa = guideJa;
-      result.usageGuideEn = guideEn;
+      if (!result.usageGuideKo) result.usageGuideKo = await translateTextDynamic(app.usageGuide, 'ko');
+      if (!result.usageGuideJa) result.usageGuideJa = await translateTextDynamic(app.usageGuide, 'ja');
+      if (!result.usageGuideEn) result.usageGuideEn = await translateTextDynamic(app.usageGuide, 'en');
+    }
+
+    if (app.features && app.features.length > 0) {
+      if (!result.featuresJa || result.featuresJa.length === 0) {
+        result.featuresJa = app.features.map(f => translateToJa(f));
+      }
+      if (!result.featuresEn || result.featuresEn.length === 0) {
+        result.featuresEn = app.features.map(f => translateToEn(f));
+      }
+      if (!result.featuresKo || result.featuresKo.length === 0) {
+        result.featuresKo = app.features.map(f => translateToKo(f));
+      }
     }
   } catch (err) {
     console.error('Async translate app failed:', err);
   }
 
-  return result;
+  return autoTranslateApp(result);
 }
 
 // Translate input (KO/EN/JA) to Korean
@@ -134,7 +127,6 @@ export function translateToKo(text: string): string {
   if (ko.includes("One Month's Todo") || ko.includes("1ヶ月ToDo")) return "One Month's Todo (원 먼스 투두 - 한 달 목표 달성)";
   if (ko.includes("My Prayer") && (ko.includes("iPhone") || ko.includes("아이폰"))) return "My Prayer (아이폰 전용 - 기도 응답 캘린더)";
   if (ko.includes("My Prayer") && !ko.includes("마이 프레이어")) return "My Prayer (마이 프레이어 - 기도 응답 캘린더)";
-  if (ko.includes("Prayer List")) return "Prayer List (그룹용 - 기도 응답 리스트)";
 
   if (ko.includes("50ページの長いPDFも") || ko.includes("Summarize 50-page PDFs")) {
     return "50페이지 분량의 긴 PDF도 10초 만에 핵심 요약 노트로 작성해 드립니다.";
@@ -154,26 +146,36 @@ export function translateToKo(text: string): string {
 
   ko = ko.replace(/\(iPhone用\)/g, '(아이폰 전용)');
   ko = ko.replace(/\(グループ用\)/g, '(그룹용)');
-  ko = ko.replace(/\(\(iPhone Version\)\)/g, '(아이폰 전용)');
-  ko = ko.replace(/\(iPhone Version\)/g, '(아이폰 전용)');
+  ko = ko.replace(/祈禱|祈り/g, '기도');
+  ko = ko.replace(/祈祷/g, '기도');
 
   return ko;
 }
 
-// Translate input (KO/EN/JA) to Japanese
+// Translate input (KO/EN/JA) to Japanese with natural "お祈り" expressions
 export function translateToJa(text: string): string {
   if (!text) return '';
 
   let ja = text;
+
+  // Key Features Translation Rules (Robust Partial Match)
+  if (ja.includes("모바일") || ja.includes("스마트폰") || ja.includes("원클릭 실행") || ja.includes("ワンタッチ")) {
+    return "モバイル＆スマホアプリ ワンタッチ即時起動";
+  }
+  if (ja.includes("독점 100엔") || ja.includes("정찰제 다운로드") || ja.includes("100円")) {
+    return "独占100円一律定額ダウンロード";
+  }
+  if (ja.includes("안전 검증") || ja.includes("무설치") || ja.includes("직속 패키지") || ja.includes("検証済み")) {
+    return "安全検証済み インストール不要パッケージ";
+  }
 
   if (ja.includes("PDF AI Summarizer")) return "PDF AI Summarizer (ワンクリック要約機)";
   if (ja.includes("Prompt Magic Generator")) return "Prompt Magic Generator (プロンプト生成器)";
   if (ja.includes("Auto File Organizer Pro")) return "Auto File Organizer Pro (フォルダ自動整理)";
   if (ja.includes("Context Native Translator")) return "Context Native Translator (自然な文脈翻訳)";
   if (ja.includes("One Month's Todo") || ja.includes("원 먼스 투두")) return "One Month's Todo (1ヶ月ToDoカレンダー)";
-  if (ja.includes("My Prayer") && (ja.includes("iPhone") || ja.includes("아이폰"))) return "My Prayer (iPhone専用 願望成就カレンダー)";
-  if (ja.includes("My Prayer") && !ja.includes("祈り")) return "My Prayer (祈り・願望成就カレンダー)";
-  if (ja.includes("Prayer List")) return "Prayer List (グループ用 祈りリスト)";
+  if (ja.includes("My Prayer") && (ja.includes("iPhone") || ja.includes("아이폰"))) return "My Prayer (iPhone専用 お祈りカレンダー)";
+  if (ja.includes("My Prayer") && !ja.includes("お祈り")) return "My Prayer (お祈り・願望成就カレンダー)";
 
   if (ja.includes("50페이지 분량의 긴 PDF도") || ja.includes("Summarize 50-page PDFs")) {
     return "50ページの長いPDFも10秒で要約ノートに自動作成します。";
@@ -191,24 +193,18 @@ export function translateToJa(text: string): string {
     return "1ヶ月のToDoリスト。目標タスクを実行した回数を一目で確認できます。";
   }
   if (ja.includes("My Prayer") || ja.includes("나의 기도가 이루어")) {
-    return "My Prayerで祈りと目標が達成されたことを毎日の達成ログに記録してみましょう。";
-  }
-  if (ja.includes("모바일 & 스마트폰 어플 원클릭 실행") || ja.includes("모바일 & 스마트폰 앱")) {
-    return "モバイル＆スマホアプリ ワンタッチ即時起動";
-  }
-  if (ja.includes("독점 100엔 정찰제 다운로드") || ja.includes("독점 100엔")) {
-    return "独占100円一律定額ダウンロード";
-  }
-  if (ja.includes("안전 검증 무설치") || ja.includes("안전 검증")) {
-    return "安全検証済み インストール不要パッケージ";
+    return "My Prayerでお祈りと目標が達成されたことを毎日の達成ログに記録してみましょう。";
   }
 
-  ja = ja.replace(/iPhone용/gi, 'iPhone用');
+  // Japanese natural word replacement: Fix 祈禱 to お祈り
+  ja = ja.replace(/祈禱|祈祷/g, 'お祈り');
+  ja = ja.replace(/iPhone용/gi, 'iPhone専用');
   ja = ja.replace(/Group용|그룹용/gi, 'グループ用');
   ja = ja.replace(/안드로이드용/gi, 'Android用');
   ja = ja.replace(/PC용/gi, 'PC用');
   ja = ja.replace(/어플/g, 'アプリ');
   ja = ja.replace(/앱/g, 'アプリ');
+  ja = ja.replace(/기도/g, 'お祈り');
 
   return ja;
 }
@@ -219,6 +215,16 @@ export function translateToEn(text: string): string {
 
   let en = text;
 
+  if (en.includes("모바일") || en.includes("스마트폰") || en.includes("원클릭 실행")) {
+    return "1-Touch instant Mobile & Smartphone execution";
+  }
+  if (en.includes("독점 100엔") || en.includes("정찰제 다운로드")) {
+    return "Exclusive flat $1 download";
+  }
+  if (en.includes("안전 검증") || en.includes("무설치")) {
+    return "Verified secure no-install package";
+  }
+
   if (en.includes("PDF AI Summarizer")) return "PDF AI Summarizer (1-Click Summarizer)";
   if (en.includes("Prompt Magic Generator")) return "Prompt Magic Generator (Prompt Engineering Tool)";
   if (en.includes("Auto File Organizer Pro")) return "Auto File Organizer Pro (Smart Folder Sort)";
@@ -226,7 +232,6 @@ export function translateToEn(text: string): string {
   if (en.includes("One Month's Todo") || en.includes("원 먼스 투두") || en.includes("1ヶ月ToDo")) return "One Month's Todo (30-Day Goal Tracker)";
   if (en.includes("My Prayer") && (en.includes("iPhone") || en.includes("아이폰"))) return "My Prayer (iPhone Edition - Prayer Tracker)";
   if (en.includes("My Prayer") && !en.includes("Prayer & Goal")) return "My Prayer (Prayer & Goal Tracker)";
-  if (en.includes("Prayer List")) return "Prayer List (Group Edition)";
 
   if (en.includes("50페이지 분량의 긴 PDF도") || en.includes("50ページの長いPDFも")) {
     return "Summarize 50-page PDFs into key bullet notes within 10 seconds.";
@@ -234,20 +239,11 @@ export function translateToEn(text: string): string {
   if (en.includes("원하는 아이디어만 입력하면") || en.includes("アイデアを入力するだけで")) {
     return "Generate optimal Midjourney & ChatGPT prompts instantly.";
   }
-  if (en.includes("지저분한 다운로드 폴더를") || en.includes("散らかったダウンロードフォルダを")) {
+  if (en.includes("지저분한 다운로드 폴더를") || en.includes("散らかったダウンロードフォルダ를")) {
     return "Sort desktop & download folder clutter in 1 second by extensions.";
   }
   if (en.includes("직역이 아닌 상황과 문맥에") || en.includes("直訳ではなく状況と文脈に")) {
     return "Native contextual translations for business and casual tone.";
-  }
-  if (en.includes("모바일 & 스마트폰 어플")) {
-    return "1-Touch instant Mobile & Smartphone execution";
-  }
-  if (en.includes("독점 100엔 정찰제")) {
-    return "Exclusive flat $1 download";
-  }
-  if (en.includes("안전 검증 무설치")) {
-    return "Verified secure no-install package";
   }
 
   en = en.replace(/\(\(iPhone Version\)\)/g, '(iPhone Edition)');

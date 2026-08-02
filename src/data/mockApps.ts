@@ -5,15 +5,15 @@ export const MOCK_APPS: AppItem[] = [
     id: 'app-7',
     title: "My Prayer (마이 프레이어 - 기도 응답 캘린더)",
     titleKo: "My Prayer (마이 프레이어 - 기도 응답 캘린더)",
-    titleJa: "My Prayer (祈り・願望成就カレンダー)",
+    titleJa: "My Prayer (お祈り・願望成就カレンダー)",
     titleEn: "My Prayer (Prayer & Goal Tracker)",
     shortDescription: "My Prayer에서 기도와 목표가 이루어진 것을 매일 확인하고 기록해 보세요.",
     shortDescriptionKo: "My Prayer에서 기도와 목표가 이루어진 것을 매일 확인하고 기록해 보세요.",
-    shortDescriptionJa: "My Prayerで祈りと目標が達成されたことを毎日の達成ログに記録してみましょう。",
+    shortDescriptionJa: "My Prayerでお祈りと目標が達成されたことを毎日の達成ログに記録してみましょう。",
     shortDescriptionEn: "Track and confirm your daily targeted prayers and habit achievements.",
     fullDescription: "매일 이루고 싶은 소망과 기도를 등록하고, 목표를 달성할 때마다 체크하며 성취감을 누릴 수 있는 고성능 스마트폰 모바일 다이어리 앱입니다.",
     fullDescriptionKo: "매일 이루고 싶은 소망과 기도를 등록하고, 목표를 달성할 때마다 체크하며 성취감을 누릴 수 있는 고성능 스마트폰 모바일 다이어리 앱입니다.",
-    fullDescriptionJa: "毎日達成したい願いと祈りを登録し、目標を達成するたびにチェックして達成感を味わえるスマートフォン日記アプリ。",
+    fullDescriptionJa: "毎日達成したい願いとお祈りを登録し、目標を達成するたびにチェックして達成感を味わえるスマートフォン日記アプリ。",
     fullDescriptionEn: "A specialized daily mobile tracker app for target habit confirmations and prayer achievements.",
     priceJpy: 100,
     priceKrw: 1000,
@@ -27,18 +27,18 @@ export const MOCK_APPS: AppItem[] = [
     downloads: 140,
     thumbnailUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
     features: [
-      '모바일 & 스마트폰 어플 원클릭 터치 실행',
+      '모바일 & 스마트폰 어플 원클릭 실행',
       '기도 달성 캘린더 및 일일 체크리스트',
       '안전 검증 무설치 직속 모바일 패키지'
     ],
     featuresKo: [
-      '모바일 & 스마트폰 어플 원클릭 터치 실행',
+      '모바일 & 스마트폰 어플 원클릭 실행',
       '기도 달성 캘린더 및 일일 체크리스트',
       '안전 검증 무설치 직속 모바일 패키지'
     ],
     featuresJa: [
       'モバイル＆スマホアプリ ワンタッチ即時起動',
-      '祈り達成カレンダー＆デイリーチェックリスト',
+      'お祈り達成カレンダー＆デイリーチェックリスト',
       '安全検証済み モバイル直接ダウンロード'
     ],
     featuresEn: [
@@ -48,7 +48,7 @@ export const MOCK_APPS: AppItem[] = [
     ],
     usageGuide: '1. 다운로드 버튼을 눌러 앱 패키지를 받습니다.\n2. 스마트폰에서 앱을 실행하고 매일 기도 및 목표 달성을 체크하세요.',
     usageGuideKo: '1. 다운로드 버튼을 눌러 앱 패키지를 받습니다.\n2. 스마트폰에서 앱을 실행하고 매일 기도 및 목표 달성을 체크하세요.',
-    usageGuideJa: '1. ダウンロードボタンを押してアプリを保存します。\n2. スマホでアプリを起動し、毎日の目標をチェックしてください。',
+    usageGuideJa: '1. ダウンロードボタンを押してアプリを保存します。\n2. スマホでアプリを起動し、毎日のお祈りをチェックしてください。',
     usageGuideEn: '1. Tap Download to save the app.\n2. Open the app on your mobile device and log daily achievements.',
     downloadUrl: '/apps_store/my_prayer/index.html',
     isPopular: true,
@@ -135,24 +135,24 @@ export const MOCK_APPS: AppItem[] = [
     downloads: 980,
     thumbnailUrl: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=600&auto=format&fit=crop&q=80',
     features: [
-      '한국어/영어/일본어 다국어 PDF 원문 요약',
+      '모바일 & 스마트폰 어플 원클릭 실행',
       '주요 인사이트 마인드맵 추출',
-      '요약본 TXT, Markdown 및 PDF 저장 지원'
+      '안전 검증 무설치 / 직속 패키지'
     ],
     featuresKo: [
-      '한국어/영어/일본어 다국어 PDF 원문 요약',
+      '모바일 & 스마트폰 어플 원클릭 실행',
       '주요 인사이트 마인드맵 추출',
-      '요약본 TXT, Markdown 및 PDF 저장 지원'
+      '안전 검증 무설치 / 직속 패키지'
     ],
     featuresJa: [
-      '日本語・英語・韓国語の多言語PDF本文要約',
+      'モバイル＆スマホアプリ ワンタッチ即時起動',
       '主要インサイトのマインドマップ抽出',
-      '要約文のTXT、Markdown、PDF保存対応'
+      '安全検証済み インストール不要パッケージ'
     ],
     featuresEn: [
-      'Multilingual PDF text summarization (EN/JA/KO)',
+      '1-Touch instant Mobile & Smartphone execution',
       'Key insight mindmap extraction',
-      'Export summaries to TXT, Markdown, and PDF'
+      'Verified secure no-install package'
     ],
     usageGuide: '1. PDF 파일을 프로그램에 드래그하여 놓습니다.\n2. [원클릭 요약] 버튼을 누르면 10초 만에 핵심 요약본이 생성됩니다.',
     usageGuideKo: '1. PDF 파일을 프로그램에 드래그하여 놓습니다.\n2. [원클릭 요약] 버튼을 누르면 10초 만에 핵심 요약본이 생성됩니다.',
@@ -188,24 +188,24 @@ export const MOCK_APPS: AppItem[] = [
     downloads: 650,
     thumbnailUrl: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&auto=format&fit=crop&q=80',
     features: [
-      'Midjourney v6 스타일 파라미터 자동 조합',
+      '모바일 & 스마트폰 어플 원클릭 실행',
       'ChatGPT 시나리오별 페르소나 프롬프트 라이브러리',
-      '클립보드 원클릭 복사'
+      '독점 100엔 정찰제 다운로드'
     ],
     featuresKo: [
-      'Midjourney v6 스타일 파라미터 자동 조합',
+      '모바일 & 스마트폰 어플 원클릭 실행',
       'ChatGPT 시나리오별 페르소나 프롬프트 라이브러리',
-      '클립보드 원클릭 복사'
+      '독점 100엔 정찰제 다운로드'
     ],
     featuresJa: [
-      'Midjourney v6スタイルパラメータの自動組み合わせ',
+      'モバイル＆スマホアプリ ワンタッチ即時起動',
       'ChatGPTシナリオ別ペルソナプロンプトライブラリ',
-      'クリップボードへのワンクリックコピー'
+      '独占100円一律定額ダウンロード'
     ],
     featuresEn: [
-      'Midjourney v6 style parameter presets',
+      '1-Touch instant Mobile & Smartphone execution',
       'ChatGPT scenario persona prompt library',
-      'One-click clipboard copy'
+      'Exclusive flat $1 download'
     ],
     usageGuide: '1. 키워드나 원하는 콘셉트를 입력창에 적습니다.\n2. 스타일 옵션을 체크하고 [프롬프트 생성]을 누르면 즉시 완성됩니다.',
     usageGuideKo: '1. 키워드나 원하는 콘셉트를 입력창에 적습니다.\n2. 스타일 옵션을 체크하고 [프롬프트 생성]을 누르면 즉시 완성됩니다.',
@@ -240,24 +240,24 @@ export const MOCK_APPS: AppItem[] = [
     downloads: 2310,
     thumbnailUrl: 'https://images.unsplash.com/photo-1544396821-4dd40b938ad3?w=600&auto=format&fit=crop&q=80',
     features: [
-      '확장자 및 파일 이름 분석 자동 폴더링',
-      '중복 파일 탐지 및 용량 확보',
-      '백그라운드 자동 감지 실행 옵션'
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
     ],
     featuresKo: [
-      '확장자 및 파일 이름 분석 자동 폴더링',
-      '중복 파일 탐지 및 용량 확보',
-      '백그라운드 자동 감지 실행 옵션'
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
     ],
     featuresJa: [
-      '拡張子・ファイル名解析による自動フォルダ分け',
-      '重複ファイルの検知とディスク容量確保',
-      'バックグラウンド自動監視実行オプション'
+      'モバイル＆スマホアプリ ワンタッチ即時起動',
+      '独占100円一律定額ダウンロード',
+      '安全検証済み インストール不要パッケージ'
     ],
     featuresEn: [
-      'Auto-folder sorting by extensions & filenames',
-      'Duplicate file detection to free disk space',
-      'Background auto-monitoring options'
+      '1-Touch instant Mobile & Smartphone execution',
+      'Exclusive flat $1 download',
+      'Verified secure no-install package'
     ],
     usageGuide: '1. 정리하고 싶은 다운로드 폴더 경로를 설정합니다.\n2. [자동 정리 실행]을 누르면 1초 만에 종류별 폴더가 생성되고 정리됩니다.',
     usageGuideKo: '1. 정리하고 싶은 다운로드 폴더 경로를 설정합니다.\n2. [자동 정리 실행]을 누르면 1초 만에 종류별 폴더가 생성되고 정리됩니다.',
@@ -293,24 +293,24 @@ export const MOCK_APPS: AppItem[] = [
     downloads: 890,
     thumbnailUrl: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&auto=format&fit=crop&q=80',
     features: [
-      '단축키 핫키 팝업 번역',
-      '비즈니스/캐주얼/학술 어조 변환',
-      '문맥 설명 툴팁 및 유사 표현 제시'
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
     ],
     featuresKo: [
-      '단축키 핫키 팝업 번역',
-      '비즈니스/캐주얼/학술 어조 변환',
-      '문맥 설명 툴팁 및 유사 표현 제시'
+      '모바일 & 스마트폰 어플 원클릭 실행',
+      '독점 100엔 정찰제 다운로드',
+      '안전 검증 무설치 / 직속 패키지'
     ],
     featuresJa: [
-      'ショートカットキーポップアップ即時翻訳',
-      'ビジネス・カジュアル・論文のトーン変換',
-      '文脈解説ツールチップと類似表現の提示'
+      'モバイル＆スマホアプリ ワンタッチ即時起動',
+      '独占100円一律定額ダウンロード',
+      '安全検証済み インストール不要パッケージ'
     ],
     featuresEn: [
-      'Shortcut hotkey popup instant translation',
-      'Business, casual, academic tone switching',
-      'Context explanation tooltips and synonyms'
+      '1-Touch instant Mobile & Smartphone execution',
+      'Exclusive flat $1 download',
+      'Verified secure no-install package'
     ],
     usageGuide: '1. 번역하고 싶은 텍스트를 드래그 선택 후 단축키(Alt+T)를 누릅니다.\n2. 상황에 맞는 어조(비즈니스/일상)를 선택하면 자연스러운 뉘앙스로 번역됩니다.',
     usageGuideKo: '1. 번역하고 싶은 텍스트를 드래그 선택 후 단축키(Alt+T)를 누릅니다.\n2. 상황에 맞는 어조(비즈니스/일상)를 선택하면 자연스러운 뉘앙스로 번역됩니다.',
