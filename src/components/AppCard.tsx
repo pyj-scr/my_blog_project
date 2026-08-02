@@ -4,6 +4,7 @@ import React from 'react';
 import { AppItem } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { usePurchase } from '@/context/PurchaseContext';
+import { translateToJa, translateToEn, translateToKo } from '@/utils/autoTranslateApp';
 import { Sparkles, Star, Monitor, Apple, Globe, CheckCircle } from 'lucide-react';
 
 interface AppCardProps {
@@ -17,20 +18,32 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
 
   const purchased = isPurchased(app.id);
 
-  // Dynamic 3-Language Resolution based on selected Language
-  const title =
+  // Dynamic 3-Language Resolution with Forced Translation Safety Guard
+  let title =
     language === 'ko'
       ? app.titleKo || app.title
       : language === 'ja'
       ? app.titleJa || app.title
       : app.titleEn || app.title;
 
-  const shortDesc =
+  let shortDesc =
     language === 'ko'
       ? app.shortDescriptionKo || app.shortDescription
       : language === 'ja'
       ? app.shortDescriptionJa || app.shortDescription
       : app.shortDescriptionEn || app.shortDescription;
+
+  // Force language transformation safety guard if Korean remains in Japanese/English mode
+  if (language === 'ja') {
+    title = translateToJa(title);
+    shortDesc = translateToJa(shortDesc);
+  } else if (language === 'en') {
+    title = translateToEn(title);
+    shortDesc = translateToEn(shortDesc);
+  } else if (language === 'ko') {
+    title = translateToKo(title);
+    shortDesc = translateToKo(shortDesc);
+  }
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {
@@ -59,32 +72,33 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-slate-700 hover:bg-slate-900/90 hover:shadow-2xl hover:shadow-rose-950/20 cursor-pointer"
     >
       <div>
-        <div className="relative mb-5 h-52 w-full overflow-hidden rounded-xl bg-slate-950">
+        {/* Thumbnail Image Container with object-contain to show full image without cropping */}
+        <div className="relative mb-5 h-52 w-full overflow-hidden rounded-xl bg-slate-950 flex items-center justify-center p-2 border border-slate-800/80">
           <img
             src={app.thumbnailUrl}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
           
-          <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-rose-600 px-3 py-1 text-xs font-black text-white shadow-md">
+          <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-rose-600 px-3 py-1 text-xs font-black text-white shadow-md z-10">
             <Sparkles className="h-3.5 w-3.5" />
             <span>{formatPrice(app)}</span>
           </div>
 
           {app.isPopular && (
-            <div className="absolute top-3 right-3 rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-xs font-bold text-amber-300">
+            <div className="absolute top-3 right-3 rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-xs font-bold text-amber-300 z-10">
               TOP
             </div>
           )}
 
           {app.isNew && (
-            <div className="absolute top-3 right-16 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-0.5 text-xs font-bold text-indigo-300">
+            <div className="absolute top-3 right-16 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-0.5 text-xs font-bold text-indigo-300 z-10">
               NEW
             </div>
           )}
 
-          <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-slate-950/80 backdrop-blur-md px-2.5 py-1 text-xs text-slate-200">
+          <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-slate-950/90 backdrop-blur-md px-2.5 py-1 text-xs text-slate-200 z-10 border border-slate-800">
             {app.os.includes('Android') && <span className="text-emerald-400 font-bold">🤖</span>}
             {app.os.includes('iOS') && <span className="text-rose-400 font-bold">🍎</span>}
             {app.os.includes('Windows') && <Monitor className="h-4 w-4" />}

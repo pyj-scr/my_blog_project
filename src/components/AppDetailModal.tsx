@@ -6,6 +6,7 @@ import { AppItem } from '@/types/app';
 import { usePurchase } from '@/context/PurchaseContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { translateToJa, translateToEn, translateToKo } from '@/utils/autoTranslateApp';
 import { UploadAppModal } from '@/components/UploadAppModal';
 
 interface AppDetailModalProps {
@@ -29,33 +30,51 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
   const purchased = isPurchased(app.id);
 
   // Dynamic 3-Language Resolution based on selected Language
-  const title =
+  let title =
     language === 'ko'
       ? app.titleKo || app.title
       : language === 'ja'
       ? app.titleJa || app.title
       : app.titleEn || app.title;
 
-  const fullDesc =
+  let fullDesc =
     language === 'ko'
       ? app.fullDescriptionKo || app.fullDescription
       : language === 'ja'
       ? app.fullDescriptionJa || app.fullDescription
       : app.fullDescriptionEn || app.fullDescription;
 
-  const usageGuide =
+  let usageGuide =
     language === 'ko'
       ? app.usageGuideKo || app.usageGuide
       : language === 'ja'
       ? app.usageGuideJa || app.usageGuide
       : app.usageGuideEn || app.usageGuide;
 
-  const features =
+  let features =
     language === 'ko'
       ? app.featuresKo || app.features
       : language === 'ja'
       ? app.featuresJa || app.features
       : app.featuresEn || app.features;
+
+  // Forced Safety Guard Translation to ensure NO Korean remnants leak in JA/EN modes
+  if (language === 'ja') {
+    title = translateToJa(title);
+    fullDesc = translateToJa(fullDesc);
+    if (usageGuide) usageGuide = translateToJa(usageGuide);
+    if (features) features = features.map(f => translateToJa(f));
+  } else if (language === 'en') {
+    title = translateToEn(title);
+    fullDesc = translateToEn(fullDesc);
+    if (usageGuide) usageGuide = translateToEn(usageGuide);
+    if (features) features = features.map(f => translateToEn(f));
+  } else if (language === 'ko') {
+    title = translateToKo(title);
+    fullDesc = translateToKo(fullDesc);
+    if (usageGuide) usageGuide = translateToKo(usageGuide);
+    if (features) features = features.map(f => translateToKo(f));
+  }
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {
@@ -99,14 +118,14 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
         <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl">
           
-          {/* Header Banner Image */}
-          <div className="relative h-48 sm:h-60 w-full overflow-hidden bg-slate-950">
+          {/* Header Banner Image with object-contain to fit entire image */}
+          <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-950 flex items-center justify-center p-3 border-b border-slate-800/80">
             <img
               src={app.thumbnailUrl}
               alt={title}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/30 to-transparent pointer-events-none" />
             
             {/* Close Button */}
             <button
@@ -117,16 +136,16 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             </button>
 
             {/* Category & Title */}
-            <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
+            <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between z-10">
               <div>
                 <span className="inline-block rounded-full bg-rose-500/20 border border-rose-500/30 px-3 py-1 text-xs font-bold text-rose-300 mb-2">
                   {getCategoryTranslation(app.category)}
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-white">{title}</h2>
+                <h2 className="text-2xl sm:text-3xl font-black text-white drop-shadow-md">{title}</h2>
               </div>
               
               <div className="text-right">
-                <span className="inline-flex items-center gap-1 text-xl sm:text-2xl font-black text-amber-400 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-xl border border-amber-500/20">
+                <span className="inline-flex items-center gap-1 text-xl sm:text-2xl font-black text-amber-400 bg-slate-950/90 backdrop-blur-md px-3 py-1 rounded-xl border border-amber-500/20 shadow-lg">
                   <Sparkles className="h-4 w-4" />
                   {formatPrice(app)}
                 </span>
@@ -168,20 +187,22 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             </div>
 
             {/* Features */}
-            <div>
-              <h3 className="text-sm font-bold text-white mb-3">{t.keyFeaturesTitle}</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {features.map((feature, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2.5 rounded-xl bg-slate-950 p-3 border border-slate-800 text-xs text-slate-200"
-                  >
-                    <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
+            {features && features.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold text-white mb-3">{t.keyFeaturesTitle}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {features.map((feature, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-2.5 rounded-xl bg-slate-950 p-3 border border-slate-800 text-xs text-slate-200"
+                    >
+                      <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* How to Use / Usage Guide Manual */}
             {usageGuide && (
