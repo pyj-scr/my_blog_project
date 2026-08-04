@@ -10,9 +10,10 @@ import { AppItem } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
 import { ArrowRight, Sparkles, Zap, ShieldCheck, Gift, Layers } from 'lucide-react';
 import { autoTranslateApp } from '@/utils/autoTranslateApp';
+import { sortAppsByNewest } from '@/utils/sortApps';
 
 export default function Home() {
-  const [appList, setAppList] = useState<AppItem[]>(() => MOCK_APPS.map(autoTranslateApp));
+  const [appList, setAppList] = useState<AppItem[]>(() => sortAppsByNewest(MOCK_APPS.map(autoTranslateApp)));
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const { t } = useLanguage();
 
@@ -22,7 +23,7 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         if (data.apps && data.apps.length > 0) {
-          setAppList(data.apps.map(autoTranslateApp));
+          setAppList(sortAppsByNewest(data.apps.map(autoTranslateApp)));
         }
       }
     } catch (err) {

@@ -9,6 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Navbar } from '@/components/Navbar';
 import { Search, Sparkles, Filter, SlidersHorizontal } from 'lucide-react';
 import { autoTranslateApp } from '@/utils/autoTranslateApp';
+import { sortAppsByNewest } from '@/utils/sortApps';
 
 const CATEGORIES: AppCategory[] = [
   '전체',
@@ -21,7 +22,7 @@ const CATEGORIES: AppCategory[] = [
 ];
 
 export default function AppsCatalogPage() {
-  const [appList, setAppList] = useState<AppItem[]>(() => MOCK_APPS.map(autoTranslateApp));
+  const [appList, setAppList] = useState<AppItem[]>(() => sortAppsByNewest(MOCK_APPS.map(autoTranslateApp)));
   const [selectedCategory, setSelectedCategory] = useState<AppCategory>('전체');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
@@ -34,7 +35,7 @@ export default function AppsCatalogPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.apps && data.apps.length > 0) {
-          setAppList(data.apps.map(autoTranslateApp));
+          setAppList(sortAppsByNewest(data.apps.map(autoTranslateApp)));
         }
       }
     } catch (err) {

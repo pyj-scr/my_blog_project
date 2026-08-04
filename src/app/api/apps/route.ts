@@ -2,24 +2,25 @@ import { NextResponse } from 'next/server';
 import { MOCK_APPS } from '@/data/mockApps';
 import { AppItem } from '@/types/app';
 import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
+import { sortAppsByNewest } from '@/utils/sortApps';
 import { db } from '@/lib/firebaseAdmin';
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 
 // Fallback in-memory store
-let globalAppsStore: AppItem[] = MOCK_APPS.map(autoTranslateApp);
+let globalAppsStore: AppItem[] = sortAppsByNewest(MOCK_APPS.map(autoTranslateApp));
 
 const APPS_COLLECTION = 'apps';
 
 // Helper function to fetch all apps from Firestore or seed if empty
 async function getAppsFromFirestore(): Promise<AppItem[]> {
-  if (!db) return globalAppsStore;
+  if (!db) return sortAppsByNewest(globalAppsStore);
 
   try {
     const snapshot = await db.collection(APPS_COLLECTION).get();
     
     if (snapshot.empty) {
       // Seed Firestore with initial mock apps
-      const initialApps = MOCK_APPS.map(autoTranslateApp);
+      const initialApps = sortAppsByNewest(MOCK_APPS.map(autoTranslateApp));
       const batch = db.batch();
       for (const app of initialApps) {
         const docRef = db.collection(APPS_COLLECTION).doc(app.id);
@@ -35,16 +36,18 @@ async function getAppsFromFirestore(): Promise<AppItem[]> {
       apps.push(doc.data() as AppItem);
     });
 
+    const sortedApps = sortAppsByNewest(apps);
+
     // Keep memory fallback updated
-    globalAppsStore = apps;
-    return apps;
+    globalAppsStore = sortedApps;
+    return sortedApps;
   } catch (error) {
     console.error('Firestore GET error:', error);
-    return globalAppsStore;
+    return sortAppsByNewest(globalAppsStore);
   }
 }
 
-// GET: Fetch all global apps shared across all browsers and users worldwide
+// GET: Fetch all global apps shared across all browsers and users worldwide (Sorted newest first)
 export async function GET() {
   const apps = await getAppsFromFirestore();
   return NextResponse.json({
@@ -66,7 +69,7 @@ export async function POST(request: Request) {
     }
 
     // Keep memory fallback in sync
-    globalAppsStore = [translatedApp, ...globalAppsStore.filter((a) => a.id !== translatedApp.id)];
+    globalAppsStore = sortAppsByNewest([translatedApp, ...globalAppsStore.filter((a) => a.id !== translatedApp.id)]);
 
     const allApps = await getAppsFromFirestore();
 
@@ -94,8 +97,8 @@ export async function PUT(request: Request) {
       await db.collection(APPS_COLLECTION).doc(translatedApp.id).set(translatedApp, { merge: true });
     }
 
-    globalAppsStore = globalAppsStore.map((app) =>
-      app.id === translatedApp.id ? translatedApp : app
+    globalAppsStore = sortAppsByNewest(
+      globalAppsStore.map((app) => (app.id === translatedApp.id ? translatedApp : app))
     );
 
     const allApps = await getAppsFromFirestore();
@@ -128,7 +131,7 @@ export async function DELETE(request: Request) {
       await db.collection(APPS_COLLECTION).doc(appId).delete();
     }
 
-    globalAppsStore = globalAppsStore.filter((app) => app.id !== appId);
+    globalAppsStore = sortAppsByNewest(globalAppsStore.filter((app) => app.id !== appId));
 
     const allApps = await getAppsFromFirestore();
 
