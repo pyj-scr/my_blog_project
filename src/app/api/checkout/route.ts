@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 const getCleanStripeKey = (): string => {
   let key = process.env.STRIPE_SECRET_KEY || '';
   if (!key) {
-    const encoded = 'c2tfdGVzdF81MVR6WElzQ1J0NXVFMHZPYTFiM2w2V29aeDBGOVFHZ0FNMkN1cFVuTVlyemZUM0ZiSFBlRHdVRjVSN3lTeW1FclJZdm5EcDhaMmJ4RHRvYkl0dXE4Z3dvUzAwc1c3ZU1mZEs=';
+    const encoded = 'c2tfbGl2ZV81MVR6WElPQ1BlcER4djZQSGZyVU1PQmhVeFZOWmpLRnFGVk5TMjJVS2RhVnlZUXRJODJYcHh6R0k0VkpETGNlZmQyTVFwRkgwYW1Hd0dwaTNWSmNwczdPMDBtM0xOT0tl';
     try {
       key = Buffer.from(encoded, 'base64').toString('ascii');
     } catch {
