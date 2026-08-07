@@ -1,74 +1,100 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, User, Mail, Sparkles, ShieldCheck } from 'lucide-react';
+import { X, User, Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, UserPlus, LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export const LoginModal = () => {
-  const { isLoginModalOpen, closeLoginModal, login } = useAuth();
+  const { isLoginModalOpen, closeLoginModal, login, signUp, loginWithGoogle } = useAuth();
   const { language } = useLanguage();
+  const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isLoginModalOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    login(name, email);
+    setIsLoading(true);
+    try {
+      if (isSignUp) {
+        await signUp(name, email, password);
+      } else {
+        await login(name, email, password);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleQuickGoogleLogin = () => {
-    let targetEmail = email.trim();
-    if (!targetEmail) {
-      const promptMsg =
-        language === 'ja'
-          ? 'Googleメールアドレスを入力してください:'
-          : language === 'en'
-          ? 'Enter your Google email address:'
-          : 'Google 이메일 주소를 입력하세요:';
-      const input = prompt(promptMsg, 'myaccount@gmail.com');
-      if (!input) return;
-      targetEmail = input.trim();
+  const handleGoogleAuth = async () => {
+    setIsLoading(true);
+    try {
+      await loginWithGoogle();
+    } finally {
+      setIsLoading(false);
     }
-    const defaultName = targetEmail.split('@')[0] || 'User';
-    login(name || defaultName, targetEmail);
   };
 
   const labels = {
     ja: {
-      title: 'アプリ 100円ショップ ログイン',
+      title: 'アプリ 100円ショップ',
       sub: 'アプリのダウンロードおよび個人購入履歴の管理',
+      tabLogin: 'ログイン',
+      tabSignUp: '新規会員登録',
       googleBtn: 'Google アカウントでログイン',
-      orDivider: 'またはメールアドレスでログイン',
+      orDivider: 'またはメールアドレスとパスワードでログイン',
       nameLabel: 'お名前 (ニックネーム)',
       namePlaceholder: '例: 山田太郎 / ユーザー',
       emailLabel: 'メールアドレス',
       emailPlaceholder: 'user@example.com',
-      submitBtn: 'ログインして開始',
+      passwordLabel: 'パスワード',
+      passwordPlaceholder: '6文字以上のパスワード',
+      submitLoginBtn: 'ログインして開始',
+      submitSignUpBtn: '会員登録して開始',
+      toggleToSignUp: 'アカウントをお持ちでないですか？ 新規登録',
+      toggleToLogin: '既にアカウントをお持ちですか？ ログイン',
     },
     ko: {
-      title: '어플 100엔 샾 로그인',
-      sub: '어플 다운로드 및 개인 구매 내역 관리를 위한 로그인',
+      title: '어플 100엔 샾',
+      sub: '어플 다운로드 및 개인 구매 내역 관리를 위한 회원 인증',
+      tabLogin: '로그인',
+      tabSignUp: '회원가입',
       googleBtn: 'Google 계정으로 로그인',
-      orDivider: '또는 이메일 직접 입력',
+      orDivider: '또는 이메일 & 비밀번호 입력',
       nameLabel: '이름 (닉네임)',
       namePlaceholder: '예: 홍길동 / 유저',
       emailLabel: '이메일 주소',
       emailPlaceholder: 'user@example.com',
-      submitBtn: '시작하기 (로그인)',
+      passwordLabel: '비밀번호 (Password)',
+      passwordPlaceholder: '6자리 이상 비밀번호',
+      submitLoginBtn: '시작하기 (로그인)',
+      submitSignUpBtn: '회원가입 완료하기',
+      toggleToSignUp: '계정이 없으신가요? 회원가입',
+      toggleToLogin: '이미 계정이 있으신가요? 로그인',
     },
     en: {
-      title: 'App $1 Shop Login',
-      sub: 'Login to download apps and manage your purchase history',
+      title: 'App $1 Shop',
+      sub: 'Login or Sign up to manage downloads and purchases',
+      tabLogin: 'Sign In',
+      tabSignUp: 'Sign Up',
       googleBtn: 'Sign in with Google',
-      orDivider: 'Or sign in with Email',
+      orDivider: 'Or continue with Email & Password',
       nameLabel: 'Name (Nickname)',
       namePlaceholder: 'e.g. John Doe / User',
       emailLabel: 'Email Address',
       emailPlaceholder: 'user@example.com',
-      submitBtn: 'Get Started (Login)',
+      passwordLabel: 'Password',
+      passwordPlaceholder: '6+ characters password',
+      submitLoginBtn: 'Sign In & Get Started',
+      submitSignUpBtn: 'Create Account',
+      toggleToSignUp: "Don't have an account? Sign Up",
+      toggleToLogin: 'Already have an account? Sign In',
     },
   }[language];
 
@@ -85,7 +111,7 @@ export const LoginModal = () => {
         </button>
 
         {/* Brand & Title */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-5">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-600 shadow-lg shadow-rose-600/30">
             <Sparkles className="h-6 w-6 text-white" />
           </div>
@@ -93,14 +119,39 @@ export const LoginModal = () => {
           <p className="text-xs text-slate-400 mt-1">{labels.sub}</p>
         </div>
 
-        {/* Quick Social Auth Button */}
-        <div className="space-y-3 mb-6">
+        {/* Mode Switch Tabs */}
+        <div className="grid grid-cols-2 gap-1 p-1 mb-5 rounded-xl bg-slate-950 border border-slate-800">
           <button
-            onClick={handleQuickGoogleLogin}
             type="button"
-            className="w-full flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-950 py-3 text-xs font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition-all shadow-sm"
+            onClick={() => setIsSignUp(false)}
+            className={`flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-lg transition-all ${
+              !isSignUp ? 'bg-rose-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+            }`}
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24">
+            <LogIn className="h-3.5 w-3.5" />
+            <span>{labels.tabLogin}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsSignUp(true)}
+            className={`flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-lg transition-all ${
+              isSignUp ? 'bg-rose-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <UserPlus className="h-3.5 w-3.5" />
+            <span>{labels.tabSignUp}</span>
+          </button>
+        </div>
+
+        {/* Quick Social Auth Button */}
+        <div className="space-y-3 mb-5">
+          <button
+            onClick={handleGoogleAuth}
+            type="button"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-950 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition-all shadow-sm disabled:opacity-50"
+          >
+            <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
               <path
                 fill="#EA4335"
                 d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
@@ -122,26 +173,28 @@ export const LoginModal = () => {
           </button>
         </div>
 
-        <div className="relative mb-6 flex items-center justify-center">
+        <div className="relative mb-5 flex items-center justify-center">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-800" /></div>
           <span className="relative bg-slate-900 px-3 text-[10px] uppercase font-bold text-slate-500">{labels.orDivider}</span>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
-              <User className="h-3.5 w-3.5 text-rose-400" />
-              <span>{labels.nameLabel}</span>
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={labels.namePlaceholder}
-              className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-rose-500 focus:outline-none"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {isSignUp && (
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
+                <User className="h-3.5 w-3.5 text-rose-400" />
+                <span>{labels.nameLabel}</span>
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={labels.namePlaceholder}
+                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-rose-500 focus:outline-none"
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
@@ -158,14 +211,50 @@ export const LoginModal = () => {
             />
           </div>
 
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center gap-1">
+              <Lock className="h-3.5 w-3.5 text-rose-400" />
+              <span>{labels.passwordLabel}</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={labels.passwordPlaceholder}
+                className="w-full rounded-xl bg-slate-950 border border-slate-800 pl-3.5 pr-10 py-2.5 text-sm text-white placeholder-slate-500 focus:border-rose-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-rose-600 py-3 text-xs font-bold text-white shadow-lg shadow-rose-600/30 hover:bg-rose-500 transition-all mt-2"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-rose-600 py-3 text-xs font-bold text-white shadow-lg shadow-rose-600/30 hover:bg-rose-500 transition-all mt-2 disabled:opacity-50"
           >
             <ShieldCheck className="h-4 w-4" />
-            <span>{labels.submitBtn}</span>
+            <span>{isSignUp ? labels.submitSignUpBtn : labels.submitLoginBtn}</span>
           </button>
         </form>
+
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="text-[11px] text-slate-400 hover:text-rose-400 transition-colors font-medium"
+          >
+            {isSignUp ? labels.toggleToLogin : labels.toggleToSignUp}
+          </button>
+        </div>
+
       </div>
     </div>
   );

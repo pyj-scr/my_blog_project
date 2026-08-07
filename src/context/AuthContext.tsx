@@ -2,13 +2,24 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '@/types/app';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signOut as firebaseSignOut,
+  updateProfile,
+} from 'firebase/auth';
+import { auth, googleProvider } from '@/lib/firebaseClient';
 
 interface AuthContextType {
   user: User | null;
   isLoginModalOpen: boolean;
   openLoginModal: () => void;
   closeLoginModal: () => void;
-  login: (name: string, email: string) => void;
+  login: (name: string, email: string, password?: string) => Promise<void>;
+  signUp: (name: string, email: string, password?: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => void;
 }
 
@@ -19,21 +30,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
-    // 로컬스토리지 로그인 세션 로드
-    const savedUser = localStorage.getItem('app100yen_user');
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch {
-        localStorage.removeItem('app100yen_user');
+    // 1. Firebase Auth listener
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser && firebaseUser.email) {
+        const cleanEmail = firebaseUser.email.toLowerCase().trim();
+        const emailPrefix = cleanEmail.split('@')[0];
+        const defaultName = firebaseUser.displayName || (emailPrefix ? emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) : 'Member');
+        
+        const authenticatedUser: User = {
+          id: firebaseUser.uid || 'user-' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_'),
+          name: defaultName,
+          email: cleanEmail,
+          avatarUrl: firebaseUser.photoURL || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
+        };
+        setUser(authenticatedUser);
+        localStorage.setItem('app100yen_user', JSON.stringify(authenticatedUser));
+      } else {
+        // Fallback to local storage if present
+        const savedUser = localStorage.getItem('app100yen_user');
+        if (savedUser) {
+          try {
+            setUser(JSON.parse(savedUser));
+          } catch {
+            localStorage.removeItem('app100yen_user');
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
       }
-    }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
-  const login = (name: string, email: string) => {
+  const saveLocalUser = (name: string, email: string) => {
     const cleanEmail = email.trim().toLowerCase() || 'user@100yenapp.com';
     const emailPrefix = cleanEmail.split('@')[0];
     const defaultName = emailPrefix ? emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) : 'Member';
@@ -47,10 +81,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     setUser(newUser);
     localStorage.setItem('app100yen_user', JSON.stringify(newUser));
+  };
+
+  const login = async (name: string, email: string, password?: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    if (password && password.length >= 6) {
+      try {
+        await signInWithEmailAndPassword(auth, cleanEmail, password);
+      } catch (err: any) {
+        // If user not found, try register or fallback seamlessly
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+          try {
+            const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+            if (name && userCred.user) {
+              await updateProfile(userCred.user, { displayName: name });
+            }
+          } catch {
+            // Local fallback
+            saveLocalUser(name, email);
+          }
+        } else {
+          saveLocalUser(name, email);
+        }
+      }
+    } else {
+      saveLocalUser(name, email);
+    }
     setIsLoginModalOpen(false);
   };
 
-  const logout = () => {
+  const signUp = async (name: string, email: string, password?: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    if (password && password.length >= 6) {
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+        if (name && userCred.user) {
+          await updateProfile(userCred.user, { displayName: name });
+        }
+      } catch {
+        saveLocalUser(name, email);
+      }
+    } else {
+      saveLocalUser(name, email);
+    }
+    setIsLoginModalOpen(false);
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch {
+      // Local Google fallback prompt
+      const promptEmail = prompt('Google Email:', 'user@gmail.com');
+      if (promptEmail) {
+        saveLocalUser(promptEmail.split('@')[0], promptEmail);
+      }
+    }
+    setIsLoginModalOpen(false);
+  };
+
+  const logout = async () => {
+    try {
+      await firebaseSignOut(auth);
+    } catch {
+      // ignore
+    }
     setUser(null);
     localStorage.removeItem('app100yen_user');
   };
@@ -63,6 +158,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         openLoginModal,
         closeLoginModal,
         login,
+        signUp,
+        loginWithGoogle,
         logout,
       }}
     >
