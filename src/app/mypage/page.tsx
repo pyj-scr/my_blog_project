@@ -49,10 +49,7 @@ export default function MyPage() {
     );
   }
 
-  const userNameDisplay =
-    user.name === '구글 사용자' || user.name === 'Google User' || user.name === 'グーグルユーザー'
-      ? t.userDefaultName
-      : user.name;
+  const userNameDisplay = user.name || user.email || t.userDefaultName;
 
   return (
     <div className="min-h-screen flex flex-col justify-between text-slate-100 selection:bg-rose-500 selection:text-white">
@@ -82,8 +79,9 @@ export default function MyPage() {
           <button
             onClick={() => {
               if (confirm('구매 내역을 초기화하시겠습니까?')) {
-                localStorage.removeItem('app100yen_purchases');
-                window.location.href = '/apps';
+                const key = user?.email ? `app100yen_purchases_${user.email.toLowerCase().trim()}` : 'app100yen_purchases_guest';
+                localStorage.removeItem(key);
+                window.location.reload();
               }
             }}
             className="px-3.5 py-2 text-xs font-bold text-slate-400 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all"

@@ -59,6 +59,7 @@ export interface UserPurchase {
   purchasedAt: string;
   licenseKey: string;
   userName?: string;
+  userEmail?: string;
   downloadUrl?: string;
 }
 

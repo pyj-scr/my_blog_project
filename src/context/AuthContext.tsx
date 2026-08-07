@@ -34,11 +34,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
   const login = (name: string, email: string) => {
+    const cleanEmail = email.trim().toLowerCase() || 'user@100yenapp.com';
+    const emailPrefix = cleanEmail.split('@')[0];
+    const defaultName = emailPrefix ? emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) : 'Member';
+    const cleanName = name.trim() || defaultName;
+
     const newUser: User = {
-      id: 'user-' + Date.now(),
-      name: name || '크리에이터 회원',
-      email: email || 'user@100yenapp.com',
-      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email || 'user')}`,
+      id: 'user-' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_'),
+      name: cleanName,
+      email: cleanEmail,
+      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
     };
     setUser(newUser);
     localStorage.setItem('app100yen_user', JSON.stringify(newUser));
