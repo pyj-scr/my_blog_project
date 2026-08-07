@@ -46,10 +46,10 @@ export const LoginModal = () => {
           : '비밀번호는 6자리 이상이어야 합니다.';
       case 'AUTH_GOOGLE_FAILED':
         return language === 'ja'
-          ? 'Googleログイン認証に失敗しました。下のメールアドレス入力欄からご自身のメールを入力してログインしてください。'
+          ? 'Googleログイン連携にはFirebase Web APIキー(apiKey)の設定が必要です。下のメールアドレス・パスワード入力欄から直接ログインできます。'
           : language === 'en'
-          ? 'Google authentication failed. Please enter your email below to sign in.'
-          : 'Google 로그인 연동에 실패했습니다. 아래 이메일 입력창에 본인의 이메일을 입력하신 후 로그인해주세요.';
+          ? 'Google OAuth requires Firebase Web API Key configuration. Please log in using your email and password below.'
+          : 'Google 로그인 연동을 위해서는 Firebase 웹 API 키(apiKey) 설정이 필요합니다. 파이어베이스 콘솔(프로젝트 설정 -> 웹 앱)의 apiKey를 전달해주시거나, 아래 이메일 입력칸으로 바로 로그인하실 수 있습니다.';
       default:
         return errKey;
     }
