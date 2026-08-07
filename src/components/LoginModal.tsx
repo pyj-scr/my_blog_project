@@ -14,19 +14,54 @@ export const LoginModal = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   if (!isLoginModalOpen) return null;
+
+  const getTranslatedError = (errKey: string) => {
+    switch (errKey) {
+      case 'AUTH_WRONG_PASSWORD':
+        return language === 'ja'
+          ? 'パスワードが正しくありません。'
+          : language === 'en'
+          ? 'Incorrect password.'
+          : '비밀번호가 올바르지 않습니다.';
+      case 'AUTH_USER_NOT_FOUND':
+        return language === 'ja'
+          ? 'アカウントが見つかりません。新規会員登録を行ってください。'
+          : language === 'en'
+          ? 'Account not found. Please sign up.'
+          : '등록되지 않은 계정입니다. 회원가입 탭에서 신규 가입해주세요.';
+      case 'AUTH_EMAIL_EXISTS':
+        return language === 'ja'
+          ? '既に登録されているメールアドレスです。'
+          : language === 'en'
+          ? 'Email is already registered.'
+          : '이미 가입된 이메일 주소입니다.';
+      case 'AUTH_WEAK_PASSWORD':
+        return language === 'ja'
+          ? 'パスワードは6文字以上で入力してください。'
+          : language === 'en'
+          ? 'Password must be at least 6 characters.'
+          : '비밀번호는 6자리 이상이어야 합니다.';
+      default:
+        return errKey;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
     setIsLoading(true);
+    setErrorMsg('');
     try {
       if (isSignUp) {
         await signUp(name, email, password);
       } else {
         await login(name, email, password);
       }
+    } catch (err: any) {
+      setErrorMsg(getTranslatedError(err.message));
     } finally {
       setIsLoading(false);
     }
@@ -34,8 +69,11 @@ export const LoginModal = () => {
 
   const handleGoogleAuth = async () => {
     setIsLoading(true);
+    setErrorMsg('');
     try {
       await loginWithGoogle(email.trim());
+    } catch (err: any) {
+      setErrorMsg(getTranslatedError(err.message));
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +161,7 @@ export const LoginModal = () => {
         <div className="grid grid-cols-2 gap-1 p-1 mb-5 rounded-xl bg-slate-950 border border-slate-800">
           <button
             type="button"
-            onClick={() => setIsSignUp(false)}
+            onClick={() => { setIsSignUp(false); setErrorMsg(''); }}
             className={`flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-lg transition-all ${
               !isSignUp ? 'bg-rose-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -133,7 +171,7 @@ export const LoginModal = () => {
           </button>
           <button
             type="button"
-            onClick={() => setIsSignUp(true)}
+            onClick={() => { setIsSignUp(true); setErrorMsg(''); }}
             className={`flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-lg transition-all ${
               isSignUp ? 'bg-rose-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -142,6 +180,12 @@ export const LoginModal = () => {
             <span>{labels.tabSignUp}</span>
           </button>
         </div>
+
+        {errorMsg && (
+          <div className="mb-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs font-semibold text-rose-300 text-center animate-fadeIn">
+            {errorMsg}
+          </div>
+        )}
 
         {/* Quick Social Auth Button */}
         <div className="space-y-3 mb-5">

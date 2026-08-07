@@ -89,17 +89,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         await signInWithEmailAndPassword(auth, cleanEmail, password);
       } catch (err: any) {
-        // If user not found, try register or fallback seamlessly
-        if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-          try {
-            const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
-            if (name && userCred.user) {
-              await updateProfile(userCred.user, { displayName: name });
-            }
-          } catch {
-            // Local fallback
-            saveLocalUser(name, email);
-          }
+        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          throw new Error('AUTH_WRONG_PASSWORD');
+        } else if (err.code === 'auth/user-not-found') {
+          throw new Error('AUTH_USER_NOT_FOUND');
         } else {
           saveLocalUser(name, email);
         }
@@ -118,8 +111,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (name && userCred.user) {
           await updateProfile(userCred.user, { displayName: name });
         }
-      } catch {
-        saveLocalUser(name, email);
+      } catch (err: any) {
+        if (err.code === 'auth/email-already-in-use') {
+          throw new Error('AUTH_EMAIL_EXISTS');
+        } else if (err.code === 'auth/weak-password') {
+          throw new Error('AUTH_WEAK_PASSWORD');
+        } else {
+          saveLocalUser(name, email);
+        }
       }
     } else {
       saveLocalUser(name, email);
