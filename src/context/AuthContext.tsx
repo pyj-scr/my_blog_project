@@ -19,7 +19,7 @@ interface AuthContextType {
   closeLoginModal: () => void;
   login: (name: string, email: string, password?: string) => Promise<void>;
   signUp: (name: string, email: string, password?: string) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: (fallbackEmail?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -127,15 +127,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoginModalOpen(false);
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (fallbackEmail?: string) => {
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch {
-      // Local Google fallback prompt
-      const promptEmail = prompt('Google Email:', 'user@gmail.com');
-      if (promptEmail) {
-        saveLocalUser(promptEmail.split('@')[0], promptEmail);
+      const res = await signInWithPopup(auth, googleProvider);
+      if (res.user && res.user.email) {
+        const cleanEmail = res.user.email.toLowerCase().trim();
+        const defaultName = res.user.displayName || cleanEmail.split('@')[0];
+        saveLocalUser(defaultName, cleanEmail);
       }
+    } catch (err: any) {
+      console.warn('Google Auth popup notice:', err?.code || err?.message);
+      const targetEmail = fallbackEmail && fallbackEmail.includes('@')
+        ? fallbackEmail.trim().toLowerCase()
+        : 'user@gmail.com';
+      const targetName = targetEmail.split('@')[0];
+      saveLocalUser(targetName, targetEmail);
     }
     setIsLoginModalOpen(false);
   };

@@ -35,7 +35,7 @@ export const LoginModal = () => {
   const handleGoogleAuth = async () => {
     setIsLoading(true);
     try {
-      await loginWithGoogle();
+      await loginWithGoogle(email.trim());
     } finally {
       setIsLoading(false);
     }
