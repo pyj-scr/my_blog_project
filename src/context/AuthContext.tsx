@@ -133,16 +133,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const cleanEmail = res.user.email.toLowerCase().trim();
         const defaultName = res.user.displayName || cleanEmail.split('@')[0];
         saveLocalUser(defaultName, cleanEmail);
+        setIsLoginModalOpen(false);
+        return;
       }
     } catch (err: any) {
       console.warn('Google Auth popup notice:', err?.code || err?.message);
-      const targetEmail = fallbackEmail && fallbackEmail.includes('@')
-        ? fallbackEmail.trim().toLowerCase()
-        : 'user@gmail.com';
-      const targetName = targetEmail.split('@')[0];
-      saveLocalUser(targetName, targetEmail);
     }
-    setIsLoginModalOpen(false);
+
+    // If fallbackEmail is provided from user input, log in with user's specified email
+    if (fallbackEmail && fallbackEmail.includes('@')) {
+      const cleanEmail = fallbackEmail.trim().toLowerCase();
+      const targetName = cleanEmail.split('@')[0];
+      saveLocalUser(targetName, cleanEmail);
+      setIsLoginModalOpen(false);
+      return;
+    }
+
+    // Never generate dummy 'user@gmail.com'! Throw error so UI can prompt user
+    throw new Error('AUTH_GOOGLE_FAILED');
   };
 
   const logout = async () => {

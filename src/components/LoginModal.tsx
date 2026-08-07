@@ -44,6 +44,12 @@ export const LoginModal = () => {
           : language === 'en'
           ? 'Password must be at least 6 characters.'
           : '비밀번호는 6자리 이상이어야 합니다.';
+      case 'AUTH_GOOGLE_FAILED':
+        return language === 'ja'
+          ? 'Googleログイン認証に失敗しました。下のメールアドレス入力欄からご自身のメールを入力してログインしてください。'
+          : language === 'en'
+          ? 'Google authentication failed. Please enter your email below to sign in.'
+          : 'Google 로그인 연동에 실패했습니다. 아래 이메일 입력창에 본인의 이메일을 입력하신 후 로그인해주세요.';
       default:
         return errKey;
     }
