@@ -138,19 +138,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (err: any) {
       console.warn('Google Auth popup notice:', err?.code || err?.message);
-    }
 
-    // If fallbackEmail is provided from user input, log in with user's specified email
-    if (fallbackEmail && fallbackEmail.includes('@')) {
-      const cleanEmail = fallbackEmail.trim().toLowerCase();
-      const targetName = cleanEmail.split('@')[0];
-      saveLocalUser(targetName, cleanEmail);
-      setIsLoginModalOpen(false);
-      return;
-    }
+      // If fallbackEmail is provided from user input, log in with user's specified email
+      if (fallbackEmail && fallbackEmail.includes('@')) {
+        const cleanEmail = fallbackEmail.trim().toLowerCase();
+        const targetName = cleanEmail.split('@')[0];
+        saveLocalUser(targetName, cleanEmail);
+        setIsLoginModalOpen(false);
+        return;
+      }
 
-    // Never generate dummy 'user@gmail.com'! Throw error so UI can prompt user
-    throw new Error('AUTH_GOOGLE_FAILED');
+      if (err?.code === 'auth/unauthorized-domain') {
+        throw new Error('AUTH_UNAUTHORIZED_DOMAIN');
+      } else if (err?.code === 'auth/popup-closed-by-user') {
+        throw new Error('AUTH_POPUP_CLOSED');
+      } else if (err?.code === 'auth/operation-not-allowed') {
+        throw new Error('AUTH_OPERATION_NOT_ALLOWED');
+      } else {
+        throw new Error(err?.code || 'AUTH_GOOGLE_FAILED');
+      }
+    }
   };
 
   const logout = async () => {

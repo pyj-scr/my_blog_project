@@ -44,12 +44,24 @@ export const LoginModal = () => {
           : language === 'en'
           ? 'Password must be at least 6 characters.'
           : '비밀번호는 6자리 이상이어야 합니다.';
+      case 'AUTH_UNAUTHORIZED_DOMAIN':
+        return language === 'ja'
+          ? 'Firebase承認済みドメインの設定が必要です。Firebaseコンソール -> Authentication -> 設定 -> \'承認済みドメイン\' に 100yen.yoyogiyj.com を追加するか、下のメールアドレス入力欄から直接ログインできます。'
+          : language === 'en'
+          ? 'Unauthorized domain. Please add 100yen.yoyogiyj.com to Firebase Console -> Authentication -> Settings -> Authorized domains, or sign in below.'
+          : '도메인 승인이 필요합니다. 파이어베이스 콘솔 ➔ Authentication ➔ 설정 ➔ \'승인된 도메인\'에 100yen.yoyogiyj.com 을 추가해주시거나, 아래 이메일 입력칸으로 바로 로그인해주세요.';
+      case 'AUTH_POPUP_CLOSED':
+        return language === 'ja'
+          ? 'Googleログイン画面が閉じられました。下のメールアドレス入力欄から直接ログインできます。'
+          : language === 'en'
+          ? 'Google login window was closed. Please try again or sign in with your email below.'
+          : '구글 로그인 팝업 창이 닫혔습니다. 버튼을 다시 누르시거나 아래 이메일 입력창으로 바로 로그인해주세요.';
       case 'AUTH_GOOGLE_FAILED':
         return language === 'ja'
-          ? 'Googleログイン連携にはFirebase Web APIキー(apiKey)の設定が必要です。下のメールアドレス・パスワード入力欄から直接ログインできます。'
+          ? 'Googleログイン連携には承認済みドメインの設定が必要です。下のメールアドレス・パスワード入力欄から直接ログインできます。'
           : language === 'en'
-          ? 'Google OAuth requires Firebase Web API Key configuration. Please log in using your email and password below.'
-          : 'Google 로그인 연동을 위해서는 Firebase 웹 API 키(apiKey) 설정이 필요합니다. 파이어베이스 콘솔(프로젝트 설정 -> 웹 앱)의 apiKey를 전달해주시거나, 아래 이메일 입력칸으로 바로 로그인하실 수 있습니다.';
+          ? 'Google OAuth failed. Please add 100yen.yoyogiyj.com to Authorized Domains or sign in with email below.'
+          : 'Google 로그인 연동 실패. 파이어베이스 콘솔(Authentication ➔ 설정 ➔ 승인된 도메인)에 100yen.yoyogiyj.com 을 추가해주시거나, 아래 이메일 입력칸으로 바로 로그인해주세요.';
       default:
         return errKey;
     }
