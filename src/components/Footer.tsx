@@ -77,10 +77,15 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>{t.footerCopyright}</p>
-          <div className="flex items-center gap-1">
-            <span>Made with</span>
-            <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500 inline mx-0.5" />
-            <span>for AI Builders</span>
+          <div className="flex items-center gap-4">
+            <Link href="/tokushoho" className="hover:text-rose-400 transition-colors">
+              特定商取引法に基づく表記
+            </Link>
+            <div className="flex items-center gap-1">
+              <span>Made with</span>
+              <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500 inline mx-0.5" />
+              <span>for AI Builders</span>
+            </div>
           </div>
         </div>
       </div>
