@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { MOCK_APPS } from '@/data/mockApps';
 import { AppItem } from '@/types/app';
-import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
+import { autoTranslateApp, asyncTranslateApp, translateToKo, translateToJa, translateToEn, containsJapanese, containsKorean } from '@/utils/autoTranslateApp';
 import { sortAppsByNewest } from '@/utils/sortApps';
 import { db } from '@/lib/firebaseAdmin';
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore';
@@ -12,11 +12,31 @@ let globalAppsStore: AppItem[] = sortAppsByNewest(MOCK_APPS.map(autoTranslateApp
 const APPS_COLLECTION = 'apps';
 
 function sanitizeApp(app: AppItem): AppItem {
+  const baseTranslated = autoTranslateApp(app);
   const isValid = (s?: string) => s && s.trim().length > 1;
-  const cleaned = { ...app };
-  if (!isValid(cleaned.titleKo)) cleaned.titleKo = cleaned.title;
-  if (!isValid(cleaned.titleJa)) cleaned.titleJa = cleaned.title;
-  if (!isValid(cleaned.titleEn)) cleaned.titleEn = cleaned.title;
+
+  const cleaned = { ...baseTranslated };
+
+  if (!isValid(cleaned.titleKo) || containsJapanese(cleaned.titleKo)) {
+    cleaned.titleKo = translateToKo(cleaned.title);
+  }
+  if (!isValid(cleaned.titleJa) || containsKorean(cleaned.titleJa)) {
+    cleaned.titleJa = translateToJa(cleaned.title);
+  }
+  if (!isValid(cleaned.titleEn) || containsJapanese(cleaned.titleEn) || containsKorean(cleaned.titleEn)) {
+    cleaned.titleEn = translateToEn(cleaned.title);
+  }
+
+  if (!isValid(cleaned.shortDescriptionKo) || containsJapanese(cleaned.shortDescriptionKo)) {
+    cleaned.shortDescriptionKo = translateToKo(cleaned.shortDescription);
+  }
+  if (!isValid(cleaned.shortDescriptionJa) || containsKorean(cleaned.shortDescriptionJa)) {
+    cleaned.shortDescriptionJa = translateToJa(cleaned.shortDescription);
+  }
+  if (!isValid(cleaned.shortDescriptionEn) || containsJapanese(cleaned.shortDescriptionEn) || containsKorean(cleaned.shortDescriptionEn)) {
+    cleaned.shortDescriptionEn = translateToEn(cleaned.shortDescription);
+  }
+
   return cleaned;
 }
 
@@ -26,7 +46,7 @@ async function getAppsFromFirestore(): Promise<AppItem[]> {
 
   try {
     const snapshot = await db.collection(APPS_COLLECTION).get();
-    
+
     if (snapshot.empty) {
       // Seed Firestore with initial mock apps
       const initialApps = sortAppsByNewest(MOCK_APPS.map(autoTranslateApp)).map(sanitizeApp);
@@ -41,9 +61,23 @@ async function getAppsFromFirestore(): Promise<AppItem[]> {
     }
 
     const apps: AppItem[] = [];
-    snapshot.docs.forEach((doc: QueryDocumentSnapshot) => {
-      apps.push(sanitizeApp(doc.data() as AppItem));
-    });
+    for (const doc of snapshot.docs) {
+      const data = doc.data() as AppItem;
+      const sanitized = sanitizeApp(data);
+      apps.push(sanitized);
+
+      // Self-healing: if fields were untranslated in DB, update Firestore in background
+      if (
+        db &&
+        (sanitized.titleKo !== data.titleKo ||
+          sanitized.titleJa !== data.titleJa ||
+          sanitized.titleEn !== data.titleEn ||
+          sanitized.shortDescriptionKo !== data.shortDescriptionKo ||
+          sanitized.shortDescriptionEn !== data.shortDescriptionEn)
+      ) {
+        db.collection(APPS_COLLECTION).doc(sanitized.id).set(sanitized, { merge: true }).catch(() => {});
+      }
+    }
 
     const sortedApps = sortAppsByNewest(apps);
 
@@ -69,7 +103,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body: AppItem = await request.json();
-    
+
     // Auto translate to KO, JA, EN 3 languages
     const translatedApp = await asyncTranslateApp(body);
 

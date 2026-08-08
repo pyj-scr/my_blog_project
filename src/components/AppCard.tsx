@@ -23,6 +23,9 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
     return fallback && fallback.trim().length > 0 ? fallback.trim() : '';
   };
 
+  const containsJp = (t?: string) => t && /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(t);
+  const containsKr = (t?: string) => t && /[\uAC00-\uD7A3]/.test(t);
+
   let title =
     language === 'ko'
       ? getValidText(app.titleKo, app.title)
@@ -36,6 +39,17 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
       : language === 'ja'
       ? getValidText(app.shortDescriptionJa, app.shortDescription)
       : getValidText(app.shortDescriptionEn, app.shortDescription);
+
+  if (language === 'ko') {
+    if (containsJp(title)) title = translateToKo(title);
+    if (containsJp(shortDesc)) shortDesc = translateToKo(shortDesc);
+  } else if (language === 'en') {
+    if (containsJp(title) || containsKr(title)) title = translateToEn(title);
+    if (containsJp(shortDesc) || containsKr(shortDesc)) shortDesc = translateToEn(shortDesc);
+  } else if (language === 'ja') {
+    if (containsKr(title)) title = translateToJa(title);
+    if (containsKr(shortDesc)) shortDesc = translateToJa(shortDesc);
+  }
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {

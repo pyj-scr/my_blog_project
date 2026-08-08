@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen, Image as ImageIcon, Trash2, Globe } from 'lucide-react';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
-import { autoTranslateApp, asyncTranslateApp, translateToJa, translateToEn, translateToKo } from '@/utils/autoTranslateApp';
+import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
 
 interface UploadAppModalProps {
   onClose: () => void;
@@ -50,38 +50,35 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
 
   useEffect(() => {
     if (editApp) {
-      const isValid = (s?: string) => s && s.trim().length > 1;
       setTitle(editApp.title);
+      setCategory(editApp.category);
+      setShortDesc(editApp.shortDescription);
+      setFullDesc(editApp.fullDescription || '');
+      setUsageGuide(editApp.usageGuide || '');
+      setSelectedOS(editApp.os || ['Android', 'iOS']);
+      setCustomImage(editApp.thumbnailUrl || null);
+
+      const isValid = (s?: string) => s && s.trim().length > 1;
       setTitleKo(isValid(editApp.titleKo) ? editApp.titleKo! : '');
       setTitleJa(isValid(editApp.titleJa) ? editApp.titleJa! : '');
       setTitleEn(isValid(editApp.titleEn) ? editApp.titleEn! : '');
-      setCategory(editApp.category);
-      setShortDesc(editApp.shortDescription);
-      setFullDesc(editApp.fullDescription);
-      setUsageGuide(editApp.usageGuide || '');
-      setSelectedOS(editApp.os as string[]);
-      if (editApp.thumbnailUrl) {
-        setCustomImage(editApp.thumbnailUrl);
-      }
     }
   }, [editApp]);
 
   const toggleOS = (os: string) => {
     if (selectedOS.includes(os)) {
-      setSelectedOS(selectedOS.filter((o) => o !== os));
+      setSelectedOS(selectedOS.filter((item) => item !== os));
     } else {
       setSelectedOS([...selectedOS, os]);
     }
   };
 
-  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
-      reader.onload = (uploadEvent) => {
-        if (uploadEvent.target?.result) {
-          setCustomImage(uploadEvent.target.result as string);
-        }
+      reader.onloadend = () => {
+        setCustomImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -105,9 +102,9 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     const baseApp: AppItem = {
       id: editApp ? editApp.id : `app-custom-${Date.now()}`,
       title: title.trim(),
-      titleKo: isValid(titleKo) ? titleKo.trim() : translateToKo(title),
-      titleJa: isValid(titleJa) ? titleJa.trim() : translateToJa(title),
-      titleEn: isValid(titleEn) ? titleEn.trim() : translateToEn(title),
+      titleKo: showAdvancedTitleEdit && isValid(titleKo) ? titleKo.trim() : undefined,
+      titleJa: showAdvancedTitleEdit && isValid(titleJa) ? titleJa.trim() : undefined,
+      titleEn: showAdvancedTitleEdit && isValid(titleEn) ? titleEn.trim() : undefined,
       shortDescription: shortDesc.trim(),
       fullDescription: (fullDesc || shortDesc).trim(),
       usageGuide: usageGuide.trim(),
@@ -149,15 +146,12 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
 
     // Enrich with dynamic translation
     const translated = await asyncTranslateApp(baseApp);
-    
-    if (isValid(titleJa)) translated.titleJa = titleJa.trim();
-    if (isValid(titleEn)) translated.titleEn = titleEn.trim();
-    if (isValid(titleKo)) translated.titleKo = titleKo.trim();
 
-    // Ensure title is set properly across all 3 languages if any is missing or corrupted
-    if (!isValid(translated.titleJa)) translated.titleJa = title.trim();
-    if (!isValid(translated.titleKo)) translated.titleKo = translateToKo(title.trim());
-    if (!isValid(translated.titleEn)) translated.titleEn = translateToEn(title.trim());
+    if (showAdvancedTitleEdit) {
+      if (isValid(titleJa)) translated.titleJa = titleJa.trim();
+      if (isValid(titleEn)) translated.titleEn = titleEn.trim();
+      if (isValid(titleKo)) translated.titleKo = titleKo.trim();
+    }
 
     // Send to Global Server API Database Route (Real-Time Worldwide Sync)
     try {
@@ -171,37 +165,60 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
 
       if (res.ok) {
         const data = await res.json();
-        if (data.app) {
-          if (editApp && onAppUpdated) {
-            onAppUpdated(data.app);
-          } else if (onAppCreated) {
-            onAppCreated(data.app);
-          }
+        const finalApp = data.app || translated;
+
+        if (editApp && onAppUpdated) {
+          onAppUpdated(finalApp);
+        } else if (onAppCreated) {
+          onAppCreated(finalApp);
         }
+
+        const eventName = editApp ? 'app-updated' : 'app-created';
+        const customEvent = new CustomEvent(eventName, { detail: finalApp });
+        window.dispatchEvent(customEvent);
+
+        setIsSuccess(true);
+        setTimeout(() => {
+          onClose();
+        }, 1200);
+      } else {
+        const fallbackApp = autoTranslateApp(translated);
+        if (editApp && onAppUpdated) {
+          onAppUpdated(fallbackApp);
+        } else if (onAppCreated) {
+          onAppCreated(fallbackApp);
+        }
+        setIsSuccess(true);
+        setTimeout(() => {
+          onClose();
+        }, 1200);
       }
     } catch (err) {
-      console.error('Server sync failed:', err);
-      // Fallback local update
-      if (editApp && onAppUpdated) onAppUpdated(translated);
-      else if (onAppCreated) onAppCreated(translated);
+      console.error('App submit API failed:', err);
+      const fallbackApp = autoTranslateApp(translated);
+      if (editApp && onAppUpdated) {
+        onAppUpdated(fallbackApp);
+      } else if (onAppCreated) {
+        onAppCreated(fallbackApp);
+      }
+      setIsSuccess(true);
+      setTimeout(() => {
+        onClose();
+      }, 1200);
+    } finally {
+      setIsTranslating(false);
     }
-
-    setIsTranslating(false);
-    setIsSuccess(true);
-    setTimeout(() => {
-      onClose();
-    }, 1200);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 px-6 py-5 bg-slate-950/60">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-600/30">
-              {editApp ? <Edit3 className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-2xl rounded-3xl border border-slate-800 bg-slate-900/95 shadow-2xl overflow-hidden">
+
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b border-slate-800 p-6 bg-slate-950/50">
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-rose-600 to-indigo-600 shadow-md">
+              {editApp ? <Edit3 className="h-5 w-5 text-white" /> : <Upload className="h-5 w-5 text-white" />}
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">
@@ -214,106 +231,86 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Success Banner */}
+        {/* Success Screen */}
         {isSuccess ? (
           <div className="p-12 text-center space-y-4">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              <CheckCircle className="h-10 w-10" />
+            <div className="flex justify-center">
+              <CheckCircle className="h-16 w-16 text-emerald-400 animate-bounce" />
             </div>
-            <h3 className="text-xl font-extrabold text-white">
-              {editApp ? '어플 정보가 수정되었습니다!' : '어플 등록이 완료되었습니다!'}
+            <h3 className="text-xl font-black text-white">
+              {editApp ? t.appUpdatedSuccessTitle : t.appCreatedSuccessTitle}
             </h3>
-            <p className="text-sm text-slate-300">전 세계 모든 사용자 스토어에 실시간 등록되었습니다.</p>
+            <p className="text-sm text-slate-300">
+              {editApp ? t.appUpdatedSuccessDesc : t.appCreatedSuccessDesc}
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-            
-            {/* Custom App Thumbnail Cover Upload Section */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-                  <ImageIcon className="h-4 w-4" />
-                  <span>{t.thumbnailLabel}</span>
-                </label>
-                {customImage && (
-                  <button
-                    type="button"
-                    onClick={() => setCustomImage(null)}
-                    className="flex items-center gap-1 text-[11px] font-bold text-rose-400 hover:text-rose-300"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                    <span>초기화 (자동 이미지)</span>
-                  </button>
-                )}
+
+            {/* Thumbnail Preview & Upload Box */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-950 p-4 rounded-2xl border border-slate-800">
+              <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center">
+                <img
+                  src={finalThumbnail}
+                  alt="App Preview"
+                  className="h-full w-full object-contain"
+                />
               </div>
-
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="relative h-28 w-full sm:w-44 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shrink-0 flex items-center justify-center p-2">
-                  <img
-                    src={finalThumbnail}
-                    alt="App Preview"
-                    className="h-full w-full object-contain"
-                  />
-                  <div className="absolute top-2 left-2 rounded-full bg-slate-950/80 px-2 py-0.5 text-[9px] font-bold text-emerald-400 border border-emerald-500/30">
-                    {customImage ? '커스텀 이미지' : '자동 추천 이미지'}
-                  </div>
-                </div>
-
-                <div className="flex-1 w-full">
-                  <div className="relative border-2 border-dashed border-slate-800 hover:border-amber-500/80 rounded-xl bg-slate-900/50 p-4 text-center cursor-pointer transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageFileChange}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
-                    <div className="flex flex-col items-center justify-center space-y-1 pointer-events-none">
-                      <Upload className="h-4 w-4 text-amber-400" />
-                      <span className="text-xs text-slate-200 font-bold">
-                        {customImage ? '다른 이미지로 변경' : t.thumbnailDropText}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-2">
-                    {t.thumbnailAutoNotice}
-                  </p>
+              <div className="space-y-2 text-center sm:text-left flex-1">
+                <p className="text-xs font-bold text-slate-200">{t.thumbnailTitle}</p>
+                <p className="text-[11px] text-slate-400">
+                  {t.thumbnailDesc}
+                </p>
+                <div className="flex items-center gap-2 pt-1 justify-center sm:justify-start">
+                  <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold text-slate-200 hover:bg-slate-800 cursor-pointer transition-all">
+                    <ImageIcon className="h-3.5 w-3.5 text-rose-400" />
+                    <span>{t.uploadImageBtn}</span>
+                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                  </label>
+                  {customImage && (
+                    <button
+                      type="button"
+                      onClick={() => setCustomImage(null)}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs font-bold text-rose-400 hover:bg-rose-500/20 transition-all"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>{t.resetDefaultImageBtn}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* App Title Main Input */}
+            {/* Main App Title */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-slate-300">
+                <label className="block text-xs font-bold text-slate-300">
                   {t.appNameLabel} <span className="text-rose-400">*</span>
                 </label>
+
+                {/* Advanced Language Edit Toggle */}
                 <button
                   type="button"
                   onClick={() => setShowAdvancedTitleEdit(!showAdvancedTitleEdit)}
-                  className="flex items-center gap-1 text-[11px] font-bold text-indigo-400 hover:text-indigo-300"
+                  className="flex items-center gap-1 text-[11px] font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
                 >
                   <Globe className="h-3 w-3" />
                   <span>{showAdvancedTitleEdit ? '언어별 수동 직접 입력 닫기' : '🌐 언어별 어플 이름 직접 입력/수정'}</span>
                 </button>
               </div>
-              
+
               <input
                 type="text"
                 required
                 placeholder={t.appNamePlaceholder}
                 value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (!titleJa) setTitleJa(translateToJa(e.target.value));
-                  if (!titleEn) setTitleEn(translateToEn(e.target.value));
-                  if (!titleKo) setTitleKo(translateToKo(e.target.value));
-                }}
+                onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none"
               />
 
@@ -323,7 +320,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
                   <p className="text-[11px] font-bold text-indigo-300">
                     ※ 원하시는 일본어/영어/한국어 표기법을 직접 수정하시면 AI 자동 번역보다 최우선하여 전 세계 적용됩니다.
                   </p>
-                  
+
                   <div>
                     <label className="block text-[11px] font-bold text-slate-400 mb-1">🇯🇵 日本語 アプリ名 (일본어 표기 직접 수정)</label>
                     <input

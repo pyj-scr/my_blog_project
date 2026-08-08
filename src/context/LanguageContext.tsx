@@ -1,9 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Language, AppItem } from '@/types/app';
+import { AppItem } from '@/types/app';
+
+export type Language = 'ja' | 'ko' | 'en';
 
 export interface TranslationSet {
+  // Navigation & Header
   brandTitle: string;
   brandTagline: string;
   navApps: string;
@@ -11,6 +14,8 @@ export interface TranslationSet {
   login: string;
   logout: string;
   userDefaultName: string;
+
+  // Hero & Catalog
   heroTag: string;
   heroTitle1: string;
   heroTitleHighlight: string;
@@ -27,10 +32,14 @@ export interface TranslationSet {
   popularCatalogTitle: string;
   popularCatalogSub: string;
   viewAllApps: string;
+
+  // Apps Catalog Page
   catalogBadge: string;
   catalogTitle: string;
   catalogSubtitle: string;
   searchPlaceholder: string;
+
+  // App Cards & Buttons
   buyBtn: string;
   purchasedLabel: string;
   downloadFile: string;
@@ -38,6 +47,8 @@ export interface TranslationSet {
   ratingLabel: string;
   downloadCountLabel: string;
   downloadCountSuffix: string;
+
+  // Categories
   categoryAll: string;
   categoryMobile: string;
   categoryAi: string;
@@ -45,7 +56,7 @@ export interface TranslationSet {
   categoryDev: string;
   categoryAuto: string;
   categoryUtil: string;
-  
+
   // MyPage
   resetTestPurchases: string;
   purchasedAppsTotal: string;
@@ -76,6 +87,14 @@ export interface TranslationSet {
   cancelBtn: string;
   submitUploadBtn: string;
   submitSaveBtn: string;
+  uploadImageBtn: string;
+  resetDefaultImageBtn: string;
+  thumbnailTitle: string;
+  thumbnailDesc: string;
+  appCreatedSuccessTitle: string;
+  appCreatedSuccessDesc: string;
+  appUpdatedSuccessTitle: string;
+  appUpdatedSuccessDesc: string;
 
   // App Detail Modal
   appIntroTitle: string;
@@ -108,72 +127,80 @@ const translations: Record<Language, TranslationSet> = {
     navMyPage: 'マイダウンロード',
     login: 'ログイン',
     logout: 'ログアウト',
-    userDefaultName: '会員',
-    heroTag: 'AIアプリ全品 100円均一ショップ',
-    heroTitle1: '一人で使うには勿体ない！',
+    userDefaultName: '会員様',
+    heroTag: '100円定額制 デジタル アプリストア',
+    heroTitle1: '一人で使うには惜しすぎる！',
     heroTitleHighlight: 'アプリ 100円ショップ',
-    heroDesc: '背景除去ツールからPDF AI要約機、自動化ツールまで！必要なアプリを100円で永久ダウンロード。',
-    btnExplore: 'アプリを探してダウンロード',
-    trustBadge1Title: 'たった100円 / $1',
-    trustBadge1Sub: '手軽な一律価格',
-    trustBadge2Title: 'ワンクリック即時利用',
+    heroDesc: '画像背景削除からPDF AI要約機、自動化ツールまで！たった100円で一生使える高精度アプリを今すぐGETしてください。',
+    btnExplore: '100円アプリを探してダウンロード',
+    trustBadge1Title: '100円一律定額制',
+    trustBadge1Sub: '負担ゼロの超特価',
+    trustBadge2Title: 'ワンクリック即時起動',
     trustBadge2Sub: 'インストール不要ウェブアプリ',
     trustBadge3Title: '生涯無料アップデート',
-    trustBadge3Sub: '一度の購入で永久所有',
-    trustBadge4Title: '実行ファイル同梱',
-    trustBadge4Sub: 'Pythonデスクトッププログラム',
-    popularCatalogTitle: '🔥 人気100円アプリラインナップ',
-    popularCatalogSub: '100円ですぐに利用できる高性能ユーティリティです。',
+    trustBadge3Sub: '1度購入で永久所有',
+    trustBadge4Title: 'PC・スマホ両対応',
+    trustBadge4Sub: 'Python・モバイルパッケージ',
+    popularCatalogTitle: '🔥 大人気 100円アプリ ラインナップ',
+    popularCatalogSub: '100円で即時ダウンロード可能な高品質ユーティリティアプリラインナップです。',
     viewAllApps: 'すべてのアプリを見る',
-    catalogBadge: '100円一律デジタルアプリストア',
-    catalogTitle: 'アプリ一覧',
-    catalogSubtitle: '100円ですぐにダウンロード可能な高品質ユーティリティラインナップです。',
-    searchPlaceholder: 'アプリ名または機能を検索...',
+    catalogBadge: '100円 定額制 デジタル アプリストア',
+    catalogTitle: 'アプリ カタログ',
+    catalogSubtitle: '100円で即時ダウンロード可能な高品質ユーティリティアプリラインナップです。',
+    searchPlaceholder: 'アプリ名または機能で検索...',
     buyBtn: '100円で購入',
     purchasedLabel: '購入済み',
-    downloadFile: 'インストールファイルのダウンロード',
+    downloadFile: 'インストールファイル ダウンロード',
     licenseKey: 'ライセンスキー',
     ratingLabel: '評価',
     downloadCountLabel: 'ダウンロード',
     downloadCountSuffix: '回',
-    categoryAll: 'すべて',
-    categoryMobile: 'モバイルアプリ',
-    categoryAi: 'AI生産性',
-    categoryDesign: 'デザイン＆メディア',
-    categoryDev: '開発＆ツール',
+    categoryAll: '全体',
+    categoryMobile: 'モバイル アプリ',
+    categoryAi: 'AI 生産性',
+    categoryDesign: 'デザイン & ミディア',
+    categoryDev: '開発 & ツール',
     categoryAuto: '自動化',
     categoryUtil: 'ユーティリティ',
-    
+
     // MyPage
-    resetTestPurchases: '🔄 履歴リセット',
-    purchasedAppsTotal: '保有アプリ数',
-    proMember: 'PROメンバー',
+    resetTestPurchases: '🔄 購入履歴のリセット (テスト用)',
+    purchasedAppsTotal: '保有中のアプリ',
+    proMember: 'PRO 会員',
 
     // Upload App Modal
     uploadModalTitle: '新規スマホ/PCアプリ登録',
     uploadModalSub: '100円ショップに新しいアプリを登録して公開します',
     uploadModalEditTitle: 'アプリ情報の編集',
     uploadModalEditSub: '登録済みアプリの情報と説明書を編集します',
-    thumbnailLabel: 'アプリの代表サムネイル画像 (任意)',
-    thumbnailDropText: 'クリックまたはドラッグして画像を選択 (.PNG, .JPG, .WebP)',
-    thumbnailAutoNotice: '※画像をアップロードしない場合、カテゴリに合った画像が自動設定されます。',
+    thumbnailLabel: 'アプリ カバー サムネイル画像 (選択)',
+    thumbnailDropText: '画像ファイル(.PNG, .JPG, .WebP)をドロップまたは選択してください',
+    thumbnailAutoNotice: '※ 画像未登録時はカテゴリ別高品質デフォルト画像が自動割り当てられます。',
     appNameLabel: 'アプリ名',
-    appNamePlaceholder: '例: One Month\'s Todo / スマホカレンダー Pro',
+    appNamePlaceholder: '例: One Month\'s Todo (1ヶ月ToDoカレンダー)',
     categoryLabel: 'カテゴリ',
-    priceAndRevenueLabel: '販売価格＆収益配分 (手数料10%)',
-    revenueShareText: '売上の90%を開発者に還元 / プラットフォーム手数料10%',
-    supportedOSLabel: '対応OS・端末選択',
-    shortDescLabel: 'アプリの一行紹介',
-    shortDescPlaceholder: 'アプリのコア機能や特徴を一行で説明...',
+    priceAndRevenueLabel: '販売価格 & 収益配分 (手数料 10%)',
+    revenueShareText: '販売金額の90%をクリエイター精算 / プラットフォーム手数料10%',
+    supportedOSLabel: '対応機器 / OS 選択',
+    shortDescLabel: 'アプリの一言紹介',
+    shortDescPlaceholder: 'アプリの核心機能と特徴を一言で説明...',
     fullDescLabel: 'アプリの詳細紹介',
-    fullDescPlaceholder: 'アプリの詳細な特徴や紹介文を入力してください...',
-    usageGuideLabel: 'アプリの使い方・ガイド (使用説明)',
+    fullDescPlaceholder: 'アプリの詳細な機能や特徴を入力してください...',
+    usageGuideLabel: 'アプリの使い方・ガイド (How to Use)',
     usageGuidePlaceholder: 'ユーザーがアプリを起動して使用する手順やガイドを入力してください...',
     fileUploadLabel: 'アプリ実行/インストールファイルのアップロード (.APK, .IPA, .ZIP)',
     fileUploadDropText: 'APK、IPA、ZIPファイルをアップロードまたはクリックしてください',
     cancelBtn: 'キャンセル',
     submitUploadBtn: '100円アプリとして登録',
     submitSaveBtn: 'アプリ情報を保存',
+    uploadImageBtn: 'カスタム画像アップロード',
+    resetDefaultImageBtn: 'デフォルトに戻す',
+    thumbnailTitle: 'アプリ カバー画像 (サムネイル)',
+    thumbnailDesc: 'アプリのカードや詳細画面に表示されるカバー画像です。未設定時はカテゴリ別の高品質画像が自動適用されます。',
+    appCreatedSuccessTitle: 'アプリの登録が完了しました！',
+    appCreatedSuccessDesc: 'アプリが正常に登録され、世界中のユーザーに即時公開されました。',
+    appUpdatedSuccessTitle: 'アプリ情報の更新が完了しました！',
+    appUpdatedSuccessDesc: '変更された情報が正常に保存され、世界中に反映されました。',
 
     // App Detail Modal
     appIntroTitle: 'アプリケーション紹介',
@@ -184,48 +211,48 @@ const translations: Record<Language, TranslationSet> = {
     closeBtn: '閉じる',
     editBtn: '編集',
     deleteBtn: '削除',
-    downloadNowBtn: 'ダウンロードする',
+    downloadNowBtn: 'ダウンロード',
 
     // Footer
-    footerDesc: 'AI技術で丁寧に開発された高品質ユーティリティ＆生産性アプリを、誰でも気軽に100円でお得に入手できるマーケットプレイスです。',
-    footerTrustHeader: '安心決済＆サービス',
-    footerTrust1: '100円一律定額制 (追加料金なし)',
-    footerTrust2: '即時ダウンロード＆無制限アップデート',
+    footerDesc: 'AI技術で丁寧に開発された高品質ユーティリティ＆生産性アプリを誰でも気軽に100円(₩1,000)でGETできるマーケットプレイスです。',
+    footerTrustHeader: '安心決済 & サービス',
+    footerTrust1: '100円単一定価制 (追加料金なし)',
+    footerTrust2: '即時ダウンロード & 無制限アップデート',
     footerCategoryHeader: 'カテゴリ',
     footerCategory1: 'AI生産性ツール',
-    footerCategory2: 'デザイン＆メディア',
+    footerCategory2: 'デザイン & ミディア',
     footerCategory3: '自動化ユーティリティ',
     footerCopyright: '© 2026 アプリ 100円ショップ (100-Yen App Shop). All rights reserved.',
   },
   ko: {
-    brandTitle: '어플 100엔 샾',
+    brandTitle: '어플 100엔 샵',
     brandTagline: 'AI Apps at Just 100 Yen',
-    navApps: '어플 다운로드',
+    navApps: '어플 카탈로그',
     navMyPage: '마이 다운로드',
     login: '로그인',
     logout: '로그아웃',
-    userDefaultName: '일반 회원',
-    heroTag: 'AI 어플 전품목 100엔 균일가 샾',
-    heroTitle1: '혼자 쓰기 아까워 공개하는',
-    heroTitleHighlight: '어플 100엔 샾',
-    heroDesc: '배경 제거 툴부터 PDF AI 요약기, 자동화 툴까지! 필요한 어플을 단돈 100엔에 평생 영구 소장하세요.',
-    btnExplore: '어플 찾고 바로 다운로드',
-    trustBadge1Title: '단돈 100엔 / $1',
-    trustBadge1Sub: '부담 없는 초저가 정찰제',
-    trustBadge2Title: '원클릭 즉시 사용',
-    trustBadge2Sub: '무설치 브라우저 앱 지원',
+    userDefaultName: '회원님',
+    heroTag: '100엔 정찰제 디지털 앱 스토어',
+    heroTitle1: '혼자 쓰기 너무 아까운!',
+    heroTitleHighlight: '어플 100엔 샵',
+    heroDesc: '누끼 따기 이미지 배경 제거부터 PDF AI 요약기, 자동화 툴까지! 단돈 100엔으로 평생 쓰는 고성능 어플을 지금 득템하세요.',
+    btnExplore: '100엔 어플 찾아보고 다운로드',
+    trustBadge1Title: '100엔 일률 정찰제',
+    trustBadge1Sub: '부담 제로 초특가',
+    trustBadge2Title: '원터치 즉시 실행',
+    trustBadge2Sub: '무설치 웹 어플리케이션',
     trustBadge3Title: '평생 무료 업데이트',
-    trustBadge3Sub: '한 번 구매로 영구 소장',
-    trustBadge4Title: '실행 파일 포함',
-    trustBadge4Sub: 'Python 데스크톱 프로그램',
-    popularCatalogTitle: '🔥 인기 100엔 어플 라인업',
-    popularCatalogSub: '지금 바로 100엔으로 즉시 이용 가능한 고성능 유틸리티들입니다.',
-    viewAllApps: '전체 어플 보기',
+    trustBadge3Sub: '1회 결제로 영구 소장',
+    trustBadge4Title: 'PC·모바일 완벽 지원',
+    trustBadge4Sub: 'Python·모바일 패키지',
+    popularCatalogTitle: '🔥 인기 폭발 100엔 어플 라인업',
+    popularCatalogSub: '100엔으로 즉시 다운로드 가능한 고품질 유틸리티 어플 라인업입니다.',
+    viewAllApps: '모든 어플 카탈로그 보기',
     catalogBadge: '100엔 정찰제 디지털 앱 스토어',
     catalogTitle: '어플 카탈로그',
     catalogSubtitle: '100엔으로 즉시 다운로드 가능한 고품질 유틸리티 어플 라인업입니다.',
     searchPlaceholder: '어플 이름 또는 기능 검색...',
-    buyBtn: '1000원에 구매',
+    buyBtn: '1,000원 결제',
     purchasedLabel: '구매 완료',
     downloadFile: '설치 파일 다운로드',
     licenseKey: '라이선스 키',
@@ -239,22 +266,22 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: '개발 & 툴',
     categoryAuto: '자동화',
     categoryUtil: '유틸리티',
-    
+
     // MyPage
-    resetTestPurchases: '🔄 구매 내역 리셋',
-    purchasedAppsTotal: '보유 어플 수',
-    proMember: 'PRO 멤버',
+    resetTestPurchases: '🔄 구매 내역 초기화 (테스트용)',
+    purchasedAppsTotal: '보유 중인 어플',
+    proMember: 'PRO 회원',
 
     // Upload App Modal
     uploadModalTitle: '신규 핸드폰 / PC 어플 등록',
     uploadModalSub: '100엔 마켓에 새로운 어플을 등록하여 출시합니다',
     uploadModalEditTitle: '어플 정보 수정',
     uploadModalEditSub: '등록된 어플의 정보와 설명서를 수정합니다',
-    thumbnailLabel: '어플 대표 썸네일 이미지 (선택)',
-    thumbnailDropText: '클릭 또는 드래그하여 이미지 선택 (.PNG, .JPG, .WebP)',
-    thumbnailAutoNotice: '※ 이미지를 첨부하지 않으면 카테고리에 어울리는 고급 이미지가 자동 지정됩니다.',
+    thumbnailLabel: '어플 커버 썸네일 이미지 (선택)',
+    thumbnailDropText: '이미지 파일(.PNG, .JPG, .WebP)을 드래그하거나 선택하세요',
+    thumbnailAutoNotice: '※ 이미지 미등록 시 카테고리별 고품질 기본 이미지가 자동 할당됩니다.',
     appNameLabel: '어플 이름',
-    appNamePlaceholder: '예: One Month\'s Todo / 스마트 캘린더 Pro',
+    appNamePlaceholder: '예: One Month\'s Todo (원 먼스 투두)',
     categoryLabel: '카테고리',
     priceAndRevenueLabel: '판매 가격 & 수익 배분 (수수료 10%)',
     revenueShareText: '판매 금액의 90% 개발자 정산 / 플랫폼 수수료 10%',
@@ -270,6 +297,14 @@ const translations: Record<Language, TranslationSet> = {
     cancelBtn: '취소',
     submitUploadBtn: '100엔 어플 등록하기',
     submitSaveBtn: '어플 정보 저장하기',
+    uploadImageBtn: '커스텀 이미지 업로드',
+    resetDefaultImageBtn: '기본 이미지로 리셋',
+    thumbnailTitle: '어플 커버 이미지 (썸네일)',
+    thumbnailDesc: '어플 카탈로그 카드 및 상세 모달에 표시될 이미지입니다. 미설정 시 카테고리별 고품질 대표 이미지가 적용됩니다.',
+    appCreatedSuccessTitle: '어플 등록이 완료되었습니다!',
+    appCreatedSuccessDesc: '어플이 성공적으로 등록되어 전 세계 사용자에게 즉시 공개되었습니다.',
+    appUpdatedSuccessTitle: '어플 정보 수정이 완료되었습니다!',
+    appUpdatedSuccessDesc: '수정된 정보가 성공적으로 저장되어 전 세계에 반영되었습니다.',
 
     // App Detail Modal
     appIntroTitle: '어플리케이션 소개',
@@ -366,6 +401,14 @@ const translations: Record<Language, TranslationSet> = {
     cancelBtn: 'Cancel',
     submitUploadBtn: 'Publish for $1 App',
     submitSaveBtn: 'Save App Info',
+    uploadImageBtn: 'Upload Custom Image',
+    resetDefaultImageBtn: 'Reset Default Image',
+    thumbnailTitle: 'App Cover Image (Thumbnail)',
+    thumbnailDesc: 'Cover image shown in app cards and details modal. If unset, high-quality category default image applies.',
+    appCreatedSuccessTitle: 'App Registered Successfully!',
+    appCreatedSuccessDesc: 'Your application has been published globally to all users.',
+    appUpdatedSuccessTitle: 'App Details Updated!',
+    appUpdatedSuccessDesc: 'Your updated app information has been saved globally.',
 
     // App Detail Modal
     appIntroTitle: 'Application Overview',

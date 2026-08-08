@@ -34,6 +34,9 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
     return fallback && fallback.trim().length > 0 ? fallback.trim() : '';
   };
 
+  const containsJp = (t?: string) => t && /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(t);
+  const containsKr = (t?: string) => t && /[\uAC00-\uD7A3]/.test(t);
+
   let title =
     language === 'ko'
       ? getValidText(app.titleKo, app.title)
@@ -61,6 +64,20 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
       : language === 'ja'
       ? app.featuresJa && app.featuresJa.length > 0 ? app.featuresJa : app.features
       : app.featuresEn && app.featuresEn.length > 0 ? app.featuresEn : app.features;
+
+  if (language === 'ko') {
+    if (containsJp(title)) title = translateToKo(title);
+    if (containsJp(fullDesc)) fullDesc = translateToKo(fullDesc);
+    if (usageGuide && containsJp(usageGuide)) usageGuide = translateToKo(usageGuide);
+  } else if (language === 'en') {
+    if (containsJp(title) || containsKr(title)) title = translateToEn(title);
+    if (containsJp(fullDesc) || containsKr(fullDesc)) fullDesc = translateToEn(fullDesc);
+    if (usageGuide && (containsJp(usageGuide) || containsKr(usageGuide))) usageGuide = translateToEn(usageGuide);
+  } else if (language === 'ja') {
+    if (containsKr(title)) title = translateToJa(title);
+    if (containsKr(fullDesc)) fullDesc = translateToJa(fullDesc);
+    if (usageGuide && containsKr(usageGuide)) usageGuide = translateToJa(usageGuide);
+  }
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {
