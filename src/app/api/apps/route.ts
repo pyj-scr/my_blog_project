@@ -11,16 +11,25 @@ let globalAppsStore: AppItem[] = sortAppsByNewest(MOCK_APPS.map(autoTranslateApp
 
 const APPS_COLLECTION = 'apps';
 
+function sanitizeApp(app: AppItem): AppItem {
+  const isValid = (s?: string) => s && s.trim().length > 1;
+  const cleaned = { ...app };
+  if (!isValid(cleaned.titleKo)) cleaned.titleKo = cleaned.title;
+  if (!isValid(cleaned.titleJa)) cleaned.titleJa = cleaned.title;
+  if (!isValid(cleaned.titleEn)) cleaned.titleEn = cleaned.title;
+  return cleaned;
+}
+
 // Helper function to fetch all apps from Firestore or seed if empty
 async function getAppsFromFirestore(): Promise<AppItem[]> {
-  if (!db) return sortAppsByNewest(globalAppsStore);
+  if (!db) return sortAppsByNewest(globalAppsStore.map(sanitizeApp));
 
   try {
     const snapshot = await db.collection(APPS_COLLECTION).get();
     
     if (snapshot.empty) {
       // Seed Firestore with initial mock apps
-      const initialApps = sortAppsByNewest(MOCK_APPS.map(autoTranslateApp));
+      const initialApps = sortAppsByNewest(MOCK_APPS.map(autoTranslateApp)).map(sanitizeApp);
       const batch = db.batch();
       for (const app of initialApps) {
         const docRef = db.collection(APPS_COLLECTION).doc(app.id);
@@ -33,7 +42,7 @@ async function getAppsFromFirestore(): Promise<AppItem[]> {
 
     const apps: AppItem[] = [];
     snapshot.docs.forEach((doc: QueryDocumentSnapshot) => {
-      apps.push(doc.data() as AppItem);
+      apps.push(sanitizeApp(doc.data() as AppItem));
     });
 
     const sortedApps = sortAppsByNewest(apps);
@@ -43,7 +52,7 @@ async function getAppsFromFirestore(): Promise<AppItem[]> {
     return sortedApps;
   } catch (error) {
     console.error('Firestore GET error:', error);
-    return sortAppsByNewest(globalAppsStore);
+    return sortAppsByNewest(globalAppsStore.map(sanitizeApp));
   }
 }
 

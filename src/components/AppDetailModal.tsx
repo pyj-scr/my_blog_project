@@ -29,52 +29,38 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
 
   const purchased = isPurchased(app.id);
 
-  // Dynamic 3-Language Resolution based on selected Language
+  const getValidText = (val?: string, fallback?: string) => {
+    if (val && val.trim().length > 1) return val.trim();
+    return fallback && fallback.trim().length > 0 ? fallback.trim() : '';
+  };
+
   let title =
     language === 'ko'
-      ? app.titleKo || app.title
+      ? getValidText(app.titleKo, app.title)
       : language === 'ja'
-      ? app.titleJa || app.title
-      : app.titleEn || app.title;
+      ? getValidText(app.titleJa, app.title)
+      : getValidText(app.titleEn, app.title);
 
   let fullDesc =
     language === 'ko'
-      ? app.fullDescriptionKo || app.fullDescription
+      ? getValidText(app.fullDescriptionKo, app.fullDescription)
       : language === 'ja'
-      ? app.fullDescriptionJa || app.fullDescription
-      : app.fullDescriptionEn || app.fullDescription;
+      ? getValidText(app.fullDescriptionJa, app.fullDescription)
+      : getValidText(app.fullDescriptionEn, app.fullDescription);
 
   let usageGuide =
     language === 'ko'
-      ? app.usageGuideKo || app.usageGuide
+      ? getValidText(app.usageGuideKo, app.usageGuide)
       : language === 'ja'
-      ? app.usageGuideJa || app.usageGuide
-      : app.usageGuideEn || app.usageGuide;
+      ? getValidText(app.usageGuideJa, app.usageGuide)
+      : getValidText(app.usageGuideEn, app.usageGuide);
 
   let features =
     language === 'ko'
-      ? app.featuresKo || app.features
+      ? app.featuresKo && app.featuresKo.length > 0 ? app.featuresKo : app.features
       : language === 'ja'
-      ? app.featuresJa || app.features
-      : app.featuresEn || app.features;
-
-  // Forced Safety Guard Translation to ensure NO Korean remnants leak in JA/EN modes
-  if (language === 'ja') {
-    title = translateToJa(title);
-    fullDesc = translateToJa(fullDesc);
-    if (usageGuide) usageGuide = translateToJa(usageGuide);
-    if (features) features = features.map(f => translateToJa(f));
-  } else if (language === 'en') {
-    title = translateToEn(title);
-    fullDesc = translateToEn(fullDesc);
-    if (usageGuide) usageGuide = translateToEn(usageGuide);
-    if (features) features = features.map(f => translateToEn(f));
-  } else if (language === 'ko') {
-    title = translateToKo(title);
-    fullDesc = translateToKo(fullDesc);
-    if (usageGuide) usageGuide = translateToKo(usageGuide);
-    if (features) features = features.map(f => translateToKo(f));
-  }
+      ? app.featuresJa && app.featuresJa.length > 0 ? app.featuresJa : app.features
+      : app.featuresEn && app.featuresEn.length > 0 ? app.featuresEn : app.features;
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {

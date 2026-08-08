@@ -17,7 +17,7 @@ export async function translateTextDynamic(text: string, targetLang: 'ja' | 'en'
       if (data && data[0] && Array.isArray(data[0])) {
         const translated = data[0].map((item: any) => item[0]).join('');
         if (translated && translated.trim() !== '') {
-          return fallbackTranslate(translated, targetLang);
+          return translated;
         }
       }
     }

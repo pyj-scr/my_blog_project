@@ -50,10 +50,11 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
 
   useEffect(() => {
     if (editApp) {
+      const isValid = (s?: string) => s && s.trim().length > 1;
       setTitle(editApp.title);
-      setTitleKo(editApp.titleKo || editApp.title);
-      setTitleJa(editApp.titleJa || editApp.title);
-      setTitleEn(editApp.titleEn || editApp.title);
+      setTitleKo(isValid(editApp.titleKo) ? editApp.titleKo! : '');
+      setTitleJa(isValid(editApp.titleJa) ? editApp.titleJa! : '');
+      setTitleEn(isValid(editApp.titleEn) ? editApp.titleEn! : '');
       setCategory(editApp.category);
       setShortDesc(editApp.shortDescription);
       setFullDesc(editApp.fullDescription);
@@ -99,16 +100,17 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     if (!title || !shortDesc) return;
 
     setIsTranslating(true);
+    const isValid = (s?: string) => s && s.trim().length > 1;
 
     const baseApp: AppItem = {
       id: editApp ? editApp.id : `app-custom-${Date.now()}`,
-      title: title,
-      titleKo: titleKo || translateToKo(title),
-      titleJa: titleJa || translateToJa(title),
-      titleEn: titleEn || translateToEn(title),
-      shortDescription: shortDesc,
-      fullDescription: fullDesc || shortDesc,
-      usageGuide: usageGuide,
+      title: title.trim(),
+      titleKo: isValid(titleKo) ? titleKo.trim() : translateToKo(title),
+      titleJa: isValid(titleJa) ? titleJa.trim() : translateToJa(title),
+      titleEn: isValid(titleEn) ? titleEn.trim() : translateToEn(title),
+      shortDescription: shortDesc.trim(),
+      fullDescription: (fullDesc || shortDesc).trim(),
+      usageGuide: usageGuide.trim(),
       priceJpy: 100,
       priceKrw: 1000,
       priceUsd: 1.0,
@@ -148,9 +150,14 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
     // Enrich with dynamic translation
     const translated = await asyncTranslateApp(baseApp);
     
-    if (titleJa && titleJa.trim() !== '') translated.titleJa = titleJa;
-    if (titleEn && titleEn.trim() !== '') translated.titleEn = titleEn;
-    if (titleKo && titleKo.trim() !== '') translated.titleKo = titleKo;
+    if (isValid(titleJa)) translated.titleJa = titleJa.trim();
+    if (isValid(titleEn)) translated.titleEn = titleEn.trim();
+    if (isValid(titleKo)) translated.titleKo = titleKo.trim();
+
+    // Ensure title is set properly across all 3 languages if any is missing or corrupted
+    if (!isValid(translated.titleJa)) translated.titleJa = title.trim();
+    if (!isValid(translated.titleKo)) translated.titleKo = translateToKo(title.trim());
+    if (!isValid(translated.titleEn)) translated.titleEn = translateToEn(title.trim());
 
     // Send to Global Server API Database Route (Real-Time Worldwide Sync)
     try {

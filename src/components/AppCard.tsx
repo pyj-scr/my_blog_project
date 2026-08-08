@@ -18,32 +18,24 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
 
   const purchased = isPurchased(app.id);
 
-  // Dynamic 3-Language Resolution with Forced Translation Safety Guard
+  const getValidText = (val?: string, fallback?: string) => {
+    if (val && val.trim().length > 1) return val.trim();
+    return fallback && fallback.trim().length > 0 ? fallback.trim() : '';
+  };
+
   let title =
     language === 'ko'
-      ? app.titleKo || app.title
+      ? getValidText(app.titleKo, app.title)
       : language === 'ja'
-      ? app.titleJa || app.title
-      : app.titleEn || app.title;
+      ? getValidText(app.titleJa, app.title)
+      : getValidText(app.titleEn, app.title);
 
   let shortDesc =
     language === 'ko'
-      ? app.shortDescriptionKo || app.shortDescription
+      ? getValidText(app.shortDescriptionKo, app.shortDescription)
       : language === 'ja'
-      ? app.shortDescriptionJa || app.shortDescription
-      : app.shortDescriptionEn || app.shortDescription;
-
-  // Force language transformation safety guard if Korean remains in Japanese/English mode
-  if (language === 'ja') {
-    title = translateToJa(title);
-    shortDesc = translateToJa(shortDesc);
-  } else if (language === 'en') {
-    title = translateToEn(title);
-    shortDesc = translateToEn(shortDesc);
-  } else if (language === 'ko') {
-    title = translateToKo(title);
-    shortDesc = translateToKo(shortDesc);
-  }
+      ? getValidText(app.shortDescriptionJa, app.shortDescription)
+      : getValidText(app.shortDescriptionEn, app.shortDescription);
 
   const getCategoryTranslation = (cat: string) => {
     switch (cat) {
