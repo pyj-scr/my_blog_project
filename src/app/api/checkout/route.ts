@@ -1,15 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const getCleanStripeKey = (): string => {
-  let key = process.env.STRIPE_SECRET_KEY || '';
-  if (!key) {
-    const encoded = 'c2tfbGl2ZV81MVR6WElPQ1BlcER4djZQSGZyVU1PQmhVeFZOWmpLRnFGVk5TMjJVS2RhVnlZUXRJODJYcHh6R0k0VkpETGNlZmQyTVFwRkgwYW1Hd0dwaTNWSmNwczdPMDBtM0xOT0tl';
-    try {
-      key = Buffer.from(encoded, 'base64').toString('ascii');
-    } catch {
-      key = '';
-    }
-  }
+  const key = process.env.STRIPE_SECRET_KEY || '';
   return key.replace(/[^\x20-\x7E]/g, '').trim();
 };
 
