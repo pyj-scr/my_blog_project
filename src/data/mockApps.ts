@@ -50,7 +50,7 @@ export const MOCK_APPS: AppItem[] = [
     usageGuideKo: 'iPhone의 설치 방법 (공통)\n1. Safari로 다음의 주소 중 목적의 앱 주소를 엽니다.\n2. 화면 하단 공유 버튼을 누릅니다.\n3. 메뉴에서 [홈 화면에 추가]를 선택합니다.',
     usageGuideJa: 'iPhoneのインストール方法（共通）\n1. Safariで以下のアドレスのうち、目的のアプリアドレスを開きます。（他のブラウザではありません - 必ずSafari）\n2. 画面下部（または上部）共有ボタンを押します。\n3. メニューから「ホーム画面に追加」を選択します。',
     usageGuideEn: 'iPhone Installation Guide:\n1. Open app URL in Safari browser.\n2. Tap Share button.\n3. Select Add to Home Screen.',
-    downloadUrl: '/apps_store/my_prayer/index.html',
+    downloadUrl: 'https://prayer-list-9bb0d.web.app',
     isPopular: true,
     isNew: true,
     updatedAt: '2026-08-02'
@@ -104,7 +104,7 @@ export const MOCK_APPS: AppItem[] = [
     usageGuideKo: 'iPhone의 설치 방법 (공통)\n1. Safari로 다음의 주소 중 목적의 앱 주소를 엽니다.\n2. 화면 하단 공유 버튼을 누릅니다.\n3. 메뉴에서 [홈 화면에 추가]를 선택합니다.',
     usageGuideJa: 'iPhoneのインストール方法（共通）\n1. Safariで以下のアドレスのうち、目的のアプリアドレスを開きます。（他のブラウザではありません - 必ずSafari）\n2. 画面下部（または上部）共有ボタンを押します。\n3. メニューから「ホーム画面に追加」を選択します。',
     usageGuideEn: 'iPhone Installation Guide:\n1. Open app URL in Safari browser.\n2. Tap Share button.\n3. Select Add to Home Screen.',
-    downloadUrl: '/apps_store/my_prayer/index.html',
+    downloadUrl: 'https://my-prayer-journal.web.app',
     isPopular: true,
     isNew: true,
     updatedAt: '2026-08-02'
@@ -158,7 +158,7 @@ export const MOCK_APPS: AppItem[] = [
     usageGuideKo: '1. 다운로드 버튼을 눌러 앱 패키지를 받습니다.\n2. 스마트폰에서 앱을 실행하고 매일 기도 및 목표 달성을 체크하세요.',
     usageGuideJa: '1. ダウンロードボタンを押してアプリを保存します。\n2. スマホでアプリを起動し、毎日のお祈りをチェックしてください。',
     usageGuideEn: '1. Tap Download to save the app.\n2. Open the app on your mobile device and log daily achievements.',
-    downloadUrl: '/apps_store/my_prayer/index.html',
+    downloadUrl: 'https://my-prayer-journal.web.app',
     isPopular: true,
     isNew: true,
     updatedAt: '2026-08-01'
@@ -212,7 +212,7 @@ export const MOCK_APPS: AppItem[] = [
     usageGuideKo: '1. 앱 실행 후 이번 달 목표 과제 3가지를 등록합니다.\n2. 하루 1회 완료 시 버튼을 터치하면 성취 그래프가 기록됩니다.',
     usageGuideJa: '1. アプリ起動後、今月の目標タスクを登録します。\n2. 達成時にボタンをタップするとグラフが記録されます。',
     usageGuideEn: '1. Enter 3 target goals for the month.\n2. Tap daily upon completion to track monthly progress.',
-    downloadUrl: '/apps_store/one_months_todo/index.html',
+    downloadUrl: 'https://my-todo-checklist.web.app',
     isPopular: true,
     isNew: true,
     updatedAt: '2026-08-01'

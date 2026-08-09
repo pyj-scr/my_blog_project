@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePurchase } from '@/context/PurchaseContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { MOCK_APPS } from '@/data/mockApps';
+import { AppItem } from '@/types/app';
 import { Navbar } from '@/components/Navbar';
 import { Download, Key, Calendar, ShoppingBag, ArrowRight, User as UserIcon } from 'lucide-react';
 
@@ -13,6 +14,16 @@ export default function MyPage() {
   const { purchases, processPayment } = usePurchase();
   const { user, openLoginModal } = useAuth();
   const { language, t } = useLanguage();
+  const [appList, setAppList] = useState<AppItem[]>(MOCK_APPS);
+
+  useEffect(() => {
+    fetch('/api/apps')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.apps?.length > 0) setAppList(data.apps);
+      })
+      .catch((err) => console.warn('Failed to load apps from global server API in MyPage', err));
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -21,13 +32,13 @@ export default function MyPage() {
       const appId = params.get('appId');
 
       if (isSuccess === 'true' && appId) {
-        const targetApp = MOCK_APPS.find((a) => a.id === appId);
+        const targetApp = appList.find((a) => a.id === appId);
         if (targetApp && !purchases.some((p) => p.appId === appId)) {
           processPayment(targetApp, user?.name || t.userDefaultName);
         }
       }
     }
-  }, [user, purchases, processPayment, t.userDefaultName]);
+  }, [user, purchases, processPayment, t.userDefaultName, appList]);
 
   if (!user) {
     return (
@@ -105,7 +116,7 @@ export default function MyPage() {
         {purchases.length > 0 ? (
           <div className="space-y-4">
             {purchases.map((item) => {
-              const targetApp = MOCK_APPS.find((a) => a.id === item.appId);
+              const targetApp = appList.find((a) => a.id === item.appId);
               const title =
                 targetApp && language === 'ja' && targetApp.titleJa
                   ? targetApp.titleJa
