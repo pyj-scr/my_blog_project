@@ -30,11 +30,12 @@ export default function MyPage() {
       const params = new URLSearchParams(window.location.search);
       const isSuccess = params.get('success');
       const appId = params.get('appId');
+      const sessionId = params.get('session_id');
 
-      if (isSuccess === 'true' && appId) {
+      if (isSuccess === 'true' && appId && sessionId) {
         const targetApp = appList.find((a) => a.id === appId);
-        if (targetApp && !purchases.some((p) => p.appId === appId)) {
-          processPayment(targetApp, user?.name || t.userDefaultName);
+        if (targetApp && !purchases.some((p) => p.sessionId === sessionId)) {
+          processPayment(targetApp, user?.name || t.userDefaultName, sessionId);
         }
       }
     }

@@ -61,6 +61,7 @@ export interface UserPurchase {
   userName?: string;
   userEmail?: string;
   downloadUrl?: string;
+  sessionId?: string;
 }
 
 export type PurchaseItem = UserPurchase;

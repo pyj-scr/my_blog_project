@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
-
-const getCleanStripeKey = (): string => {
-  const key = process.env.STRIPE_SECRET_KEY || '';
-  return key.replace(/[^\x20-\x7E]/g, '').trim();
-};
+import { getCleanStripeKey } from '@/lib/stripe';
 
 export async function POST(req: Request) {
   try {
@@ -39,7 +35,8 @@ export async function POST(req: Request) {
     params.append('line_items[0][quantity]', '1');
     params.append('mode', 'payment');
     params.append('managed_payments[enabled]', 'false');
-    params.append('success_url', `${origin}/mypage?success=true&appId=${appId}`);
+    params.append('metadata[appId]', appId);
+    params.append('success_url', `${origin}/mypage?success=true&appId=${appId}&session_id={CHECKOUT_SESSION_ID}`);
     params.append('cancel_url', `${origin}/?canceled=true`);
 
     const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {

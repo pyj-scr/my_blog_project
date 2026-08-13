@@ -10,7 +10,7 @@ interface PurchaseContextType {
   paymentModalApp: AppItem | null;
   openPaymentModal: (app: AppItem) => void;
   closePaymentModal: () => void;
-  processPayment: (app: AppItem, cardHolderName?: string) => Promise<boolean>;
+  processPayment: (app: AppItem, cardHolderName?: string, sessionId?: string) => Promise<boolean>;
   isPurchased: (appId: string) => boolean;
 }
 
@@ -25,30 +25,75 @@ export const PurchaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return email ? `app100yen_purchases_${email.toLowerCase().trim()}` : 'app100yen_purchases_guest';
   };
 
+  // Load a cached copy instantly (works offline / before the server responds),
+  // then reconcile with the server record for logged-in users so purchase
+  // history survives switching browsers or clearing local cache.
   useEffect(() => {
     const key = getStorageKey(user?.email);
     const savedPurchases = localStorage.getItem(key);
-    
+    let cached: PurchaseItem[] = [];
+
     if (savedPurchases) {
       try {
-        setPurchases(JSON.parse(savedPurchases));
+        cached = JSON.parse(savedPurchases);
       } catch {
         localStorage.removeItem(key);
-        setPurchases([]);
       }
-    } else {
+    } else if (!user) {
       // Legacy fallback check for main key
       const legacyPurchases = localStorage.getItem('app100yen_purchases');
-      if (legacyPurchases && !user) {
+      if (legacyPurchases) {
         try {
-          setPurchases(JSON.parse(legacyPurchases));
+          cached = JSON.parse(legacyPurchases);
         } catch {
-          setPurchases([]);
+          // ignore corrupt legacy data
         }
-      } else {
-        setPurchases([]);
       }
     }
+    setPurchases(cached);
+
+    if (!user?.email) return;
+
+    fetch(`/api/purchases?email=${encodeURIComponent(user.email)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && Array.isArray(data.purchases)) {
+          setPurchases(data.purchases);
+          localStorage.setItem(key, JSON.stringify(data.purchases));
+
+          // Claim any purchase made as a guest (before login) on this browser
+          // so it becomes visible from other devices too.
+          const guestKey = getStorageKey(undefined);
+          const guestRaw = localStorage.getItem(guestKey);
+          if (guestRaw) {
+            try {
+              const guestPurchases: PurchaseItem[] = JSON.parse(guestRaw);
+              const known = new Set(data.purchases.map((p: PurchaseItem) => p.sessionId).filter(Boolean));
+              guestPurchases
+                .filter((p) => p.sessionId && !known.has(p.sessionId))
+                .forEach((p) => {
+                  fetch('/api/purchases', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      appId: p.appId,
+                      sessionId: p.sessionId,
+                      appTitle: p.appTitle,
+                      priceJpy: p.priceJpy,
+                      priceFormatted: p.priceFormatted,
+                      downloadUrl: p.downloadUrl,
+                      userName: user.name,
+                      userEmail: user.email,
+                    }),
+                  }).catch(() => {});
+                });
+            } catch {
+              // ignore corrupt guest cache
+            }
+          }
+        }
+      })
+      .catch((err) => console.warn('Failed to sync purchases from server', err));
   }, [user]);
 
   const openPaymentModal = (app: AppItem) => {
@@ -63,41 +108,60 @@ export const PurchaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return purchases.some((p) => p.appId === appId);
   };
 
-  const processPayment = async (app: AppItem, cardHolderName?: string): Promise<boolean> => {
-    // 1초 결제 시뮬레이션
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    const newPurchase: PurchaseItem = {
-      id: 'pur-' + Date.now(),
-      appId: app.id,
-      appTitle: app.title,
-      priceJpy: app.priceJpy,
-      priceFormatted: `${app.priceJpy}円 / ₩${app.priceKrw.toLocaleString()} / $${app.priceUsd.toFixed(2)}`,
-      purchasedAt: new Date().toISOString().split('T')[0],
-      licenseKey: '100YEN-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-      userName: cardHolderName || user?.name || 'Guest',
-      userEmail: user?.email || undefined,
-      downloadUrl: app.downloadUrl,
-    };
-
-    const updated = [newPurchase, ...purchases];
-    setPurchases(updated);
-    
-    const key = getStorageKey(user?.email);
-    localStorage.setItem(key, JSON.stringify(updated));
-
-    // 결제 축하 축포 애니메이션 (Confetti)
-    try {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
-    } catch {
-      // ignore
+  // Records a purchase only after the given Stripe Checkout session is
+  // confirmed paid server-side, and persists it to Firestore (not just
+  // localStorage) so it survives browser/device changes for logged-in users.
+  const processPayment = async (app: AppItem, cardHolderName?: string, sessionId?: string): Promise<boolean> => {
+    if (!sessionId) {
+      console.error('processPayment: missing sessionId, refusing to record an unverified purchase');
+      return false;
+    }
+    if (purchases.some((p) => p.sessionId === sessionId)) {
+      return true;
     }
 
-    return true;
+    try {
+      const res = await fetch('/api/purchases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          appId: app.id,
+          sessionId,
+          appTitle: app.title,
+          priceJpy: app.priceJpy,
+          priceFormatted: `${app.priceJpy}円 / ₩${app.priceKrw.toLocaleString()} / $${app.priceUsd.toFixed(2)}`,
+          downloadUrl: app.downloadUrl,
+          userName: cardHolderName || user?.name || 'Guest',
+          userEmail: user?.email,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data?.success || !data.purchase) {
+        console.error('Purchase verification failed:', data?.error);
+        return false;
+      }
+
+      const newPurchase: PurchaseItem = data.purchase;
+      const updated = [newPurchase, ...purchases.filter((p) => p.sessionId !== sessionId)];
+      setPurchases(updated);
+      localStorage.setItem(getStorageKey(user?.email), JSON.stringify(updated));
+
+      try {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } catch {
+        // ignore
+      }
+
+      return true;
+    } catch (err) {
+      console.error('processPayment error:', err);
+      return false;
+    }
   };
 
   return (
