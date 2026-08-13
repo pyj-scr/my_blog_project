@@ -139,6 +139,10 @@ export default function MyPage() {
                   : targetApp && language === 'en' && targetApp.titleEn
                   ? targetApp.titleEn
                   : item.appTitle;
+              // Prefer the URL captured at purchase time: it stays correct even if the
+              // live catalog changes or hasn't finished loading yet, so a lookup miss
+              // on `appList` can never silently fall back to a broken link.
+              const appUrl = item.downloadUrl || targetApp?.downloadUrl;
 
               return (
                 <div
@@ -165,14 +169,25 @@ export default function MyPage() {
                     </div>
                   </div>
 
-                  <a
-                    href={targetApp?.downloadUrl || '#'}
-                    download
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 transition-all shrink-0"
-                  >
-                    <Download className="h-4 w-4" />
-                    <span>{t.downloadFile}</span>
-                  </a>
+                  {appUrl ? (
+                    <a
+                      href={appUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 transition-all shrink-0"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span>{t.downloadFile}</span>
+                    </a>
+                  ) : (
+                    <span
+                      title="App link unavailable — please contact support"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-5 py-2.5 text-xs font-extrabold text-slate-500 shrink-0 cursor-not-allowed"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span>{t.downloadFile}</span>
+                    </span>
+                  )}
                 </div>
               );
             })}
