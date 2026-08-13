@@ -172,8 +172,6 @@ export default function MyPage() {
                   {appUrl ? (
                     <a
                       href={appUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 transition-all shrink-0"
                     >
                       <Download className="h-4 w-4" />
