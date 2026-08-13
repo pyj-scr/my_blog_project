@@ -141,8 +141,16 @@ export default function MyPage() {
                   : item.appTitle;
               // Prefer the URL captured at purchase time: it stays correct even if the
               // live catalog changes or hasn't finished loading yet, so a lookup miss
-              // on `appList` can never silently fall back to a broken link.
-              const appUrl = item.downloadUrl || targetApp?.downloadUrl;
+              // on `appList` can never silently fall back to a broken link. Reject
+              // fragment-only placeholders (e.g. legacy '#download-custom' entries
+              // from apps uploaded before file upload actually worked) instead of
+              // rendering a link that looks live but does nothing.
+              const isRealUrl = (url?: string) => !!url && !url.startsWith('#');
+              const appUrl = isRealUrl(item.downloadUrl)
+                ? item.downloadUrl
+                : isRealUrl(targetApp?.downloadUrl)
+                ? targetApp?.downloadUrl
+                : undefined;
 
               return (
                 <div

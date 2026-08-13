@@ -84,6 +84,9 @@ export interface TranslationSet {
   usageGuidePlaceholder: string;
   fileUploadLabel: string;
   fileUploadDropText: string;
+  fileUploadingText: string;
+  fileUploadFailedMessage: string;
+  fileUploadRequiredMessage: string;
   cancelBtn: string;
   submitUploadBtn: string;
   submitSaveBtn: string;
@@ -190,6 +193,9 @@ const translations: Record<Language, TranslationSet> = {
     usageGuidePlaceholder: 'ユーザーがアプリを起動して使用する手順やガイドを入力してください...',
     fileUploadLabel: 'アプリ実行/インストールファイルのアップロード (.APK, .IPA, .ZIP)',
     fileUploadDropText: 'APK、IPA、ZIPファイルをアップロードまたはクリックしてください',
+    fileUploadingText: 'ファイルをアップロード中...',
+    fileUploadFailedMessage: 'ファイルのアップロードに失敗しました。もう一度お試しください。',
+    fileUploadRequiredMessage: 'アプリ実行/インストールファイルを添付してください。',
     cancelBtn: 'キャンセル',
     submitUploadBtn: '100円アプリとして登録',
     submitSaveBtn: 'アプリ情報を保存',
@@ -294,6 +300,9 @@ const translations: Record<Language, TranslationSet> = {
     usageGuidePlaceholder: '사용자가 어플을 실행하고 사용하는 자세한 순서나 가이드를 입력하세요...',
     fileUploadLabel: '어플 실행/설치 파일 업로드 (.APK, .IPA, .ZIP)',
     fileUploadDropText: 'APK, IPA, ZIP 파일 업로드 또는 클릭하세요',
+    fileUploadingText: '파일 업로드 중...',
+    fileUploadFailedMessage: '파일 업로드에 실패했습니다. 다시 시도해주세요.',
+    fileUploadRequiredMessage: '어플 실행/설치 파일을 첨부해주세요.',
     cancelBtn: '취소',
     submitUploadBtn: '100엔 어플 등록하기',
     submitSaveBtn: '어플 정보 저장하기',
@@ -398,6 +407,9 @@ const translations: Record<Language, TranslationSet> = {
     usageGuidePlaceholder: 'Provide step-by-step instructions for users to run your app...',
     fileUploadLabel: 'Upload Executable / Installer (.APK, .IPA, .ZIP)',
     fileUploadDropText: 'Drop or click to upload APK, IPA, or ZIP files',
+    fileUploadingText: 'Uploading file...',
+    fileUploadFailedMessage: 'File upload failed. Please try again.',
+    fileUploadRequiredMessage: 'Please attach an executable/installer file.',
     cancelBtn: 'Cancel',
     submitUploadBtn: 'Publish for $1 App',
     submitSaveBtn: 'Save App Info',
