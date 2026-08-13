@@ -19,7 +19,7 @@ interface AuthContextType {
   closeLoginModal: () => void;
   login: (name: string, email: string, password?: string) => Promise<void>;
   signUp: (name: string, email: string, password?: string) => Promise<void>;
-  loginWithGoogle: (fallbackEmail?: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => void;
 }
 
@@ -67,87 +67,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
-  const saveLocalUser = (name: string, email: string) => {
-    const cleanEmail = email.trim().toLowerCase() || 'user@100yenapp.com';
-    const emailPrefix = cleanEmail.split('@')[0];
-    const defaultName = emailPrefix ? emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) : 'Member';
-    const cleanName = name.trim() || defaultName;
-
-    const newUser: User = {
-      id: 'user-' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_'),
-      name: cleanName,
-      email: cleanEmail,
-      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-    };
-    setUser(newUser);
-    localStorage.setItem('app100yen_user', JSON.stringify(newUser));
-  };
-
-  const login = async (name: string, email: string, password?: string) => {
+  // Every login path must produce a real Firebase Auth session (never a locally
+  // fabricated user) - Storage Security Rules and any future server-side auth
+  // checks gate on request.auth, and accepting an unverified typed-in email as
+  // someone's identity would let anyone claim an account that isn't theirs.
+  const login = async (_name: string, email: string, password?: string) => {
     const cleanEmail = email.trim().toLowerCase();
-    if (password && password.length >= 6) {
-      try {
-        await signInWithEmailAndPassword(auth, cleanEmail, password);
-      } catch (err: any) {
-        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-          throw new Error('AUTH_WRONG_PASSWORD');
-        } else if (err.code === 'auth/user-not-found') {
-          throw new Error('AUTH_USER_NOT_FOUND');
-        } else {
-          saveLocalUser(name, email);
-        }
-      }
-    } else {
-      saveLocalUser(name, email);
+    if (!password || password.length < 6) {
+      throw new Error('AUTH_WEAK_PASSWORD');
     }
+    try {
+      await signInWithEmailAndPassword(auth, cleanEmail, password);
+    } catch (err: any) {
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        throw new Error('AUTH_WRONG_PASSWORD');
+      } else if (err.code === 'auth/user-not-found') {
+        throw new Error('AUTH_USER_NOT_FOUND');
+      }
+      throw new Error('AUTH_GENERIC_FAILED');
+    }
+    // onAuthStateChanged picks up the real Firebase user and sets it.
     setIsLoginModalOpen(false);
   };
 
   const signUp = async (name: string, email: string, password?: string) => {
     const cleanEmail = email.trim().toLowerCase();
-    if (password && password.length >= 6) {
-      try {
-        const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
-        if (name && userCred.user) {
-          await updateProfile(userCred.user, { displayName: name });
-        }
-      } catch (err: any) {
-        if (err.code === 'auth/email-already-in-use') {
-          throw new Error('AUTH_EMAIL_EXISTS');
-        } else if (err.code === 'auth/weak-password') {
-          throw new Error('AUTH_WEAK_PASSWORD');
-        } else {
-          saveLocalUser(name, email);
-        }
+    if (!password || password.length < 6) {
+      throw new Error('AUTH_WEAK_PASSWORD');
+    }
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+      if (name && userCred.user) {
+        await updateProfile(userCred.user, { displayName: name });
       }
-    } else {
-      saveLocalUser(name, email);
+    } catch (err: any) {
+      if (err.code === 'auth/email-already-in-use') {
+        throw new Error('AUTH_EMAIL_EXISTS');
+      } else if (err.code === 'auth/weak-password') {
+        throw new Error('AUTH_WEAK_PASSWORD');
+      }
+      throw new Error('AUTH_GENERIC_FAILED');
     }
     setIsLoginModalOpen(false);
   };
 
-  const loginWithGoogle = async (fallbackEmail?: string) => {
+  const loginWithGoogle = async () => {
     try {
-      const res = await signInWithPopup(auth, googleProvider);
-      if (res.user && res.user.email) {
-        const cleanEmail = res.user.email.toLowerCase().trim();
-        const defaultName = res.user.displayName || cleanEmail.split('@')[0];
-        saveLocalUser(defaultName, cleanEmail);
-        setIsLoginModalOpen(false);
-        return;
-      }
+      await signInWithPopup(auth, googleProvider);
+      setIsLoginModalOpen(false);
     } catch (err: any) {
-      console.warn('Google Auth popup notice:', err?.code || err?.message);
-
-      // If fallbackEmail is provided from user input, log in with user's specified email
-      if (fallbackEmail && fallbackEmail.includes('@')) {
-        const cleanEmail = fallbackEmail.trim().toLowerCase();
-        const targetName = cleanEmail.split('@')[0];
-        saveLocalUser(targetName, cleanEmail);
-        setIsLoginModalOpen(false);
-        return;
-      }
-
+      console.warn('Google Auth popup error:', err?.code || err?.message);
       if (err?.code === 'auth/unauthorized-domain') {
         throw new Error('AUTH_UNAUTHORIZED_DOMAIN');
       } else if (err?.code === 'auth/popup-closed-by-user') {

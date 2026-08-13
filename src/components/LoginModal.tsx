@@ -62,6 +62,12 @@ export const LoginModal = () => {
           : language === 'en'
           ? 'Google OAuth failed. Please add 100yen.yoyogiyj.com to Authorized Domains or sign in with email below.'
           : 'Google 로그인 연동 실패. 파이어베이스 콘솔(Authentication ➔ 설정 ➔ 승인된 도메인)에 100yen.yoyogiyj.com 을 추가해주시거나, 아래 이메일 입력칸으로 바로 로그인해주세요.';
+      case 'AUTH_GENERIC_FAILED':
+        return language === 'ja'
+          ? 'ログインに失敗しました。もう一度お試しください。'
+          : language === 'en'
+          ? 'Login failed. Please try again.'
+          : '로그인에 실패했습니다. 다시 시도해주세요.';
       default:
         return errKey;
     }
@@ -89,7 +95,7 @@ export const LoginModal = () => {
     setIsLoading(true);
     setErrorMsg('');
     try {
-      await loginWithGoogle(email.trim());
+      await loginWithGoogle();
     } catch (err: any) {
       setErrorMsg(getTranslatedError(err.message));
     } finally {
