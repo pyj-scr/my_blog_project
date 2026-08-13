@@ -40,7 +40,7 @@ export default function MyPage() {
     }
   }, [user, purchases, processPayment, t.userDefaultName, appList]);
 
-  if (!user) {
+  if (!user && purchases.length === 0) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-900 border border-slate-800 text-rose-400">
@@ -60,18 +60,33 @@ export default function MyPage() {
     );
   }
 
-  const userNameDisplay = user.name || user.email || t.userDefaultName;
+  const userNameDisplay = user?.name || user?.email || t.userDefaultName;
 
   return (
     <div className="min-h-screen flex flex-col justify-between text-slate-100 selection:bg-rose-500 selection:text-white">
       <Navbar />
       <main className="flex-1 max-w-5xl mx-auto px-4 py-12 w-full space-y-8">
       
+      {/* Guest Purchase Notice */}
+      {!user && (
+        <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-3.5">
+          <p className="text-xs text-amber-200">
+            {t.login} to save this purchase to your account and access it from any device.
+          </p>
+          <button
+            onClick={openLoginModal}
+            className="shrink-0 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-amber-400 transition-all"
+          >
+            {t.login}
+          </button>
+        </div>
+      )}
+
       {/* User Header */}
       <div className="mb-10 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <img
-            src={user.avatarUrl}
+            src={user?.avatarUrl || `https://api.dicebear.com/7.x/bottts/svg?seed=guest`}
             alt={userNameDisplay}
             className="h-16 w-16 rounded-full bg-slate-800 ring-4 ring-rose-500/20"
           />
@@ -82,7 +97,7 @@ export default function MyPage() {
                 {t.proMember}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">{user.email}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{user?.email}</p>
           </div>
         </div>
 
