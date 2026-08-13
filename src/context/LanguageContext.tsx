@@ -87,6 +87,7 @@ export interface TranslationSet {
   fileUploadingText: string;
   fileUploadFailedMessage: string;
   fileUploadRequiredMessage: string;
+  appSaveFailedMessage: string;
   cancelBtn: string;
   submitUploadBtn: string;
   submitSaveBtn: string;
@@ -196,6 +197,7 @@ const translations: Record<Language, TranslationSet> = {
     fileUploadingText: 'ファイルをアップロード中...',
     fileUploadFailedMessage: 'ファイルのアップロードに失敗しました。もう一度お試しください。',
     fileUploadRequiredMessage: 'アプリ実行/インストールファイルを添付してください。',
+    appSaveFailedMessage: '保存に失敗しました。もう一度お試しください。',
     cancelBtn: 'キャンセル',
     submitUploadBtn: '100円アプリとして登録',
     submitSaveBtn: 'アプリ情報を保存',
@@ -303,6 +305,7 @@ const translations: Record<Language, TranslationSet> = {
     fileUploadingText: '파일 업로드 중...',
     fileUploadFailedMessage: '파일 업로드에 실패했습니다. 다시 시도해주세요.',
     fileUploadRequiredMessage: '어플 실행/설치 파일을 첨부해주세요.',
+    appSaveFailedMessage: '저장에 실패했습니다. 다시 시도해주세요.',
     cancelBtn: '취소',
     submitUploadBtn: '100엔 어플 등록하기',
     submitSaveBtn: '어플 정보 저장하기',
@@ -410,6 +413,7 @@ const translations: Record<Language, TranslationSet> = {
     fileUploadingText: 'Uploading file...',
     fileUploadFailedMessage: 'File upload failed. Please try again.',
     fileUploadRequiredMessage: 'Please attach an executable/installer file.',
+    appSaveFailedMessage: 'Save failed. Please try again.',
     cancelBtn: 'Cancel',
     submitUploadBtn: 'Publish for $1 App',
     submitSaveBtn: 'Save App Info',

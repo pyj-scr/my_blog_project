@@ -5,7 +5,7 @@ import { X, Upload, CheckCircle, Sparkles, Plus, Edit3, BookOpen, Image as Image
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { AppItem, AppCategory, OSType } from '@/types/app';
 import { useLanguage } from '@/context/LanguageContext';
-import { autoTranslateApp, asyncTranslateApp } from '@/utils/autoTranslateApp';
+import { asyncTranslateApp } from '@/utils/autoTranslateApp';
 import { storage } from '@/lib/firebaseClient';
 
 const formatFileSize = (bytes: number): string => {
@@ -58,6 +58,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   const [isTranslating, setIsTranslating] = useState(false);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (editApp) {
@@ -108,6 +109,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !shortDesc) return;
+    setSubmitError(null);
 
     // An app listing is worthless without something to actually launch/download,
     // so require either a freshly attached file or a previously uploaded one.
@@ -140,6 +142,25 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
       setIsUploadingFile(false);
     }
 
+    // A thumbnail selected via the image picker is a base64 data URI, which can be
+    // several MB and push the JSON payload over the server's request size limit,
+    // causing the save to fail. Shrink it to a real Storage URL before submitting -
+    // this also fixes older listings edited before this app used Storage, whose
+    // thumbnail is still an inline data URI carried on every subsequent save.
+    let thumbnailForSave = finalThumbnail;
+    if (thumbnailForSave.startsWith('data:')) {
+      setIsUploadingFile(true);
+      try {
+        const blob = await (await fetch(thumbnailForSave)).blob();
+        const thumbRef = ref(storage, `app_thumbnails/${appId}/${Date.now()}.jpg`);
+        await uploadBytes(thumbRef, blob);
+        thumbnailForSave = await getDownloadURL(thumbRef);
+      } catch (err) {
+        console.error('Thumbnail upload failed, keeping inline image:', err);
+      }
+      setIsUploadingFile(false);
+    }
+
     setIsTranslating(true);
     const isValid = (s?: string) => s && s.trim().length > 1;
 
@@ -162,7 +183,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
       rating: editApp ? editApp.rating : 5.0,
       reviewsCount: editApp ? editApp.reviewsCount : 1,
       downloads: editApp ? editApp.downloads : 1,
-      thumbnailUrl: finalThumbnail,
+      thumbnailUrl: thumbnailForSave,
       features: [
         '모바일 & 스마트폰 어플 원클릭 실행',
         '독점 100엔 정찰제 다운로드',
@@ -197,7 +218,10 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
       if (isValid(titleKo)) translated.titleKo = titleKo.trim();
     }
 
-    // Send to Global Server API Database Route (Real-Time Worldwide Sync)
+    // Send to Global Server API Database Route (Real-Time Worldwide Sync).
+    // Only report success once the server actually confirms the write - showing
+    // the success checkmark on a failed request previously let saves silently
+    // vanish (client-side state looked updated, but nothing was persisted).
     try {
       const endpoint = '/api/apps';
       const method = editApp ? 'PUT' : 'POST';
@@ -207,48 +231,31 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
         body: JSON.stringify(translated),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        const finalApp = data.app || translated;
-
-        if (editApp && onAppUpdated) {
-          onAppUpdated(finalApp);
-        } else if (onAppCreated) {
-          onAppCreated(finalApp);
-        }
-
-        const eventName = editApp ? 'app-updated' : 'app-created';
-        const customEvent = new CustomEvent(eventName, { detail: finalApp });
-        window.dispatchEvent(customEvent);
-
-        setIsSuccess(true);
-        setTimeout(() => {
-          onClose();
-        }, 1200);
-      } else {
-        const fallbackApp = autoTranslateApp(translated);
-        if (editApp && onAppUpdated) {
-          onAppUpdated(fallbackApp);
-        } else if (onAppCreated) {
-          onAppCreated(fallbackApp);
-        }
-        setIsSuccess(true);
-        setTimeout(() => {
-          onClose();
-        }, 1200);
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => null);
+        throw new Error(errBody?.error || `Server error (${res.status})`);
       }
-    } catch (err) {
-      console.error('App submit API failed:', err);
-      const fallbackApp = autoTranslateApp(translated);
+
+      const data = await res.json();
+      const finalApp = data.app || translated;
+
       if (editApp && onAppUpdated) {
-        onAppUpdated(fallbackApp);
+        onAppUpdated(finalApp);
       } else if (onAppCreated) {
-        onAppCreated(fallbackApp);
+        onAppCreated(finalApp);
       }
+
+      const eventName = editApp ? 'app-updated' : 'app-created';
+      const customEvent = new CustomEvent(eventName, { detail: finalApp });
+      window.dispatchEvent(customEvent);
+
       setIsSuccess(true);
       setTimeout(() => {
         onClose();
       }, 1200);
+    } catch (err) {
+      console.error('App submit API failed:', err);
+      setSubmitError(t.appSaveFailedMessage);
     } finally {
       setIsTranslating(false);
     }
@@ -538,6 +545,12 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
             </div>
 
             {/* Submit Button */}
+            {submitError && (
+              <p className="flex items-center gap-1.5 text-xs font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-xl px-3.5 py-2.5">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>{submitError}</span>
+              </p>
+            )}
             <div className="pt-3 border-t border-slate-800 flex items-center justify-end gap-3">
               <button
                 type="button"
