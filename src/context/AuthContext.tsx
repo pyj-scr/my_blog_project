@@ -7,6 +7,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as firebaseSignOut,
   updateProfile,
 } from 'firebase/auth';
@@ -30,6 +32,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
+    // Mobile browsers commonly block/mishandle signInWithPopup, so Google
+    // login redirects away on mobile instead - this picks the result back up
+    // once the browser returns from accounts.google.com.
+    getRedirectResult(auth).catch((err) => {
+      console.warn('Google redirect sign-in error:', err?.code || err?.message);
+    });
+
     // 1. Firebase Auth listener
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser && firebaseUser.email) {
@@ -112,6 +121,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginWithGoogle = async () => {
+    const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Popups are unreliable on mobile browsers - redirect away instead and
+      // pick the result back up in the useEffect above once the browser returns.
+      await signInWithRedirect(auth, googleProvider);
+      return;
+    }
+
     try {
       await signInWithPopup(auth, googleProvider);
       setIsLoginModalOpen(false);

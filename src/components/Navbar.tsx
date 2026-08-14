@@ -72,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUploadModal, onAppCreated 
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as Language)}
-                className="bg-transparent text-xs font-bold text-slate-200 focus:outline-none cursor-pointer"
+                className="max-w-[52px] sm:max-w-none truncate bg-transparent text-xs font-bold text-slate-200 focus:outline-none cursor-pointer"
               >
                 <option value="ja" className="bg-slate-900 text-white">JP 日本語 (100円)</option>
                 <option value="ko" className="bg-slate-900 text-white">KR 한국어 (₩1,000)</option>
@@ -94,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUploadModal, onAppCreated 
               className="flex items-center gap-1 rounded-lg border border-emerald-500/40 bg-emerald-500/20 px-2.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/30 transition-all whitespace-nowrap shrink-0 shadow-sm shadow-emerald-500/20"
             >
               <PlusCircle className="h-3.5 w-3.5 text-emerald-400" />
-              <span>{language === 'ja' ? 'アプリ登録' : language === 'en' ? 'Upload App' : '어플 등록'}</span>
+              <span className="hidden sm:inline">{language === 'ja' ? 'アプリ登録' : language === 'en' ? 'Upload App' : '어플 등록'}</span>
             </button>
 
             <Link
