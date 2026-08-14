@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUploadModal, onAppCreated 
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6">
+        <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-y-2 px-3 py-2 sm:h-16 sm:flex-nowrap sm:py-0 sm:px-6">
           
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -64,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUploadModal, onAppCreated 
           </Link>
 
           {/* Right Menu */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap sm:gap-3">
             
             {/* Language Selector */}
             <div className="relative flex items-center rounded-lg border border-slate-800 bg-slate-900 px-2.5 py-1 text-xs text-slate-200 shrink-0">
