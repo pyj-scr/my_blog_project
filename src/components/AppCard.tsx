@@ -14,9 +14,10 @@ interface AppCardProps {
 
 export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
   const { language, formatPrice, t } = useLanguage();
-  const { isPurchased, openPaymentModal } = usePurchase();
+  const { isPurchased, openPaymentModal, claimFreeApp } = usePurchase();
 
   const purchased = isPurchased(app.id);
+  const isFree = app.priceJpy === 0;
 
   const getValidText = (val?: string, fallback?: string) => {
     if (val && val.trim().length > 1) return val.trim();
@@ -59,14 +60,18 @@ export const AppCard: React.FC<AppCardProps> = ({ app, onSelectDetail }) => {
       case '개발 & 툴': return t.categoryDev;
       case '자동화': return t.categoryAuto;
       case '유틸리티': return t.categoryUtil;
+      case '게임': return t.categoryGame;
       default: return cat;
     }
   };
 
-  const handleDownloadClick = (e: React.MouseEvent) => {
+  const handleDownloadClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (purchased) {
       window.location.href = '/mypage';
+    } else if (isFree) {
+      const ok = await claimFreeApp(app);
+      if (ok) window.location.href = '/mypage';
     } else {
       openPaymentModal(app);
     }

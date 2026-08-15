@@ -56,6 +56,8 @@ export interface TranslationSet {
   categoryDev: string;
   categoryAuto: string;
   categoryUtil: string;
+  categoryGame: string;
+  priceFree: string;
 
   // MyPage
   resetTestPurchases: string;
@@ -166,6 +168,8 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: '開発 & ツール',
     categoryAuto: '自動化',
     categoryUtil: 'ユーティリティ',
+    categoryGame: 'ゲーム',
+    priceFree: '無料',
 
     // MyPage
     resetTestPurchases: '🔄 購入履歴のリセット (テスト用)',
@@ -274,6 +278,8 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: '개발 & 툴',
     categoryAuto: '자동화',
     categoryUtil: '유틸리티',
+    categoryGame: '게임',
+    priceFree: '무료',
 
     // MyPage
     resetTestPurchases: '🔄 구매 내역 초기화 (테스트용)',
@@ -382,6 +388,8 @@ const translations: Record<Language, TranslationSet> = {
     categoryDev: 'Dev & Tools',
     categoryAuto: 'Automation',
     categoryUtil: 'Utilities',
+    categoryGame: 'Game',
+    priceFree: 'Free',
 
     // MyPage
     resetTestPurchases: '🔄 Reset Purchases',
@@ -479,6 +487,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const formatPrice = (app: AppItem): string => {
+    if (app.priceJpy === 0) {
+      return translations[language].priceFree;
+    }
     switch (language) {
       case 'ja':
         return `${app.priceJpy}円`;

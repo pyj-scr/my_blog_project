@@ -11,6 +11,7 @@ interface PurchaseContextType {
   openPaymentModal: (app: AppItem) => void;
   closePaymentModal: () => void;
   processPayment: (app: AppItem, cardHolderName?: string, sessionId?: string) => Promise<boolean>;
+  claimFreeApp: (app: AppItem) => Promise<boolean>;
   isPurchased: (appId: string) => boolean;
 }
 
@@ -164,6 +165,55 @@ export const PurchaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  // Grants a free (0-price) app without going through Stripe. The server looks up
+  // the app's real stored price itself before recording the purchase, so this
+  // can't be used to "claim" an app that actually costs money.
+  const claimFreeApp = async (app: AppItem): Promise<boolean> => {
+    if (purchases.some((p) => p.appId === app.id)) {
+      return true;
+    }
+
+    try {
+      const res = await fetch('/api/purchases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          appId: app.id,
+          appTitle: app.title,
+          downloadUrl: app.downloadUrl,
+          userName: user?.name || 'Guest',
+          userEmail: user?.email,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data?.success || !data.purchase) {
+        console.error('Free app claim failed:', data?.error);
+        return false;
+      }
+
+      const newPurchase: PurchaseItem = data.purchase;
+      const updated = [newPurchase, ...purchases.filter((p) => p.appId !== app.id)];
+      setPurchases(updated);
+      localStorage.setItem(getStorageKey(user?.email), JSON.stringify(updated));
+
+      try {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } catch {
+        // ignore
+      }
+
+      return true;
+    } catch (err) {
+      console.error('claimFreeApp error:', err);
+      return false;
+    }
+  };
+
   return (
     <PurchaseContext.Provider
       value={{
@@ -172,6 +222,7 @@ export const PurchaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         openPaymentModal,
         closePaymentModal,
         processPayment,
+        claimFreeApp,
         isPurchased,
       }}
     >

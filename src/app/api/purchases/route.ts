@@ -1,12 +1,28 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebaseAdmin';
 import { fetchStripeCheckoutSession } from '@/lib/stripe';
-import type { UserPurchase } from '@/types/app';
+import { MOCK_APPS } from '@/data/mockApps';
+import type { AppItem, UserPurchase } from '@/types/app';
 
 const PURCHASES_COLLECTION = 'purchases';
+const APPS_COLLECTION = 'apps';
 
 // Fallback in-memory store for local/dev environments without Firestore credentials
 const memoryPurchases: UserPurchase[] = [];
+
+// Looks up an app's authoritative, server-side record so price can never be
+// trusted from the client (e.g. forging a paid app as a free claim).
+async function getAppById(appId: string): Promise<AppItem | null> {
+  if (db) {
+    try {
+      const doc = await db.collection(APPS_COLLECTION).doc(appId).get();
+      if (doc.exists) return doc.data() as AppItem;
+    } catch (err) {
+      console.error('Firestore app lookup error:', err);
+    }
+  }
+  return MOCK_APPS.find((a) => a.id === appId) || null;
+}
 
 // GET: Fetch a logged-in user's purchase history from the global server store
 export async function GET(request: Request) {
@@ -38,23 +54,37 @@ export async function GET(request: Request) {
 // survives browser/device changes for logged-in users. A sessionId that Stripe
 // confirms as paid is required — this prevents anyone from forging a free
 // "purchase" by simply calling this endpoint with an appId.
+//
+// The one exception is an app that is genuinely free: the client may omit
+// sessionId, but the server then looks up the app's real stored price itself
+// (never trusting client-supplied price fields) and only proceeds if it is 0.
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { appId, sessionId, appTitle, priceJpy, priceFormatted, downloadUrl, userName, userEmail } = body || {};
+    const { appId, appTitle, priceFormatted, downloadUrl, userName, userEmail } = body || {};
+    let { sessionId, priceJpy } = body || {};
 
-    if (!appId || !sessionId) {
-      return NextResponse.json({ success: false, error: 'Missing appId or sessionId' }, { status: 400 });
+    if (!appId) {
+      return NextResponse.json({ success: false, error: 'Missing appId' }, { status: 400 });
     }
 
     const cleanEmail = typeof userEmail === 'string' ? userEmail.toLowerCase().trim() : undefined;
 
-    const session = await fetchStripeCheckoutSession(sessionId);
-    if (!session || session.payment_status !== 'paid') {
-      return NextResponse.json({ success: false, error: 'Payment not verified' }, { status: 402 });
-    }
-    if (session.metadata?.appId && session.metadata.appId !== appId) {
-      return NextResponse.json({ success: false, error: 'Session/app mismatch' }, { status: 400 });
+    if (!sessionId) {
+      const app = await getAppById(appId);
+      if (!app || app.priceJpy !== 0) {
+        return NextResponse.json({ success: false, error: 'Payment required' }, { status: 402 });
+      }
+      sessionId = `free_${appId}_${cleanEmail || 'guest'}`;
+      priceJpy = 0;
+    } else {
+      const session = await fetchStripeCheckoutSession(sessionId);
+      if (!session || session.payment_status !== 'paid') {
+        return NextResponse.json({ success: false, error: 'Payment not verified' }, { status: 402 });
+      }
+      if (session.metadata?.appId && session.metadata.appId !== appId) {
+        return NextResponse.json({ success: false, error: 'Session/app mismatch' }, { status: 400 });
+      }
     }
 
     // Idempotency: a page refresh or React effect re-run must not create duplicates.
@@ -88,7 +118,7 @@ export async function POST(request: Request) {
       appId,
       appTitle: appTitle || appId,
       priceJpy,
-      priceFormatted,
+      priceFormatted: priceFormatted || (priceJpy === 0 ? 'Free' : undefined),
       purchasedAt: new Date().toISOString().split('T')[0],
       licenseKey:
         '100YEN-' +

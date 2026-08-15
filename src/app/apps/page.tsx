@@ -19,6 +19,7 @@ const CATEGORIES: AppCategory[] = [
   '개발 & 툴',
   '자동화',
   '유틸리티',
+  '게임',
 ];
 
 export default function AppsCatalogPage() {
@@ -71,6 +72,7 @@ export default function AppsCatalogPage() {
       case '개발 & 툴': return t.categoryDev;
       case '자동화': return t.categoryAuto;
       case '유틸리티': return t.categoryUtil;
+      case '게임': return t.categoryGame;
       default: return cat;
     }
   };

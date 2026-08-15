@@ -29,6 +29,7 @@ const DEFAULT_CATEGORY_IMAGES: Record<AppCategory, string> = {
   '자동화': 'https://images.unsplash.com/photo-1544396821-4dd40b938ad3?w=600&auto=format&fit=crop&q=80',
   '유틸리티': 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&auto=format&fit=crop&q=80',
   '전체': 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
+  '게임': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80',
 };
 
 export const UploadAppModal: React.FC<UploadAppModalProps> = ({
@@ -45,6 +46,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
   const [titleKo, setTitleKo] = useState('');
 
   const [category, setCategory] = useState<AppCategory>('유틸리티');
+  const [isFree, setIsFree] = useState(false);
   const [shortDesc, setShortDesc] = useState('');
   const [fullDesc, setFullDesc] = useState('');
   const [usageGuide, setUsageGuide] = useState('');
@@ -69,6 +71,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
       setUsageGuide(editApp.usageGuide || '');
       setSelectedOS(editApp.os || ['Android', 'iOS']);
       setCustomImage(editApp.thumbnailUrl || null);
+      setIsFree(editApp.priceJpy === 0);
 
       const isValid = (s?: string) => s && s.trim().length > 1;
       setTitleKo(isValid(editApp.titleKo) ? editApp.titleKo! : '');
@@ -173,9 +176,9 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
       shortDescription: shortDesc.trim(),
       fullDescription: (fullDesc || shortDesc).trim(),
       usageGuide: usageGuide.trim(),
-      priceJpy: 100,
-      priceKrw: 1000,
-      priceUsd: 1.0,
+      priceJpy: isFree ? 0 : 100,
+      priceKrw: isFree ? 0 : 1000,
+      priceUsd: isFree ? 0 : 1.0,
       category: category,
       version: 'v1.0.0',
       size: fileSizeLabel || '10.0 MB',
@@ -423,6 +426,7 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
                   <option value="자동화">⚡ {t.categoryAuto}</option>
                   <option value="유틸리티">🛠️ {t.categoryUtil}</option>
                   <option value="개발 & 툴">💻 {t.categoryDev}</option>
+                  <option value="게임">🎮 {t.categoryGame}</option>
                 </select>
               </div>
 
@@ -430,15 +434,35 @@ export const UploadAppModal: React.FC<UploadAppModalProps> = ({
                 <label className="block text-xs font-bold text-emerald-400 mb-1.5">
                   {t.priceAndRevenueLabel}
                 </label>
-                <div className="flex flex-col justify-center bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white space-y-1">
-                  <div className="flex items-center justify-between font-extrabold text-amber-400">
-                    <span>100円 / ₩1,000 / $1.00 USD</span>
-                    <span className="text-[10px] text-emerald-400">90%</span>
-                  </div>
-                  <p className="text-[10px] text-slate-400">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsFree(false)}
+                    className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-extrabold transition-all ${
+                      !isFree
+                        ? 'bg-amber-500/15 border-amber-500 text-amber-400'
+                        : 'bg-slate-950 border-slate-800 text-slate-400'
+                    }`}
+                  >
+                    100円 / $1.00
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsFree(true)}
+                    className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-extrabold transition-all ${
+                      isFree
+                        ? 'bg-emerald-500/15 border-emerald-500 text-emerald-400'
+                        : 'bg-slate-950 border-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {t.priceFree}
+                  </button>
+                </div>
+                {!isFree && (
+                  <p className="text-[10px] text-slate-400 mt-1.5">
                     {t.revenueShareText}
                   </p>
-                </div>
+                )}
               </div>
             </div>
 

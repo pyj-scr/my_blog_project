@@ -1,11 +1,12 @@
-export type AppCategory = 
+export type AppCategory =
   | '전체'
   | '모바일 앱'
-  | 'AI 생산성' 
-  | '디자인 & 미디어' 
-  | '개발 & 툴' 
-  | '자동화' 
-  | '유틸리티';
+  | 'AI 생산성'
+  | '디자인 & 미디어'
+  | '개발 & 툴'
+  | '자동화'
+  | '유틸리티'
+  | '게임';
 
 export type Language = 'ko' | 'ja' | 'en';
 
