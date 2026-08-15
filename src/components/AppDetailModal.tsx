@@ -282,7 +282,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
               ) : (
                 <>
                   <Download className="h-4 w-4" />
-                  <span>{formatPrice(app)} {t.buyBtn}</span>
+                  <span>{formatPrice(app)}</span>
                 </>
               )}
             </button>
