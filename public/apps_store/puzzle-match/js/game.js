@@ -5,11 +5,11 @@
    ===================================================== */
 
 const DIFFICULTY_CONFIG = [
-  { name: '쉬움',        gridSize: 4, icon: '🟢', count: 10 },
-  { name: '보통',        gridSize: 5, icon: '🔵', count: 10 },
-  { name: '어려움',      gridSize: 6, icon: '🟡', count: 10 },
-  { name: '매우 어려움', gridSize: 7, icon: '🟠', count: 10 },
-  { name: '극한',        gridSize: 8, icon: '🔴', count: 10 },
+  { name: 'Easy',      gridSize: 4, icon: '🟢', count: 10 },
+  { name: 'Normal',    gridSize: 5, icon: '🔵', count: 10 },
+  { name: 'Hard',      gridSize: 6, icon: '🟡', count: 10 },
+  { name: 'Very Hard', gridSize: 7, icon: '🟠', count: 10 },
+  { name: 'Extreme',   gridSize: 8, icon: '🔴', count: 10 },
 ];
 
 const STAGES = [];

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🧩 퍼즐 매치 - Puzzle Match Game</title>
-  <meta name="description" content="사진 조각을 맞춰 그림을 완성하는 퍼즐 게임! 50개 스테이지 도전!">
+  <title>🧩 Puzzle Match - Photo Piece Puzzle Game</title>
+  <meta name="description" content="Match photo pieces to complete the picture! Challenge all 50 stages!">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
     <div id="screen-home" class="screen active">
       <div class="home-container">
         <div class="home-header">
-          <button id="btn-settings-home" class="icon-btn" aria-label="설정">⚙️</button>
-          <h1 class="game-title">🧩 퍼즐 매치</h1>
+          <button id="btn-settings-home" class="icon-btn" aria-label="Settings">⚙️</button>
+          <h1 class="game-title">🧩 Puzzle Match</h1>
           <div class="header-spacer"></div>
         </div>
         <div class="stage-list" id="stage-list"></div>
@@ -29,9 +29,9 @@
     <div id="screen-game" class="screen">
       <div class="game-container">
         <div class="game-header">
-          <button id="btn-settings-game" class="icon-btn" aria-label="설정">⚙️</button>
+          <button id="btn-settings-game" class="icon-btn" aria-label="Settings">⚙️</button>
           <div class="stage-info">
-            <div class="difficulty-label" id="game-difficulty">쉬움</div>
+            <div class="difficulty-label" id="game-difficulty">Easy</div>
             <div class="stage-number" id="game-stage-num">1</div>
           </div>
           <div class="timer-wrap">
@@ -41,7 +41,7 @@
         <div class="game-board" id="game-board"></div>
         <div class="game-footer">
           <div class="moves-display">
-            <span class="moves-label">이동</span>
+            <span class="moves-label">Moves</span>
             <span class="moves-count" id="game-moves">0</span>
           </div>
           <div class="progress-container">
@@ -56,7 +56,7 @@
     <div id="loading-overlay" class="loading-overlay">
       <div class="loading-content">
         <div class="loading-spinner">🧩</div>
-        <div class="loading-label">이미지 로딩 중...</div>
+        <div class="loading-label">Loading images...</div>
         <div class="loading-bar-wrap">
           <div class="loading-bar-fill" id="loading-bar"></div>
         </div>
@@ -69,24 +69,24 @@
   <div id="modal-settings" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <span class="modal-title-text">설정</span>
-        <button id="btn-close-settings" class="close-btn" aria-label="닫기">✕</button>
+        <span class="modal-title-text">Settings</span>
+        <button id="btn-close-settings" class="close-btn" aria-label="Close">✕</button>
       </div>
       <div class="settings-toggles">
-        <button class="toggle-btn active" id="toggle-bgm" title="배경음악">
+        <button class="toggle-btn active" id="toggle-bgm" title="Background Music">
           <span class="toggle-icon">🎵</span>
-          <span class="toggle-label">음악</span>
+          <span class="toggle-label">Music</span>
         </button>
-        <button class="toggle-btn active" id="toggle-sfx" title="효과음">
+        <button class="toggle-btn active" id="toggle-sfx" title="Sound Effects">
           <span class="toggle-icon">🔊</span>
-          <span class="toggle-label">효과음</span>
+          <span class="toggle-label">SFX</span>
         </button>
-        <button class="toggle-btn active" id="toggle-vibration" title="진동">
+        <button class="toggle-btn active" id="toggle-vibration" title="Vibration">
           <span class="toggle-icon">📳</span>
-          <span class="toggle-label">진동</span>
+          <span class="toggle-label">Vibration</span>
         </button>
       </div>
-      <button id="btn-go-home" class="home-btn">🏠 홈</button>
+      <button id="btn-go-home" class="home-btn">🏠 Home</button>
       <div class="modal-footer-text">
         <span class="version-text">Version 1.0.0</span>
       </div>
@@ -96,20 +96,20 @@
   <!-- ===== STAGE CLEAR MODAL ===== -->
   <div id="modal-clear" class="modal-overlay">
     <div class="modal-box clear-box">
-      <div class="clear-title">🎉 스테이지 클리어!</div>
+      <div class="clear-title">🎉 Stage Clear!</div>
       <div class="clear-stars" id="clear-stars">⭐⭐⭐</div>
       <div class="clear-stats">
         <div class="stat-row">
-          <span class="stat-label">⏱️ 시간</span>
+          <span class="stat-label">⏱️ Time</span>
           <span class="stat-value" id="clear-time">0:00</span>
         </div>
         <div class="stat-row">
-          <span class="stat-label">🔄 이동</span>
+          <span class="stat-label">🔄 Moves</span>
           <span class="stat-value" id="clear-moves">0</span>
         </div>
       </div>
-      <button id="btn-next-stage" class="next-btn">다음 스테이지 ▶</button>
-      <button id="btn-back-home" class="back-btn">스테이지 선택</button>
+      <button id="btn-next-stage" class="next-btn">Next Stage ▶</button>
+      <button id="btn-back-home" class="back-btn">Select Stage</button>
     </div>
   </div>
 
